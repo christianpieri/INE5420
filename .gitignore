@@ -5,3 +5,6 @@ vpl_wexecution
 
 # Ignorar .glade~ antigos
 *.glade~
+
+# Ignorar as configs do vscode
+.vscode

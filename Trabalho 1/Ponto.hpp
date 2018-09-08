@@ -1,13 +1,13 @@
 #ifndef PONTO_HPP
 #define PONTO_HPP
-#include "ObjetoGrafico.hpp"
 #include <string>
 
-class Ponto : public ObjetoGrafico {
+class Ponto {
 
 private:
     double x;
     double y;
+    std::string nome;
     
 public:
     Ponto();
@@ -21,9 +21,13 @@ public:
     
     void setValorY(double coordenadaY);
 
+    void setNome(std::string _nome);
+
     double getValorX();
     
     double getValorY();
+
+    std::string getNome();
     
 };
 
