@@ -2,7 +2,12 @@ using namespace std;
 #include <gtk/gtk.h>
 #include <iostream>
 #include "Window.hpp"
+#include "Ponto.hpp"
+#include "Reta.hpp"
+#include "Poligono.hpp"
 #include <sstream>
+#include <vector>
+#include <iterator>
 
     GtkWidget *windowPrincipal;
     GtkWidget *windowPonto;
@@ -50,8 +55,88 @@ using namespace std;
     GtkWidget *objectsList;
     GtkScrolledWindow *scrolledConsole;
     
+    // Lista de Objetos
+    std::vector<Ponto> objetosPonto;
+    std::vector<Reta> objetosReta;
+    std::vector<Poligono> objetosPoligono;
+
     // Surface
     static cairo_surface_t *surface = NULL;
+
+
+// Transformada de ViewPort de X
+static double transformadaViewPortCoordenadaX(double x) {
+    double auxiliar = (x - tela.getValorXMinimo()) / (tela.getValorXMaximo() - tela.getValorXMinimo());
+
+    return auxiliar * (500 - 0);
+}
+
+// Transformada de ViewPort de Y
+static double transformadaViewPortCoordenadaY(double y) {   
+    double auxiliar = (y - tela.getValorYMinimo()) / (tela.getValorYMaximo() - tela.getValorYMinimo());
+
+    return (1 - auxiliar) * (500 - 0);
+}
+
+// Limpa a tela toda
+static void clear_surface () {
+  
+  cairo_t *cr;
+  cr = cairo_create (surface);
+  cairo_set_source_rgb (cr, 1, 1, 1);
+  cairo_paint (cr);
+  cairo_destroy (cr);
+ 
+}
+
+// Desenha os objetos após passar pelas transformadas
+static void desenharLinha(double x1, double y1, double x2, double y2) {
+    cairo_t *cr;
+    cr = cairo_create (surface);
+    cairo_set_line_width (cr, 5);
+    cairo_set_line_cap  (cr, CAIRO_LINE_CAP_ROUND); 
+    cairo_move_to (cr, x1, y1);
+    cairo_line_to (cr, x2, y2);
+    cairo_stroke (cr);    
+    gtk_widget_queue_draw (windowPrincipal);
+}
+
+// Redesenha pontos
+static void redesenhaPontos() {
+
+    double x;
+    double y;
+
+    for (std::vector<Ponto>::iterator it = objetosPonto.begin(); it != objetosPonto.end(); ++it) {
+        x = it->getValorX();
+        y = it->getValorY();
+        desenharLinha(transformadaViewPortCoordenadaX(x),
+                      transformadaViewPortCoordenadaY(y),
+                      transformadaViewPortCoordenadaX(x),
+                      transformadaViewPortCoordenadaY(y));
+    }
+
+}
+
+// Redesenha retas
+static void redesenhaRetas() {
+
+}
+
+// Redesenha poligonos
+static void redesenhaPoligonos() {
+
+}
+
+// Redesenha tudo
+static void reDrawAll () {
+    clear_surface();
+
+    redesenhaPontos();
+    redesenhaRetas();
+    redesenhaPoligonos();
+  
+}
 
 // chama este método quando o botão limpar tela é clicado
 static void on_buttonLimparTela_clicked() {
@@ -61,11 +146,7 @@ static void on_buttonLimparTela_clicked() {
     gtk_text_buffer_get_end_iter(buffer, &end);
     gtk_text_buffer_insert(buffer, &end, "Botão limpar tela pressionado!\n", -1);
 
-    cairo_t *cr;
-    cr = cairo_create (surface);
-    cairo_set_source_rgb (cr, 1, 1, 1);
-    cairo_paint (cr);
-    cairo_destroy (cr);
+    clear_surface();
     gtk_widget_queue_draw (windowPrincipal);
 
 }
@@ -78,6 +159,19 @@ static void on_buttonBaixo_clicked() {
     gtk_text_buffer_get_end_iter(buffer, &end);
     gtk_text_buffer_insert(buffer, &end, "Botão baixo pressionado!\n", -1);
 
+    double xMaximo = tela.getValorXMaximo();
+    double xMinimo = tela.getValorXMinimo();
+    double yMaximo = tela.getValorYMaximo();
+    double yMinimo = tela.getValorYMinimo();
+
+    yMaximo -= 10;
+    yMinimo -= 10;
+    
+    tela.setCoordenadasMaximo(xMaximo,yMaximo);
+    tela.setCoordenadasMinimo(xMinimo,yMinimo);
+    
+    reDrawAll();
+
 }
 
 // chama este método quando o botão cima é clicado
@@ -88,6 +182,18 @@ static void on_buttonCima_clicked() {
     gtk_text_buffer_get_end_iter(buffer, &end);
     gtk_text_buffer_insert(buffer, &end, "Botão cima pressionado!\n", -1);
 
+    double xMaximo = tela.getValorXMaximo();
+    double xMinimo = tela.getValorXMinimo();
+    double yMaximo = tela.getValorYMaximo();
+    double yMinimo = tela.getValorYMinimo();
+
+    yMaximo += 10;
+    yMinimo += 10;
+    
+    tela.setCoordenadasMaximo(xMaximo,yMaximo);
+    tela.setCoordenadasMinimo(xMinimo,yMinimo);
+    
+    reDrawAll();
 }
 
 // chama este método quando o botão esquerda é clicado
@@ -98,6 +204,18 @@ static void on_buttonEsquerda_clicked() {
     gtk_text_buffer_get_end_iter(buffer, &end);
     gtk_text_buffer_insert(buffer, &end, "Botão esquerda pressionado!\n", -1);
 
+    double xMaximo = tela.getValorXMaximo();
+    double xMinimo = tela.getValorXMinimo();
+    double yMaximo = tela.getValorYMaximo();
+    double yMinimo = tela.getValorYMinimo();
+
+    xMaximo -= 10;
+    xMinimo -= 10;
+    
+    tela.setCoordenadasMaximo(xMaximo,yMaximo);
+    tela.setCoordenadasMinimo(xMinimo,yMinimo);
+    
+    reDrawAll();
 }
 
 // chama este método quando o botão direita é clicado
@@ -108,6 +226,18 @@ static void on_buttonDireita_clicked() {
     gtk_text_buffer_get_end_iter(buffer, &end);
     gtk_text_buffer_insert(buffer, &end, "Botão direita pressionado!\n", -1);
 
+    double xMaximo = tela.getValorXMaximo();
+    double xMinimo = tela.getValorXMinimo();
+    double yMaximo = tela.getValorYMaximo();
+    double yMinimo = tela.getValorYMinimo();
+
+    xMaximo += 10;
+    xMinimo += 10;
+    
+    tela.setCoordenadasMaximo(xMaximo,yMaximo);
+    tela.setCoordenadasMinimo(xMinimo,yMinimo);
+    
+    reDrawAll();
 }
 
 // chama este método quando o botão zoomIn é clicado
@@ -187,14 +317,10 @@ static void on_buttonSalvarPoint_clicked() {
 
     string nome = gtk_entry_get_text(GTK_ENTRY(textEntryPointName));
 
-    cairo_t *cr;
-    cr = cairo_create (surface);
-    cairo_set_line_width (cr, 5);
-    cairo_set_line_cap  (cr, CAIRO_LINE_CAP_ROUND); 
-    cairo_move_to (cr, x, y);
-    cairo_line_to (cr, x, y);
-    cairo_stroke (cr);    
-    gtk_widget_queue_draw (windowPrincipal);
+    desenharLinha(transformadaViewPortCoordenadaX(x), 
+                  transformadaViewPortCoordenadaY(y), 
+                  transformadaViewPortCoordenadaX(x), 
+                  transformadaViewPortCoordenadaY(y));
 
     std::ostringstream console;
     console << "O ponto " << nome << "(" << x << ", " << y << ") foi desenhado." << std::endl;
@@ -204,6 +330,9 @@ static void on_buttonSalvarPoint_clicked() {
     gtk_text_buffer_get_end_iter(buffer, &end);
     gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
 
+    Ponto ponto = Ponto(x, y, nome);
+    objetosPonto.push_back(ponto);
+    
 }
 
 // chama este método quando o botão cancelar da window ponto é clicado
@@ -217,9 +346,6 @@ static void on_buttonCancelarPoint_clicked() {
     gtk_text_buffer_insert(buffer, &end, "Inclusão de ponto cancelada!\n", -1);
 
 }
-
-
-
 
 // chama este método quando o botão salvar da window reta é clicado
 static void on_buttonSalvarReta_clicked() {
@@ -236,14 +362,10 @@ static void on_buttonSalvarReta_clicked() {
 
     string nome = gtk_entry_get_text(GTK_ENTRY(textEntryRetaName));
 
-    cairo_t *cr;
-    cr = cairo_create (surface);
-    cairo_set_line_width (cr, 5);
-    cairo_set_line_cap  (cr, CAIRO_LINE_CAP_ROUND); 
-    cairo_move_to (cr, x1, y1);
-    cairo_line_to (cr, x2, y2);
-    cairo_stroke (cr);    
-    gtk_widget_queue_draw (windowPrincipal);
+    desenharLinha(transformadaViewPortCoordenadaX(x1),
+                  transformadaViewPortCoordenadaY(y1),
+                  transformadaViewPortCoordenadaX(x2),
+                  transformadaViewPortCoordenadaY(y2));
 
     std::ostringstream console;
     console << "A reta " << nome << "(" << x1 << ", " << y1 << ") -> (" << x2 << ", " << y2 << ") foi desenhada." << std::endl;
@@ -253,6 +375,8 @@ static void on_buttonSalvarReta_clicked() {
     gtk_text_buffer_get_end_iter(buffer, &end);
     gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
 
+    Reta reta = Reta(x1, y1, x2, y2, nome);
+    objetosReta.push_back(reta);
 }
 
 // chama este método quando o botão cancelar da window reta é clicado
@@ -265,19 +389,6 @@ static void on_buttonCancelarReta_clicked() {
     gtk_text_buffer_get_end_iter(buffer, &end);
     gtk_text_buffer_insert(buffer, &end, "Inclusão de reta cancelada!\n", -1);
 
-}
-
-
-
-// PRECISA TER PRA FUNCIONAR
-static void clear_surface () {
-  
-  cairo_t *cr;
-  cr = cairo_create (surface);
-  cairo_set_source_rgb (cr, 1, 1, 1);
-  cairo_paint (cr);
-  cairo_destroy (cr);
- 
 }
 
 /*Creates the surface*/
@@ -309,7 +420,7 @@ static gboolean draw_cb (GtkWidget *widget, cairo_t   *cr,  gpointer   data) {
 int main(int argc, char *argv[]) {
    
     tela = Window(0, 0, 500, 500);
-
+    
     GtkBuilder *builder;
 
     gtk_init(&argc, &argv);

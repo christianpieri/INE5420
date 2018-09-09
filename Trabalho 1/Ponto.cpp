@@ -35,3 +35,7 @@ double Ponto::getValorX() {
 double Ponto::getValorY() {
     return y;
 }
+
+std::string Ponto::getNome() {
+    return nome;
+}
