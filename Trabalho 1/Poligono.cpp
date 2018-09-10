@@ -9,16 +9,16 @@ Poligono::Poligono(const Poligono &origem) {
 Poligono::~Poligono() {
 }
 
-Poligono::Poligono(std::vector<Ponto> _listaDePontos, std::string _nome) {
+Poligono::Poligono(std::vector<Ponto*> _listaDePontos, std::string _nome) {
     listaDePontos = _listaDePontos;
     nome = _nome;
 }
 
-void Poligono::setListaDePontos(std::vector<Ponto> _pontos) {
+void Poligono::setListaDePontos(std::vector<Ponto*> _pontos) {
     listaDePontos = _pontos;
 }
 
-std::vector<Ponto> Poligono::getListaDePontos() {
+std::vector<Ponto*> Poligono::getListaDePontos() {
     return listaDePontos;
 }
 

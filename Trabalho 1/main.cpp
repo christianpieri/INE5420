@@ -12,6 +12,7 @@ using namespace std;
     GtkWidget *windowPrincipal;
     GtkWidget *windowPonto;
     GtkWidget *windowReta;
+    GtkWidget *windowPoligono;
     Window     tela;
 
     // Botões da caixa de controle
@@ -46,6 +47,15 @@ using namespace std;
     GtkWidget *spinRetaY2;
     GtkWidget *spinRetaZ2;
     GtkWidget *textEntryRetaName;
+
+    // Botões da window poligono
+    GtkWidget *buttonSalvarPoligono;
+    GtkWidget *buttonCancelarPoligono;
+    GtkWidget *buttonAddPontoAoPoligono;
+    GtkWidget *spinPoligonoX;
+    GtkWidget *spinPoligonoY;
+    GtkWidget *spinPoligonoZ;
+    GtkWidget *textEntryPoligonoName;
     
     // Área de desenho
     GtkWidget *drawingArea;
@@ -59,6 +69,7 @@ using namespace std;
     std::vector<Ponto*> objetosPonto;
     std::vector<Reta*> objetosReta;
     std::vector<Poligono*> objetosPoligono;
+    std::vector<Ponto*> pontosAuxiliarPoligono;
 
     // Surface
     static cairo_surface_t *surface = NULL;
@@ -143,7 +154,35 @@ static void redesenhaRetas() {
 
 // Redesenha poligonos
 static void redesenhaPoligonos() {
+    double x;
+    double y;
 
+    for (std::vector<Poligono*>::iterator it = objetosPoligono.begin(); it != objetosPoligono.end(); ++it) {
+
+        auto listaDePontos = (*it)->getListaDePontos();
+
+        auto ponto = listaDePontos.at(0);
+        
+        cairo_t *cr;
+        cr = cairo_create (surface);
+        cairo_set_line_width (cr, 5);
+        cairo_set_line_cap  (cr, CAIRO_LINE_CAP_ROUND); 
+        cairo_move_to (cr, transformadaViewPortCoordenadaX(ponto->getValorX()),
+                        transformadaViewPortCoordenadaY(ponto->getValorY()));
+
+        for (std::vector<Ponto*>::iterator it = listaDePontos.begin(); it != listaDePontos.end(); ++it) {
+            x = (*it)->getValorX();
+            y = (*it)->getValorY();
+            cairo_line_to (cr, transformadaViewPortCoordenadaX(x), transformadaViewPortCoordenadaY(y));
+        }  
+
+        cairo_line_to (cr, transformadaViewPortCoordenadaX(ponto->getValorX()),
+                        transformadaViewPortCoordenadaY(ponto->getValorY()));
+    
+        cairo_stroke (cr);    
+    }
+
+    gtk_widget_queue_draw (windowPrincipal);
 }
 
 // Redesenha tudo
@@ -175,7 +214,7 @@ static void on_buttonBaixo_clicked() {
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
     GtkTextIter end;
     gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Botão baixo pressionado!\n", -1);
+    gtk_text_buffer_insert(buffer, &end, "Botão baixo pressionado! Movendo-se +10.\n", -1);
 
     double xMaximo = tela.getValorXMaximo();
     double xMinimo = tela.getValorXMinimo();
@@ -198,7 +237,7 @@ static void on_buttonCima_clicked() {
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
     GtkTextIter end;
     gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Botão cima pressionado!\n", -1);
+    gtk_text_buffer_insert(buffer, &end, "Botão cima pressionado! Movendo-se +10.\n", -1);
 
     double xMaximo = tela.getValorXMaximo();
     double xMinimo = tela.getValorXMinimo();
@@ -220,7 +259,7 @@ static void on_buttonEsquerda_clicked() {
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
     GtkTextIter end;
     gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Botão esquerda pressionado!\n", -1);
+    gtk_text_buffer_insert(buffer, &end, "Botão esquerda pressionado! Movendo-se +10.\n", -1);
 
     double xMaximo = tela.getValorXMaximo();
     double xMinimo = tela.getValorXMinimo();
@@ -242,7 +281,7 @@ static void on_buttonDireita_clicked() {
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
     GtkTextIter end;
     gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Botão direita pressionado!\n", -1);
+    gtk_text_buffer_insert(buffer, &end, "Botão direita pressionado! Movendo-se +10.\n", -1);
 
     double xMaximo = tela.getValorXMaximo();
     double xMinimo = tela.getValorXMinimo();
@@ -297,18 +336,7 @@ static void on_buttonPoligono_clicked() {
     gtk_text_buffer_get_end_iter(buffer, &end);
     gtk_text_buffer_insert(buffer, &end, "Botão poligono pressionado!\n", -1);
 
-    cairo_t *cr;
-    cr = cairo_create (surface);
-    cairo_set_line_width (cr, 5);
-    // DESENHANDO UM QUADRADO POR ENQUANTO
-    cairo_set_line_cap  (cr, CAIRO_LINE_CAP_ROUND);
-    cairo_move_to (cr, 400, 400);
-    cairo_line_to (cr, 450, 400);
-    cairo_line_to (cr, 450, 350);
-    cairo_line_to (cr, 400, 350);
-    cairo_line_to (cr, 400, 400);
-    cairo_stroke (cr);    
-    gtk_widget_queue_draw (windowPrincipal);
+    gtk_widget_show(windowPoligono);
     
 }
 
@@ -409,6 +437,80 @@ static void on_buttonCancelarReta_clicked() {
 
 }
 
+// chama este método quando o botão add ponto da window poligono é clicado
+static void on_buttonAddPontoAoPoligono_clicked() {
+    double x = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinPoligonoX));
+    double y = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinPoligonoY));
+  
+    Ponto *pontoAuxiliar = new Ponto(x, y);
+    pontosAuxiliarPoligono.push_back(pontoAuxiliar);
+
+    std::ostringstream console;
+    console << "O ponto (" << x << ", " << y << ") foi adicionado a lista de pontos do seu polígono." << std::endl;
+    
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+    gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
+    
+}
+
+// chama este método quando o botão salvar da window poligono é clicado
+static void on_buttonSalvarPoligono_clicked() {
+
+    gtk_widget_hide(windowPoligono);
+
+    string nome = gtk_entry_get_text(GTK_ENTRY(textEntryPoligonoName));
+
+    double x;
+    double y;
+
+    auto ponto = pontosAuxiliarPoligono.at(0);
+      
+    cairo_t *cr;
+    cr = cairo_create (surface);
+    cairo_set_line_width (cr, 5);
+    cairo_set_line_cap  (cr, CAIRO_LINE_CAP_ROUND); 
+    cairo_move_to (cr, transformadaViewPortCoordenadaX(ponto->getValorX()),
+                       transformadaViewPortCoordenadaY(ponto->getValorY()));
+
+    for (std::vector<Ponto*>::iterator it = pontosAuxiliarPoligono.begin(); it != pontosAuxiliarPoligono.end(); ++it) {
+        x = (*it)->getValorX();
+        y = (*it)->getValorY();
+        cairo_line_to (cr, transformadaViewPortCoordenadaX(x), transformadaViewPortCoordenadaY(y));
+    }  
+
+    cairo_line_to (cr, transformadaViewPortCoordenadaX(ponto->getValorX()),
+                       transformadaViewPortCoordenadaY(ponto->getValorY()));
+
+    cairo_stroke (cr);    
+    gtk_widget_queue_draw (windowPrincipal);
+
+    std::ostringstream console;
+    console << "O poligono " << nome << " foi desenhado." << std::endl;
+    
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+    gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
+
+    Poligono *poligono = new Poligono(pontosAuxiliarPoligono, nome);
+    objetosPoligono.push_back(poligono);
+    pontosAuxiliarPoligono.clear();
+}
+
+// chama este método quando o botão cancelar da window reta é clicado
+static void on_buttonCancelarPoligono_clicked() {
+
+    gtk_widget_hide(windowPoligono);
+
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+    gtk_text_buffer_insert(buffer, &end, "Inclusão de polígono cancelada!\n", -1);
+
+}
+
 /*Creates the surface*/
 static gboolean configure_event_cb (GtkWidget *widget, GdkEventConfigure *event, gpointer data) {
  
@@ -420,7 +522,7 @@ static gboolean configure_event_cb (GtkWidget *widget, GdkEventConfigure *event,
                                        CAIRO_CONTENT_COLOR,
                                        gtk_widget_get_allocated_width (widget),
                                        gtk_widget_get_allocated_height (widget));
-  clear_surface ();
+  clear_surface();
   
   return TRUE;
 
@@ -449,6 +551,7 @@ int main(int argc, char *argv[]) {
     windowPrincipal = GTK_WIDGET(gtk_builder_get_object(builder, "windowPrincipal"));
     windowPonto = GTK_WIDGET(gtk_builder_get_object(builder, "windowPonto"));
     windowReta = GTK_WIDGET(gtk_builder_get_object(builder, "windowReta"));
+    windowPoligono = GTK_WIDGET(gtk_builder_get_object(builder, "windowPoligono"));
     drawingArea = GTK_WIDGET(gtk_builder_get_object(builder, "drawingArea"));
     
     textConsole = GTK_WIDGET(gtk_builder_get_object(builder, "textConsole"));
@@ -473,6 +576,14 @@ int main(int argc, char *argv[]) {
     spinPontoZ = GTK_WIDGET(gtk_builder_get_object(builder, "spinPontoZ"));
     textEntryPointName = GTK_WIDGET(gtk_builder_get_object(builder, "textEntryPointName"));
 
+    buttonSalvarPoligono = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSalvarPoligono"));
+    buttonCancelarPoligono = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCancelarPoligono"));
+    buttonAddPontoAoPoligono = GTK_WIDGET(gtk_builder_get_object(builder, "buttonAddPontoAoPoligono"));
+    spinPoligonoX = GTK_WIDGET(gtk_builder_get_object(builder, "spinPoligonoX"));
+    spinPoligonoY = GTK_WIDGET(gtk_builder_get_object(builder, "spinPoligonoY"));
+    spinPoligonoZ = GTK_WIDGET(gtk_builder_get_object(builder, "spinPoligonoZ"));
+    textEntryPoligonoName = GTK_WIDGET(gtk_builder_get_object(builder, "textEntryPoligonoName"));
+
     buttonSalvarReta = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSalvarReta"));
     buttonCancelarReta = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCancelarReta"));
     spinRetaX1 = GTK_WIDGET(gtk_builder_get_object(builder, "spinRetaX1"));
@@ -482,7 +593,6 @@ int main(int argc, char *argv[]) {
     spinRetaY2 = GTK_WIDGET(gtk_builder_get_object(builder, "spinRetaY2"));
     spinRetaZ2 = GTK_WIDGET(gtk_builder_get_object(builder, "spinRetaZ2"));
     textEntryRetaName = GTK_WIDGET(gtk_builder_get_object(builder, "textEntryRetaName"));
-
 
     g_signal_connect(buttonBaixo, "button-release-event", G_CALLBACK (on_buttonBaixo_clicked), NULL);
     g_signal_connect(buttonCima, "button-release-event", G_CALLBACK (on_buttonCima_clicked), NULL);
@@ -500,16 +610,18 @@ int main(int argc, char *argv[]) {
 
     g_signal_connect(buttonSalvarReta, "button-release-event", G_CALLBACK (on_buttonSalvarReta_clicked), NULL);
     g_signal_connect(buttonCancelarReta, "button-release-event", G_CALLBACK (on_buttonCancelarReta_clicked), NULL);
+
+    g_signal_connect(buttonSalvarPoligono, "button-release-event", G_CALLBACK (on_buttonSalvarPoligono_clicked), NULL);
+    g_signal_connect(buttonCancelarPoligono, "button-release-event", G_CALLBACK (on_buttonCancelarPoligono_clicked), NULL);
+    g_signal_connect(buttonAddPontoAoPoligono, "button-release-event", G_CALLBACK (on_buttonAddPontoAoPoligono_clicked), NULL);
     
     g_signal_connect(drawingArea, "draw", G_CALLBACK(draw_cb), NULL);
     g_signal_connect(drawingArea, "configure-event", G_CALLBACK(configure_event_cb), NULL);
-
 
     gtk_builder_connect_signals(builder, NULL);
 
     gtk_widget_show(windowPrincipal);                
     gtk_main();
-
 
     return 0;
 }
