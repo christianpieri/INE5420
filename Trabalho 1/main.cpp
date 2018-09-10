@@ -56,9 +56,9 @@ using namespace std;
     GtkScrolledWindow *scrolledConsole;
     
     // Lista de Objetos
-    std::vector<Ponto> objetosPonto;
-    std::vector<Reta> objetosReta;
-    std::vector<Poligono> objetosPoligono;
+    std::vector<Ponto*> objetosPonto;
+    std::vector<Reta*> objetosReta;
+    std::vector<Poligono*> objetosPoligono;
 
     // Surface
     static cairo_surface_t *surface = NULL;
@@ -107,9 +107,10 @@ static void redesenhaPontos() {
     double x;
     double y;
 
-    for (std::vector<Ponto>::iterator it = objetosPonto.begin(); it != objetosPonto.end(); ++it) {
-        x = it->getValorX();
-        y = it->getValorY();
+    for (std::vector<Ponto*>::iterator it = objetosPonto.begin(); it != objetosPonto.end(); ++it) {
+        x = (*it)->getValorX();
+        y = (*it)->getValorY();
+
         desenharLinha(transformadaViewPortCoordenadaX(x),
                       transformadaViewPortCoordenadaY(y),
                       transformadaViewPortCoordenadaX(x),
@@ -120,7 +121,24 @@ static void redesenhaPontos() {
 
 // Redesenha retas
 static void redesenhaRetas() {
+    double x1;
+    double y1;
+    double x2;
+    double y2;
 
+    for (std::vector<Reta*>::iterator it = objetosReta.begin(); it != objetosReta.end(); ++it) {
+        x1 = (*it)->getValorXInicial();
+        y1 = (*it)->getValorYInicial();
+        x2 = (*it)->getValorXFinal();
+        y2 = (*it)->getValorYFinal();
+
+
+        desenharLinha(transformadaViewPortCoordenadaX(x1),
+                      transformadaViewPortCoordenadaY(y1),
+                      transformadaViewPortCoordenadaX(x2),
+                      transformadaViewPortCoordenadaY(y2));
+
+    }
 }
 
 // Redesenha poligonos
@@ -330,7 +348,7 @@ static void on_buttonSalvarPoint_clicked() {
     gtk_text_buffer_get_end_iter(buffer, &end);
     gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
 
-    Ponto ponto = Ponto(x, y, nome);
+    Ponto *ponto = new Ponto(x, y, nome);
     objetosPonto.push_back(ponto);
     
 }
@@ -375,7 +393,7 @@ static void on_buttonSalvarReta_clicked() {
     gtk_text_buffer_get_end_iter(buffer, &end);
     gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
 
-    Reta reta = Reta(x1, y1, x2, y2, nome);
+    Reta *reta = new Reta(x1, y1, x2, y2, nome);
     objetosReta.push_back(reta);
 }
 
