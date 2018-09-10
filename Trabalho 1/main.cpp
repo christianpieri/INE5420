@@ -540,7 +540,12 @@ static void on_buttonSimConfExclusao_clicked() {
     int quantidade = objetosPoligono.size() + objetosPonto.size() + objetosReta.size();
 
     std::ostringstream console;
-    console << quantidade << " objetos foram excluídos." << std::endl;
+
+    if(quantidade == 1) {
+        console << "1 objeto foi excluído." << std::endl;
+    } else {
+        console << quantidade << " objetos foram excluídos." << std::endl;
+    }
     
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
     GtkTextIter end;
@@ -562,7 +567,7 @@ static void on_buttonCancelarConfExclusao_clicked() {
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
     GtkTextIter end;
     gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Exclusão de todos os itens cancelada!\n", -1);
+    gtk_text_buffer_insert(buffer, &end, "Exclusão de objetos e limpeza de tela canceladas!\n", -1);
 }
 
 /*Creates the surface*/
