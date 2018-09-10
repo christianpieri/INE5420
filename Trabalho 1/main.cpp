@@ -203,6 +203,10 @@ static void on_buttonLimparTela_clicked() {
     gtk_text_buffer_get_end_iter(buffer, &end);
     gtk_text_buffer_insert(buffer, &end, "Botão limpar tela pressionado!\n", -1);
 
+    objetosPoligono.clear();
+    objetosReta.clear();
+    objetosPonto.clear();
+
     clear_surface();
     gtk_widget_queue_draw (windowPrincipal);
 
@@ -305,6 +309,15 @@ static void on_buttonZoomIn_clicked() {
     gtk_text_buffer_get_end_iter(buffer, &end);
     gtk_text_buffer_insert(buffer, &end, "Botão zoom in pressionado!\n", -1);
 
+    double xMaximo = tela.getValorXMaximo();
+    double xMinimo = tela.getValorXMinimo();
+    double yMaximo = tela.getValorYMaximo();
+    double yMinimo = tela.getValorYMinimo();
+
+    tela.setCoordenadasMaximo(xMaximo-5,yMaximo-5);
+    tela.setCoordenadasMinimo(xMinimo+5,yMinimo+5);
+    
+    reDrawAll();
 }
 
 // chama este método quando o botão zoomOut é clicado
@@ -314,6 +327,16 @@ static void on_buttonZoomOut_clicked() {
     GtkTextIter end;
     gtk_text_buffer_get_end_iter(buffer, &end);
     gtk_text_buffer_insert(buffer, &end, "Botão zoom out pressionado!\n", -1);
+
+    double xMaximo = tela.getValorXMaximo();
+    double xMinimo = tela.getValorXMinimo();
+    double yMaximo = tela.getValorYMaximo();
+    double yMinimo = tela.getValorYMinimo();
+
+    tela.setCoordenadasMaximo(xMaximo+5,yMaximo+5);
+    tela.setCoordenadasMinimo(xMinimo-5,yMinimo-5);
+    
+    reDrawAll();
 }
 
 // chama este método quando o botão reta é clicado
