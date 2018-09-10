@@ -13,6 +13,7 @@ using namespace std;
     GtkWidget *windowPonto;
     GtkWidget *windowReta;
     GtkWidget *windowPoligono;
+    GtkWidget *windowConfirmacaoExclusao;
     Window     tela;
 
     // Botões da caixa de controle
@@ -56,6 +57,10 @@ using namespace std;
     GtkWidget *spinPoligonoY;
     GtkWidget *spinPoligonoZ;
     GtkWidget *textEntryPoligonoName;
+
+    // Botões da window de confirmação de exclusão
+    GtkWidget *buttonSimConfExclusao;
+    GtkWidget *buttonCancelarConfExclusao;
     
     // Área de desenho
     GtkWidget *drawingArea;
@@ -73,7 +78,6 @@ using namespace std;
 
     // Surface
     static cairo_surface_t *surface = NULL;
-
 
 // Transformada de ViewPort de X
 static double transformadaViewPortCoordenadaX(double x) {
@@ -198,18 +202,12 @@ static void reDrawAll () {
 // chama este método quando o botão limpar tela é clicado
 static void on_buttonLimparTela_clicked() {
   
+    gtk_widget_show(windowConfirmacaoExclusao);
+
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
     GtkTextIter end;
     gtk_text_buffer_get_end_iter(buffer, &end);
     gtk_text_buffer_insert(buffer, &end, "Botão limpar tela pressionado!\n", -1);
-
-    objetosPoligono.clear();
-    objetosReta.clear();
-    objetosPonto.clear();
-
-    clear_surface();
-    gtk_widget_queue_draw (windowPrincipal);
-
 }
 
 // chama este método quando o botão baixo é clicado
@@ -534,6 +532,39 @@ static void on_buttonCancelarPoligono_clicked() {
 
 }
 
+// chama este método quando o botão sim da window de confirmação de exclusão é clicado
+static void on_buttonSimConfExclusao_clicked() {
+    
+    gtk_widget_hide(windowConfirmacaoExclusao);
+
+    int quantidade = objetosPoligono.size() + objetosPonto.size() + objetosReta.size();
+
+    std::ostringstream console;
+    console << quantidade << " objetos foram excluídos." << std::endl;
+    
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+    gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
+
+    objetosPoligono.clear();
+    objetosReta.clear();
+    objetosPonto.clear();
+
+    clear_surface();
+    gtk_widget_queue_draw (windowPrincipal);
+}
+
+// chama este método quando o botão cancelar da window de confirmação de exclusão é clicado
+static void on_buttonCancelarConfExclusao_clicked() {
+    gtk_widget_hide(windowConfirmacaoExclusao);
+
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+    gtk_text_buffer_insert(buffer, &end, "Exclusão de todos os itens cancelada!\n", -1);
+}
+
 /*Creates the surface*/
 static gboolean configure_event_cb (GtkWidget *widget, GdkEventConfigure *event, gpointer data) {
  
@@ -575,6 +606,7 @@ int main(int argc, char *argv[]) {
     windowPonto = GTK_WIDGET(gtk_builder_get_object(builder, "windowPonto"));
     windowReta = GTK_WIDGET(gtk_builder_get_object(builder, "windowReta"));
     windowPoligono = GTK_WIDGET(gtk_builder_get_object(builder, "windowPoligono"));
+    windowConfirmacaoExclusao = GTK_WIDGET(gtk_builder_get_object(builder, "windowConfirmacaoExclusao"));
     drawingArea = GTK_WIDGET(gtk_builder_get_object(builder, "drawingArea"));
     
     textConsole = GTK_WIDGET(gtk_builder_get_object(builder, "textConsole"));
@@ -617,6 +649,9 @@ int main(int argc, char *argv[]) {
     spinRetaZ2 = GTK_WIDGET(gtk_builder_get_object(builder, "spinRetaZ2"));
     textEntryRetaName = GTK_WIDGET(gtk_builder_get_object(builder, "textEntryRetaName"));
 
+    buttonSimConfExclusao = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSimConfExclusao"));
+    buttonCancelarConfExclusao = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCancelarConfExclusao"));
+
     g_signal_connect(buttonBaixo, "button-release-event", G_CALLBACK (on_buttonBaixo_clicked), NULL);
     g_signal_connect(buttonCima, "button-release-event", G_CALLBACK (on_buttonCima_clicked), NULL);
     g_signal_connect(buttonEsquerda, "button-release-event", G_CALLBACK (on_buttonEsquerda_clicked), NULL);
@@ -637,6 +672,9 @@ int main(int argc, char *argv[]) {
     g_signal_connect(buttonSalvarPoligono, "button-release-event", G_CALLBACK (on_buttonSalvarPoligono_clicked), NULL);
     g_signal_connect(buttonCancelarPoligono, "button-release-event", G_CALLBACK (on_buttonCancelarPoligono_clicked), NULL);
     g_signal_connect(buttonAddPontoAoPoligono, "button-release-event", G_CALLBACK (on_buttonAddPontoAoPoligono_clicked), NULL);
+
+    g_signal_connect(buttonSimConfExclusao, "button-release-event", G_CALLBACK (on_buttonSimConfExclusao_clicked), NULL);
+    g_signal_connect(buttonCancelarConfExclusao, "button-release-event", G_CALLBACK (on_buttonCancelarConfExclusao_clicked), NULL);
     
     g_signal_connect(drawingArea, "draw", G_CALLBACK(draw_cb), NULL);
     g_signal_connect(drawingArea, "configure-event", G_CALLBACK(configure_event_cb), NULL);

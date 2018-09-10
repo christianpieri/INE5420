@@ -653,6 +653,68 @@ novo ponto ao seu polígono:</property>
       </object>
     </child>
   </object>
+  <object class="GtkWindow" id="windowConfirmacaoExclusao">
+    <property name="width_request">400</property>
+    <property name="height_request">200</property>
+    <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Confirmação</property>
+    <property name="modal">True</property>
+    <property name="default_width">400</property>
+    <property name="default_height">200</property>
+    <property name="deletable">False</property>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <object class="GtkFixed" id="fixedWindowConfirmacaoExclusao">
+        <property name="width_request">400</property>
+        <property name="height_request">200</property>
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <child>
+          <object class="GtkLabel" id="mensagemConfirmacaoExclusao">
+            <property name="width_request">100</property>
+            <property name="height_request">80</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Você realmente deseja excluir todos os objetos?</property>
+          </object>
+          <packing>
+            <property name="x">30</property>
+            <property name="y">10</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="buttonSimConfExclusao">
+            <property name="label" translatable="yes">Sim</property>
+            <property name="width_request">100</property>
+            <property name="height_request">50</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+          </object>
+          <packing>
+            <property name="x">250</property>
+            <property name="y">90</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="buttonCancelarConfExclusao">
+            <property name="label" translatable="yes">Cancelar</property>
+            <property name="width_request">100</property>
+            <property name="height_request">50</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+          </object>
+          <packing>
+            <property name="x">50</property>
+            <property name="y">90</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
   <object class="GtkWindow" id="windowPrincipal">
     <property name="width_request">800</property>
     <property name="height_request">600</property>
