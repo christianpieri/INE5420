@@ -596,6 +596,10 @@ static gboolean draw_cb (GtkWidget *widget, cairo_t   *cr,  gpointer   data) {
 
 }
 
+static void on_buttonFecharWindowPrincipal(GtkWidget *windowPrincipal, gpointer data) {
+    gtk_main_quit();
+}
+
 int main(int argc, char *argv[]) {
    
     tela = Window(0, 0, 500, 500);
@@ -683,6 +687,8 @@ int main(int argc, char *argv[]) {
     
     g_signal_connect(drawingArea, "draw", G_CALLBACK(draw_cb), NULL);
     g_signal_connect(drawingArea, "configure-event", G_CALLBACK(configure_event_cb), NULL);
+
+    g_signal_connect(windowPrincipal, "destroy", G_CALLBACK(on_buttonFecharWindowPrincipal), NULL);
 
     gtk_builder_connect_signals(builder, NULL);
 
