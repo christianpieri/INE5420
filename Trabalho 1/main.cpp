@@ -8,6 +8,7 @@ using namespace std;
 #include <sstream>
 #include <vector>
 #include <iterator>
+#include "Validator.hpp"
 
 #define xViewPortMax 500
 #define xViewPortMin 0
@@ -70,6 +71,8 @@ using namespace std;
 
     // Botões da window de erro
     GtkWidget *buttonOkWindowAviso;
+    GtkWidget *mensagemAviso;
+    GtkWidget *mensagemTituloAviso;
     
     // Área de desenho
     GtkWidget *drawingArea;
@@ -396,34 +399,58 @@ static void on_buttonPonto_clicked() {
 // chama este método quando o botão salvar da window ponto é clicado
 static void on_buttonSalvarPoint_clicked() {
 
-    gtk_widget_hide(windowPonto);
-
-    double x = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinPontoX));
-    double y = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinPontoY));
-    double z = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinPontoZ));
-
     string nome = gtk_entry_get_text(GTK_ENTRY(textEntryPointName));
-
-    desenharLinha(transformadaViewPortCoordenadaX(x), 
-                  transformadaViewPortCoordenadaY(y), 
-                  transformadaViewPortCoordenadaX(x), 
-                  transformadaViewPortCoordenadaY(y));
-
-    std::ostringstream console;
-    console << "O ponto " << nome << "(" << x << ", " << y << ") foi desenhado." << std::endl;
+    if(nome.empty()) {
+            gtk_label_set_text(GTK_LABEL(mensagemTituloAviso), "Objeto precisa ter um nome!");
+            gtk_label_set_text(GTK_LABEL(mensagemAviso), "  Por favor, digite um nome para o seu novo objeto ponto.");
+            gtk_widget_show(windowAviso);
     
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
+    } else {
 
-    Ponto *ponto = new Ponto(x, y, nome);
-    objetosPonto.push_back(ponto);
+        double x = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinPontoX));
+        double y = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinPontoY));
+        double z = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinPontoZ));
 
-    GtkTreeIter iter;
-    gtk_list_store_append(objectListStore, &iter);
-    gtk_list_store_set(objectListStore, &iter, COL_NAME, gtk_entry_get_text(GTK_ENTRY(textEntryPointName)), COL_TYPE, "Ponto", -1);
-    
+
+        bool nomeJaExistente = false;
+        for (std::vector<Ponto*>::iterator it = objetosPonto.begin(); it != objetosPonto.end(); ++it)  {
+            
+            if(nome.compare((*it)->getNome()) == 0) {
+                nomeJaExistente = true;
+                break;
+            }
+        }
+        
+        if(nomeJaExistente) {
+            gtk_label_set_text(GTK_LABEL(mensagemTituloAviso), "Nome de objeto já existente!");
+            gtk_label_set_text(GTK_LABEL(mensagemAviso), "Nome já utilizado em outro ponto! Por favor, troque-o.");
+            gtk_widget_show(windowAviso);
+        
+        } else {
+
+            gtk_widget_hide(windowPonto);
+
+            desenharLinha(transformadaViewPortCoordenadaX(x), 
+                        transformadaViewPortCoordenadaY(y), 
+                        transformadaViewPortCoordenadaX(x), 
+                        transformadaViewPortCoordenadaY(y));
+
+            std::ostringstream console;
+            console << "O ponto " << nome << "(" << x << ", " << y << ") foi desenhado." << std::endl;
+            
+            GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+            GtkTextIter end;
+            gtk_text_buffer_get_end_iter(buffer, &end);
+            gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
+
+            Ponto *ponto = new Ponto(x, y, nome);
+            objetosPonto.push_back(ponto);
+
+            GtkTreeIter iter;
+            gtk_list_store_append(objectListStore, &iter);
+            gtk_list_store_set(objectListStore, &iter, COL_NAME, gtk_entry_get_text(GTK_ENTRY(textEntryPointName)), COL_TYPE, "Ponto", -1);
+        }
+    }
 }
 
 // chama este método quando o botão cancelar da window ponto é clicado
@@ -441,37 +468,61 @@ static void on_buttonCancelarPoint_clicked() {
 // chama este método quando o botão salvar da window reta é clicado
 static void on_buttonSalvarReta_clicked() {
 
-    gtk_widget_hide(windowReta);
-
-    double x1 = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinRetaX1));
-    double y1 = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinRetaY1));
-    double z1 = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinRetaZ1));
-
-    double x2 = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinRetaX2));
-    double y2 = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinRetaY2));
-    double z2 = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinRetaZ2));
-
     string nome = gtk_entry_get_text(GTK_ENTRY(textEntryRetaName));
-
-    desenharLinha(transformadaViewPortCoordenadaX(x1),
-                  transformadaViewPortCoordenadaY(y1),
-                  transformadaViewPortCoordenadaX(x2),
-                  transformadaViewPortCoordenadaY(y2));
-
-    std::ostringstream console;
-    console << "A reta " << nome << "(" << x1 << ", " << y1 << ") -> (" << x2 << ", " << y2 << ") foi desenhada." << std::endl;
+        
+    if(nome.empty()) {
+        gtk_label_set_text(GTK_LABEL(mensagemTituloAviso), "Objeto precisa ter um nome!");
+        gtk_label_set_text(GTK_LABEL(mensagemAviso), " Por favor, digite um nome para o seu novo objeto reta.");
+        gtk_widget_show(windowAviso);
     
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
+    } else {
 
-    Reta *reta = new Reta(x1, y1, x2, y2, nome);
-    objetosReta.push_back(reta);
+        bool nomeJaExistente = false;
+        for (std::vector<Reta*>::iterator it = objetosReta.begin(); it != objetosReta.end(); ++it)  {
+            if(nome.compare((*it)->getNome()) == 0) {
+                nomeJaExistente = true;
+                break;
+            }
+        }
+        
+        if(nomeJaExistente) {
+            gtk_label_set_text(GTK_LABEL(mensagemTituloAviso), "Nome de objeto já existente!");
+            gtk_label_set_text(GTK_LABEL(mensagemAviso), "Nome já utilizado em outra reta! Por favor, troque-o.");
+            gtk_widget_show(windowAviso);
+        
+        } else {
 
-    GtkTreeIter iter;
-    gtk_list_store_append(objectListStore, &iter);
-    gtk_list_store_set(objectListStore, &iter, COL_NAME, gtk_entry_get_text(GTK_ENTRY(textEntryRetaName)), COL_TYPE, "Reta", -1);
+            gtk_widget_hide(windowReta);
+
+            double x1 = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinRetaX1));
+            double y1 = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinRetaY1));
+            double z1 = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinRetaZ1));
+
+            double x2 = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinRetaX2));
+            double y2 = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinRetaY2));
+            double z2 = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinRetaZ2));
+
+            desenharLinha(transformadaViewPortCoordenadaX(x1),
+                        transformadaViewPortCoordenadaY(y1),
+                        transformadaViewPortCoordenadaX(x2),
+                        transformadaViewPortCoordenadaY(y2));
+
+            std::ostringstream console;
+            console << "A reta " << nome << "(" << x1 << ", " << y1 << ") -> (" << x2 << ", " << y2 << ") foi desenhada." << std::endl;
+            
+            GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+            GtkTextIter end;
+            gtk_text_buffer_get_end_iter(buffer, &end);
+            gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
+
+            Reta *reta = new Reta(x1, y1, x2, y2, nome);
+            objetosReta.push_back(reta);
+
+            GtkTreeIter iter;
+            gtk_list_store_append(objectListStore, &iter);
+            gtk_list_store_set(objectListStore, &iter, COL_NAME, gtk_entry_get_text(GTK_ENTRY(textEntryRetaName)), COL_TYPE, "Reta", -1);
+        }
+    }
 }
 
 // chama este método quando o botão cancelar da window reta é clicado
@@ -490,72 +541,97 @@ static void on_buttonCancelarReta_clicked() {
 static void on_buttonAddPontoAoPoligono_clicked() {
     double x = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinPoligonoX));
     double y = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinPoligonoY));
-  
+    
     Ponto *pontoAuxiliar = new Ponto(x, y);
     pontosAuxiliarPoligono.push_back(pontoAuxiliar);
 
     std::ostringstream console;
     console << "O ponto (" << x << ", " << y << ") foi adicionado a lista de pontos do seu polígono." << std::endl;
-    
+        
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
     GtkTextIter end;
     gtk_text_buffer_get_end_iter(buffer, &end);
     gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
-    
 }
 
 // chama este método quando o botão salvar da window poligono é clicado
 static void on_buttonSalvarPoligono_clicked() {
 
     if(pontosAuxiliarPoligono.size() == 0) {
+       
+        gtk_label_set_text(GTK_LABEL(mensagemTituloAviso), "Um ou mais dados estão faltando!");
+        gtk_label_set_text(GTK_LABEL(mensagemAviso), "Você precisa adicionar ao menos 1 ponto ao seu novo objeto!  ");
         gtk_widget_show(windowAviso);
 
     } else {
 
-        gtk_widget_hide(windowPoligono);
-
         string nome = gtk_entry_get_text(GTK_ENTRY(textEntryPoligonoName));
+        if(nome.empty()) {
+            gtk_label_set_text(GTK_LABEL(mensagemTituloAviso), "Objeto precisa ter um nome!");
+            gtk_label_set_text(GTK_LABEL(mensagemAviso), "Por favor, digite um nome para o seu novo objeto polígono.");
+            gtk_widget_show(windowAviso);
+    
+        } else {
 
-        double x;
-        double y;
-
-        auto ponto = pontosAuxiliarPoligono.at(0);
+            bool nomeJaExistente = false;
+            for (std::vector<Poligono*>::iterator it = objetosPoligono.begin(); it != objetosPoligono.end(); ++it)  {
+            
+                if(nome.compare((*it)->getNome()) == 0) {
+                    nomeJaExistente = true;
+                    break;
+                }
+            }
         
-        cairo_t *cr;
-        cr = cairo_create (surface);
-        cairo_set_line_width (cr, 5);
-        cairo_set_line_cap  (cr, CAIRO_LINE_CAP_ROUND); 
-        cairo_move_to (cr, transformadaViewPortCoordenadaX(ponto->getValorX()),
-                        transformadaViewPortCoordenadaY(ponto->getValorY()));
+            if(nomeJaExistente) {
+                gtk_label_set_text(GTK_LABEL(mensagemTituloAviso), "Nome de objeto já existente!");
+                gtk_label_set_text(GTK_LABEL(mensagemAviso), "Nome já utilizado em outro polígono! Por favor, troque-o.");
+                gtk_widget_show(windowAviso);
+            
+            } else {
 
-        for (std::vector<Ponto*>::iterator it = pontosAuxiliarPoligono.begin(); it != pontosAuxiliarPoligono.end(); ++it) {
-            x = (*it)->getValorX();
-            y = (*it)->getValorY();
-            cairo_line_to (cr, transformadaViewPortCoordenadaX(x), transformadaViewPortCoordenadaY(y));
-        }  
+                gtk_widget_hide(windowPoligono);
 
-        cairo_line_to (cr, transformadaViewPortCoordenadaX(ponto->getValorX()),
-                        transformadaViewPortCoordenadaY(ponto->getValorY()));
+                double x;
+                double y;
 
-        cairo_stroke (cr);    
-        gtk_widget_queue_draw (windowPrincipal);
+                auto ponto = pontosAuxiliarPoligono.at(0);
+                
+                cairo_t *cr;
+                cr = cairo_create (surface);
+                cairo_set_line_width (cr, 5);
+                cairo_set_line_cap  (cr, CAIRO_LINE_CAP_ROUND); 
+                cairo_move_to (cr, transformadaViewPortCoordenadaX(ponto->getValorX()),
+                                transformadaViewPortCoordenadaY(ponto->getValorY()));
 
-        std::ostringstream console;
-        console << "O poligono " << nome << " foi desenhado." << std::endl;
-        
-        GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-        GtkTextIter end;
-        gtk_text_buffer_get_end_iter(buffer, &end);
-        gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
+                for (std::vector<Ponto*>::iterator it = pontosAuxiliarPoligono.begin(); it != pontosAuxiliarPoligono.end(); ++it) {
+                    x = (*it)->getValorX();
+                    y = (*it)->getValorY();
+                    cairo_line_to (cr, transformadaViewPortCoordenadaX(x), transformadaViewPortCoordenadaY(y));
+                }  
 
-        Poligono *poligono = new Poligono(pontosAuxiliarPoligono, nome);
-        objetosPoligono.push_back(poligono);
-        pontosAuxiliarPoligono.clear();
+                cairo_line_to (cr, transformadaViewPortCoordenadaX(ponto->getValorX()),
+                                transformadaViewPortCoordenadaY(ponto->getValorY()));
 
-        GtkTreeIter iter;
-        gtk_list_store_append(objectListStore, &iter);
-        gtk_list_store_set(objectListStore, &iter, COL_NAME, gtk_entry_get_text(GTK_ENTRY(textEntryPoligonoName)), COL_TYPE, "Polígono", -1);
+                cairo_stroke (cr);    
+                gtk_widget_queue_draw (windowPrincipal);
 
+                std::ostringstream console;
+                console << "O poligono " << nome << " foi desenhado." << std::endl;
+                
+                GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+                GtkTextIter end;
+                gtk_text_buffer_get_end_iter(buffer, &end);
+                gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
+
+                Poligono *poligono = new Poligono(pontosAuxiliarPoligono, nome);
+                objetosPoligono.push_back(poligono);
+                pontosAuxiliarPoligono.clear();
+
+                GtkTreeIter iter;
+                gtk_list_store_append(objectListStore, &iter);
+                gtk_list_store_set(objectListStore, &iter, COL_NAME, gtk_entry_get_text(GTK_ENTRY(textEntryPoligonoName)), COL_TYPE, "Polígono", -1);
+            }
+        }
     }
 }
 
@@ -563,6 +639,8 @@ static void on_buttonSalvarPoligono_clicked() {
 static void on_buttonCancelarPoligono_clicked() {
 
     gtk_widget_hide(windowPoligono);
+
+    pontosAuxiliarPoligono.clear();
 
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
     GtkTextIter end;
@@ -595,7 +673,7 @@ static void on_buttonSimConfExclusao_clicked() {
     objetosReta.clear();
     objetosPonto.clear();
 
-    // LIMPAR STORE DE OBJETOS
+    // TODO: LIMPAR STORE DE OBJETOS
     
     clear_surface();
     gtk_widget_queue_draw (windowPrincipal);
@@ -735,6 +813,8 @@ int main(int argc, char *argv[]) {
     buttonCancelarConfExclusao = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCancelarConfExclusao"));
 
     buttonOkWindowAviso = GTK_WIDGET(gtk_builder_get_object(builder, "buttonOkWindowAviso"));
+    mensagemTituloAviso = GTK_WIDGET(gtk_builder_get_object(builder, "mensagemTituloAviso"));
+    mensagemAviso = GTK_WIDGET(gtk_builder_get_object(builder, "mensagemAviso"));
 
     g_signal_connect(buttonBaixo, "button-release-event", G_CALLBACK (on_buttonBaixo_clicked), NULL);
     g_signal_connect(buttonCima, "button-release-event", G_CALLBACK (on_buttonCima_clicked), NULL);
@@ -761,6 +841,7 @@ int main(int argc, char *argv[]) {
     g_signal_connect(buttonCancelarConfExclusao, "button-release-event", G_CALLBACK (on_buttonCancelarConfExclusao_clicked), NULL);
     
     g_signal_connect(buttonOkWindowAviso, "button-release-event", G_CALLBACK (on_buttonOkWindowAviso_clicked), NULL);
+
 
     g_signal_connect(drawingArea, "draw", G_CALLBACK(draw_cb), NULL);
     g_signal_connect(drawingArea, "configure-event", G_CALLBACK(configure_event_cb), NULL);
