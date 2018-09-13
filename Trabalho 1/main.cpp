@@ -9,6 +9,11 @@ using namespace std;
 #include <vector>
 #include <iterator>
 
+#define xViewPortMax 500
+#define xViewPortMin 0
+#define yViewPortMax 500
+#define yViewPortMin 0
+
     GtkWidget *windowPrincipal;
     GtkWidget *windowPonto;
     GtkWidget *windowReta;
@@ -67,8 +72,13 @@ using namespace std;
     
     // Console e objetos
     GtkWidget *textConsole;
-    GtkWidget *objectsList;
     GtkScrolledWindow *scrolledConsole;
+  
+    // Tree view dos objetos
+    GtkTreeView* objectTreeView;
+    GtkListStore* objectListStore;
+    GtkCellRenderer* objectsCellRenderer;
+    GtkTreeSelection* objectSelected;
     
     // Lista de Objetos
     std::vector<Ponto*> objetosPonto;
@@ -79,18 +89,24 @@ using namespace std;
     // Surface
     static cairo_surface_t *surface = NULL;
 
+    enum {
+    COL_NAME = 0,
+    COL_TYPE,
+    NUM_COLS
+};
+
 // Transformada de ViewPort de X
 static double transformadaViewPortCoordenadaX(double x) {
     double auxiliar = (x - tela.getValorXMinimo()) / (tela.getValorXMaximo() - tela.getValorXMinimo());
 
-    return auxiliar * (500 - 0);
+    return auxiliar * (xViewPortMax - xViewPortMin);
 }
 
 // Transformada de ViewPort de Y
 static double transformadaViewPortCoordenadaY(double y) {   
     double auxiliar = (y - tela.getValorYMinimo()) / (tela.getValorYMaximo() - tela.getValorYMinimo());
 
-    return (1 - auxiliar) * (500 - 0);
+    return (1 - auxiliar) * (yViewPortMax - yViewPortMin);
 }
 
 // Limpa a tela toda
@@ -399,6 +415,10 @@ static void on_buttonSalvarPoint_clicked() {
 
     Ponto *ponto = new Ponto(x, y, nome);
     objetosPonto.push_back(ponto);
+
+    GtkTreeIter iter;
+    gtk_list_store_append(objectListStore, &iter);
+    gtk_list_store_set(objectListStore, &iter, COL_NAME, gtk_entry_get_text(GTK_ENTRY(textEntryPointName)), COL_TYPE, "Ponto", -1);
     
 }
 
@@ -444,6 +464,10 @@ static void on_buttonSalvarReta_clicked() {
 
     Reta *reta = new Reta(x1, y1, x2, y2, nome);
     objetosReta.push_back(reta);
+
+    GtkTreeIter iter;
+    gtk_list_store_append(objectListStore, &iter);
+    gtk_list_store_set(objectListStore, &iter, COL_NAME, gtk_entry_get_text(GTK_ENTRY(textEntryRetaName)), COL_TYPE, "Reta", -1);
 }
 
 // chama este método quando o botão cancelar da window reta é clicado
@@ -518,6 +542,10 @@ static void on_buttonSalvarPoligono_clicked() {
     Poligono *poligono = new Poligono(pontosAuxiliarPoligono, nome);
     objetosPoligono.push_back(poligono);
     pontosAuxiliarPoligono.clear();
+
+    GtkTreeIter iter;
+    gtk_list_store_append(objectListStore, &iter);
+    gtk_list_store_set(objectListStore, &iter, COL_NAME, gtk_entry_get_text(GTK_ENTRY(textEntryPoligonoName)), COL_TYPE, "Polígono", -1);
 }
 
 // chama este método quando o botão cancelar da window reta é clicado
@@ -540,7 +568,12 @@ static void on_buttonSimConfExclusao_clicked() {
     int quantidade = objetosPoligono.size() + objetosPonto.size() + objetosReta.size();
 
     std::ostringstream console;
-    console << quantidade << " objetos foram excluídos." << std::endl;
+
+    if(quantidade == 1) {
+        console << "1 objeto foi excluído." << std::endl;
+    } else {
+        console << quantidade << " objetos foram excluídos." << std::endl;
+    }
     
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
     GtkTextIter end;
@@ -551,8 +584,29 @@ static void on_buttonSimConfExclusao_clicked() {
     objetosReta.clear();
     objetosPonto.clear();
 
+    // LIMPAR STORE DE OBJETOS
+    
     clear_surface();
     gtk_widget_queue_draw (windowPrincipal);
+}
+
+static Ponto retornarPonto() {
+    GtkTreeIter iter;
+    GtkTreeModel *model;
+    gchar* nomeDoObjeto;
+
+    if (gtk_tree_selection_get_selected (objectSelected, &model, &iter)) {
+        gtk_tree_model_get (model, &iter, COL_NAME, &nomeDoObjeto, -1);
+    }
+    string nome = (std::string)nomeDoObjeto;
+    std::vector<Ponto*>::iterator it;
+    for (std::vector<Ponto*>::iterator it = objetosPonto.begin(); it != objetosPonto.end(); it++) {
+        if(!nome.compare((*it)->getNome())) {
+            return (**it);
+        }
+    }
+    it = objetosPonto.begin();
+    return (**it);
 }
 
 // chama este método quando o botão cancelar da window de confirmação de exclusão é clicado
@@ -562,7 +616,7 @@ static void on_buttonCancelarConfExclusao_clicked() {
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
     GtkTextIter end;
     gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Exclusão de todos os itens cancelada!\n", -1);
+    gtk_text_buffer_insert(buffer, &end, "Exclusão de objetos e limpeza de tela canceladas!\n", -1);
 }
 
 /*Creates the surface*/
@@ -591,10 +645,14 @@ static gboolean draw_cb (GtkWidget *widget, cairo_t   *cr,  gpointer   data) {
 
 }
 
+static void on_buttonFecharWindowPrincipal(GtkWidget *windowPrincipal, gpointer data) {
+    gtk_main_quit();
+}
+
 int main(int argc, char *argv[]) {
    
     tela = Window(0, 0, 500, 500);
-    
+
     GtkBuilder *builder;
 
     gtk_init(&argc, &argv);
@@ -610,8 +668,16 @@ int main(int argc, char *argv[]) {
     drawingArea = GTK_WIDGET(gtk_builder_get_object(builder, "drawingArea"));
     
     textConsole = GTK_WIDGET(gtk_builder_get_object(builder, "textConsole"));
-    objectsList = GTK_WIDGET(gtk_builder_get_object(builder, "objectsList"));
     scrolledConsole = GTK_SCROLLED_WINDOW(gtk_builder_get_object(builder, "scrolledConsole"));
+
+    objectTreeView = GTK_TREE_VIEW(gtk_builder_get_object(builder, "objectTreeView"));
+    objectListStore = gtk_list_store_new(NUM_COLS, G_TYPE_STRING, G_TYPE_STRING);
+    objectsCellRenderer = gtk_cell_renderer_text_new();
+    gtk_tree_view_insert_column_with_attributes(objectTreeView, -1, "Nome", objectsCellRenderer, "text", COL_NAME, NULL);
+    gtk_tree_view_insert_column_with_attributes(objectTreeView, -1, "Tipo", objectsCellRenderer, "text", COL_TYPE, NULL);
+    gtk_tree_view_set_model(objectTreeView, GTK_TREE_MODEL(objectListStore));
+    objectSelected = gtk_tree_view_get_selection(objectTreeView);
+    gtk_tree_selection_set_mode(objectSelected, GTK_SELECTION_SINGLE);
 
     buttonPonto = GTK_WIDGET(gtk_builder_get_object(builder, "buttonPonto"));
     buttonPoligono = GTK_WIDGET(gtk_builder_get_object(builder, "buttonPoligono"));
@@ -678,6 +744,8 @@ int main(int argc, char *argv[]) {
     
     g_signal_connect(drawingArea, "draw", G_CALLBACK(draw_cb), NULL);
     g_signal_connect(drawingArea, "configure-event", G_CALLBACK(configure_event_cb), NULL);
+
+    g_signal_connect(windowPrincipal, "destroy", G_CALLBACK(on_buttonFecharWindowPrincipal), NULL);
 
     gtk_builder_connect_signals(builder, NULL);
 
