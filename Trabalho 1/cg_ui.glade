@@ -658,15 +658,100 @@ novo ponto ao seu polígono:</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-go-down</property>
   </object>
+  <object class="GtkImage" id="imageButtonCancelExclusao">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-cancel</property>
+  </object>
   <object class="GtkImage" id="imageButtonCima">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-go-up</property>
   </object>
+  <object class="GtkImage" id="imageButtonConfirmarExclusao">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-ok</property>
+  </object>
+  <object class="GtkWindow" id="windowConfirmacaoExclusao">
+    <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Confirmação</property>
+    <property name="resizable">False</property>
+    <property name="modal">True</property>
+    <property name="default_width">400</property>
+    <property name="default_height">150</property>
+    <property name="deletable">False</property>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <object class="GtkFixed" id="fixedWindowConfirmacaoExclusao">
+        <property name="width_request">400</property>
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <child>
+          <object class="GtkLabel" id="mensagemConfirmacaoExclusao">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Você realmente deseja excluir todos os objetos?</property>
+          </object>
+          <packing>
+            <property name="x">30</property>
+            <property name="y">20</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="buttonSimConfExclusao">
+            <property name="label" translatable="yes">Sim </property>
+            <property name="width_request">100</property>
+            <property name="height_request">50</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="image">imageButtonConfirmarExclusao</property>
+            <property name="image_position">right</property>
+            <property name="always_show_image">True</property>
+          </object>
+          <packing>
+            <property name="x">220</property>
+            <property name="y">60</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="buttonCancelarConfExclusao">
+            <property name="label" translatable="yes">Cancelar </property>
+            <property name="width_request">100</property>
+            <property name="height_request">50</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="image">imageButtonCancelExclusao</property>
+            <property name="image_position">right</property>
+            <property name="always_show_image">True</property>
+          </object>
+          <packing>
+            <property name="x">50</property>
+            <property name="y">60</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
   <object class="GtkImage" id="imageButtonEsquerda">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-go-back</property>
+  </object>
+  <object class="GtkImage" id="imageButtonRotDireita">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-redo</property>
+  </object>
+  <object class="GtkImage" id="imageButtonRotEsquerda">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="tooltip_text" translatable="yes">Rotacionar para esquerda</property>
+    <property name="stock">gtk-undo</property>
   </object>
   <object class="GtkImage" id="imageButtonZoomIn">
     <property name="visible">True</property>
@@ -760,6 +845,7 @@ novo ponto ao seu polígono:</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <property name="tooltip_text" translatable="yes">Abre a caixa de construção de pontos</property>
             <property name="image">imageLapisPonto</property>
             <property name="image_position">right</property>
             <property name="always_show_image">True</property>
@@ -777,6 +863,7 @@ novo ponto ao seu polígono:</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <property name="tooltip_text" translatable="yes">Abre a caixa de construção de retas</property>
             <property name="image">imageLapisReta</property>
             <property name="image_position">right</property>
             <property name="always_show_image">True</property>
@@ -793,6 +880,7 @@ novo ponto ao seu polígono:</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <property name="tooltip_text" translatable="yes">Mover para cima</property>
             <property name="image">imageButtonCima</property>
           </object>
           <packing>
@@ -807,6 +895,7 @@ novo ponto ao seu polígono:</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <property name="tooltip_text" translatable="yes">Mover para direita</property>
             <property name="image">imagemButtonDireita</property>
           </object>
           <packing>
@@ -821,6 +910,7 @@ novo ponto ao seu polígono:</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <property name="tooltip_text" translatable="yes">Mover para baixo</property>
             <property name="image">imageButtonBaixo</property>
             <property name="always_show_image">True</property>
           </object>
@@ -836,6 +926,7 @@ novo ponto ao seu polígono:</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <property name="tooltip_text" translatable="yes">Mover para esquerda</property>
             <property name="image">imageButtonEsquerda</property>
           </object>
           <packing>
@@ -851,6 +942,7 @@ novo ponto ao seu polígono:</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <property name="tooltip_text" translatable="yes">Abre a caixa de construção de polígonos</property>
             <property name="image">imageLapisPoligono</property>
             <property name="image_position">right</property>
             <property name="always_show_image">True</property>
@@ -867,6 +959,7 @@ novo ponto ao seu polígono:</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <property name="tooltip_text" translatable="yes">Zoom In</property>
             <property name="image">imageButtonZoomIn</property>
           </object>
           <packing>
@@ -881,6 +974,7 @@ novo ponto ao seu polígono:</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <property name="tooltip_text" translatable="yes">Zoom Out</property>
             <property name="image">imageButtonZoomOut</property>
           </object>
           <packing>
@@ -896,6 +990,7 @@ novo ponto ao seu polígono:</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <property name="tooltip_text" translatable="yes">Limpa a tela retirando todos os objetos da view</property>
             <property name="image">imageLimparTela</property>
             <property name="image_position">right</property>
             <property name="always_show_image">True</property>
@@ -936,6 +1031,7 @@ novo ponto ao seu polígono:</property>
           </object>
           <packing>
             <property name="x">50</property>
+            <property name="y">5</property>
           </packing>
         </child>
         <child>
@@ -948,70 +1044,36 @@ novo ponto ao seu polígono:</property>
           </object>
           <packing>
             <property name="x">50</property>
-            <property name="y">270</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-  </object>
-  <object class="GtkWindow" id="windowConfirmacaoExclusao">
-    <property name="width_request">300</property>
-    <property name="height_request">150</property>
-    <property name="can_focus">False</property>
-    <property name="title" translatable="yes">Confirmação</property>
-    <property name="resizable">False</property>
-    <property name="modal">True</property>
-    <property name="default_width">300</property>
-    <property name="default_height">150</property>
-    <property name="deletable">False</property>
-    <child>
-      <placeholder/>
-    </child>
-    <child>
-      <object class="GtkFixed" id="fixedWindowConfirmacaoExclusao">
-        <property name="width_request">400</property>
-        <property name="height_request">200</property>
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <child>
-          <object class="GtkLabel" id="mensagemConfirmacaoExclusao">
-            <property name="width_request">150</property>
-            <property name="height_request">30</property>
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="label" translatable="yes">Você realmente deseja excluir todos os objetos?</property>
-          </object>
-          <packing>
-            <property name="x">30</property>
-            <property name="y">10</property>
+            <property name="y">275</property>
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="buttonSimConfExclusao">
-            <property name="label" translatable="yes">Sim</property>
-            <property name="width_request">100</property>
+          <object class="GtkButton" id="buttonRotateDireita">
+            <property name="width_request">50</property>
             <property name="height_request">50</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <property name="tooltip_text" translatable="yes">Rotacionar para direita</property>
+            <property name="image">imageButtonRotDireita</property>
           </object>
           <packing>
-            <property name="x">199</property>
-            <property name="y">61</property>
+            <property name="x">200</property>
+            <property name="y">400</property>
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="buttonCancelarConfExclusao">
-            <property name="label" translatable="yes">Cancelar</property>
-            <property name="width_request">100</property>
+          <object class="GtkButton" id="buttonRotateEsquerda">
+            <property name="width_request">50</property>
             <property name="height_request">50</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <property name="image">imageButtonRotEsquerda</property>
           </object>
           <packing>
-            <property name="x">55</property>
-            <property name="y">58</property>
+            <property name="x">50</property>
+            <property name="y">400</property>
           </packing>
         </child>
       </object>
