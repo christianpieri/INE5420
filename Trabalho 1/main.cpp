@@ -19,6 +19,7 @@ using namespace std;
     GtkWidget *windowReta;
     GtkWidget *windowPoligono;
     GtkWidget *windowConfirmacaoExclusao;
+    GtkWidget *windowAviso;
     Window     tela;
 
     // Botões da caixa de controle
@@ -66,6 +67,9 @@ using namespace std;
     // Botões da window de confirmação de exclusão
     GtkWidget *buttonSimConfExclusao;
     GtkWidget *buttonCancelarConfExclusao;
+
+    // Botões da window de erro
+    GtkWidget *buttonOkWindowAviso;
     
     // Área de desenho
     GtkWidget *drawingArea;
@@ -503,49 +507,56 @@ static void on_buttonAddPontoAoPoligono_clicked() {
 // chama este método quando o botão salvar da window poligono é clicado
 static void on_buttonSalvarPoligono_clicked() {
 
-    gtk_widget_hide(windowPoligono);
+    if(pontosAuxiliarPoligono.size() == 0) {
+        gtk_widget_show(windowAviso);
 
-    string nome = gtk_entry_get_text(GTK_ENTRY(textEntryPoligonoName));
+    } else {
 
-    double x;
-    double y;
+        gtk_widget_hide(windowPoligono);
 
-    auto ponto = pontosAuxiliarPoligono.at(0);
-      
-    cairo_t *cr;
-    cr = cairo_create (surface);
-    cairo_set_line_width (cr, 5);
-    cairo_set_line_cap  (cr, CAIRO_LINE_CAP_ROUND); 
-    cairo_move_to (cr, transformadaViewPortCoordenadaX(ponto->getValorX()),
-                       transformadaViewPortCoordenadaY(ponto->getValorY()));
+        string nome = gtk_entry_get_text(GTK_ENTRY(textEntryPoligonoName));
 
-    for (std::vector<Ponto*>::iterator it = pontosAuxiliarPoligono.begin(); it != pontosAuxiliarPoligono.end(); ++it) {
-        x = (*it)->getValorX();
-        y = (*it)->getValorY();
-        cairo_line_to (cr, transformadaViewPortCoordenadaX(x), transformadaViewPortCoordenadaY(y));
-    }  
+        double x;
+        double y;
 
-    cairo_line_to (cr, transformadaViewPortCoordenadaX(ponto->getValorX()),
-                       transformadaViewPortCoordenadaY(ponto->getValorY()));
+        auto ponto = pontosAuxiliarPoligono.at(0);
+        
+        cairo_t *cr;
+        cr = cairo_create (surface);
+        cairo_set_line_width (cr, 5);
+        cairo_set_line_cap  (cr, CAIRO_LINE_CAP_ROUND); 
+        cairo_move_to (cr, transformadaViewPortCoordenadaX(ponto->getValorX()),
+                        transformadaViewPortCoordenadaY(ponto->getValorY()));
 
-    cairo_stroke (cr);    
-    gtk_widget_queue_draw (windowPrincipal);
+        for (std::vector<Ponto*>::iterator it = pontosAuxiliarPoligono.begin(); it != pontosAuxiliarPoligono.end(); ++it) {
+            x = (*it)->getValorX();
+            y = (*it)->getValorY();
+            cairo_line_to (cr, transformadaViewPortCoordenadaX(x), transformadaViewPortCoordenadaY(y));
+        }  
 
-    std::ostringstream console;
-    console << "O poligono " << nome << " foi desenhado." << std::endl;
-    
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
+        cairo_line_to (cr, transformadaViewPortCoordenadaX(ponto->getValorX()),
+                        transformadaViewPortCoordenadaY(ponto->getValorY()));
 
-    Poligono *poligono = new Poligono(pontosAuxiliarPoligono, nome);
-    objetosPoligono.push_back(poligono);
-    pontosAuxiliarPoligono.clear();
+        cairo_stroke (cr);    
+        gtk_widget_queue_draw (windowPrincipal);
 
-    GtkTreeIter iter;
-    gtk_list_store_append(objectListStore, &iter);
-    gtk_list_store_set(objectListStore, &iter, COL_NAME, gtk_entry_get_text(GTK_ENTRY(textEntryPoligonoName)), COL_TYPE, "Polígono", -1);
+        std::ostringstream console;
+        console << "O poligono " << nome << " foi desenhado." << std::endl;
+        
+        GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+        GtkTextIter end;
+        gtk_text_buffer_get_end_iter(buffer, &end);
+        gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
+
+        Poligono *poligono = new Poligono(pontosAuxiliarPoligono, nome);
+        objetosPoligono.push_back(poligono);
+        pontosAuxiliarPoligono.clear();
+
+        GtkTreeIter iter;
+        gtk_list_store_append(objectListStore, &iter);
+        gtk_list_store_set(objectListStore, &iter, COL_NAME, gtk_entry_get_text(GTK_ENTRY(textEntryPoligonoName)), COL_TYPE, "Polígono", -1);
+
+    }
 }
 
 // chama este método quando o botão cancelar da window reta é clicado
@@ -619,6 +630,10 @@ static void on_buttonCancelarConfExclusao_clicked() {
     gtk_text_buffer_insert(buffer, &end, "Exclusão de objetos e limpeza de tela canceladas!\n", -1);
 }
 
+static void on_buttonOkWindowAviso_clicked() {
+    gtk_widget_hide(windowAviso);
+}
+
 /*Creates the surface*/
 static gboolean configure_event_cb (GtkWidget *widget, GdkEventConfigure *event, gpointer data) {
  
@@ -665,6 +680,7 @@ int main(int argc, char *argv[]) {
     windowReta = GTK_WIDGET(gtk_builder_get_object(builder, "windowReta"));
     windowPoligono = GTK_WIDGET(gtk_builder_get_object(builder, "windowPoligono"));
     windowConfirmacaoExclusao = GTK_WIDGET(gtk_builder_get_object(builder, "windowConfirmacaoExclusao"));
+    windowAviso = GTK_WIDGET(gtk_builder_get_object(builder, "windowAviso"));
     drawingArea = GTK_WIDGET(gtk_builder_get_object(builder, "drawingArea"));
     
     textConsole = GTK_WIDGET(gtk_builder_get_object(builder, "textConsole"));
@@ -718,6 +734,8 @@ int main(int argc, char *argv[]) {
     buttonSimConfExclusao = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSimConfExclusao"));
     buttonCancelarConfExclusao = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCancelarConfExclusao"));
 
+    buttonOkWindowAviso = GTK_WIDGET(gtk_builder_get_object(builder, "buttonOkWindowAviso"));
+
     g_signal_connect(buttonBaixo, "button-release-event", G_CALLBACK (on_buttonBaixo_clicked), NULL);
     g_signal_connect(buttonCima, "button-release-event", G_CALLBACK (on_buttonCima_clicked), NULL);
     g_signal_connect(buttonEsquerda, "button-release-event", G_CALLBACK (on_buttonEsquerda_clicked), NULL);
@@ -742,6 +760,8 @@ int main(int argc, char *argv[]) {
     g_signal_connect(buttonSimConfExclusao, "button-release-event", G_CALLBACK (on_buttonSimConfExclusao_clicked), NULL);
     g_signal_connect(buttonCancelarConfExclusao, "button-release-event", G_CALLBACK (on_buttonCancelarConfExclusao_clicked), NULL);
     
+    g_signal_connect(buttonOkWindowAviso, "button-release-event", G_CALLBACK (on_buttonOkWindowAviso_clicked), NULL);
+
     g_signal_connect(drawingArea, "draw", G_CALLBACK(draw_cb), NULL);
     g_signal_connect(drawingArea, "configure-event", G_CALLBACK(configure_event_cb), NULL);
 
