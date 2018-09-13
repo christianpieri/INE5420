@@ -31,6 +31,8 @@ using namespace std;
     GtkWidget *buttonEsquerda;
     GtkWidget *buttonDireita;
     GtkWidget *buttonLimparTela;
+    GtkWidget *buttonRotateDireita;
+    GtkWidget *buttonRotateEsquerda;
 
     // Botões dos objetos a serem desenhados
     GtkWidget *buttonPonto;
@@ -679,6 +681,22 @@ static void on_buttonSimConfExclusao_clicked() {
     gtk_widget_queue_draw (windowPrincipal);
 }
 
+static void on_buttonRotateDireita_clicked() {
+    // gtk_widet_show(windowRotacao);
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+    gtk_text_buffer_insert(buffer, &end, "Botão rotação a direita pressionado!\n", -1);
+}
+
+static void on_buttonRotateEsquerda_clicked() {
+    // gtk_widet_show(windowRotacao);
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+    gtk_text_buffer_insert(buffer, &end, "Botão rotação a esquerda pressionado!\n", -1);
+}
+
 static Ponto retornarPonto() {
     GtkTreeIter iter;
     GtkTreeModel *model;
@@ -783,6 +801,8 @@ int main(int argc, char *argv[]) {
     buttonZoomIn = GTK_WIDGET(gtk_builder_get_object(builder, "buttonZoomIn"));
     buttonZoomOut = GTK_WIDGET(gtk_builder_get_object(builder, "buttonZoomOut"));
     buttonLimparTela = GTK_WIDGET(gtk_builder_get_object(builder, "buttonLimparTela"));
+    buttonRotateDireita = GTK_WIDGET(gtk_builder_get_object(builder, "buttonRotateDireita"));
+    buttonRotateEsquerda = GTK_WIDGET(gtk_builder_get_object(builder, "buttonRotateEsquerda"));
 
     buttonSalvarPoint = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSalvarPoint"));
     buttonCancelarPoint = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCancelarPoint"));
@@ -826,6 +846,8 @@ int main(int argc, char *argv[]) {
     g_signal_connect(buttonPoligono, "button-release-event", G_CALLBACK (on_buttonPoligono_clicked), NULL);
     g_signal_connect(buttonReta, "button-release-event", G_CALLBACK (on_buttonReta_clicked), NULL);
     g_signal_connect(buttonLimparTela, "button-release-event", G_CALLBACK (on_buttonLimparTela_clicked), NULL);
+    g_signal_connect(buttonRotateDireita, "button-release-event", G_CALLBACK (on_buttonRotateDireita_clicked), NULL);
+    g_signal_connect(buttonRotateEsquerda, "button-release-event", G_CALLBACK (on_buttonRotateEsquerda_clicked), NULL);
 
     g_signal_connect(buttonSalvarPoint, "button-release-event", G_CALLBACK (on_buttonSalvarPoint_clicked), NULL);
     g_signal_connect(buttonCancelarPoint, "button-release-event", G_CALLBACK (on_buttonCancelarPoint_clicked), NULL);
