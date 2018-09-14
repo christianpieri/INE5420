@@ -33,6 +33,7 @@ using namespace std;
     GtkWidget *buttonLimparTela;
     GtkWidget *buttonRotateDireita;
     GtkWidget *buttonRotateEsquerda;
+    GtkWidget *buttonDeletarObjeto;
 
     // Botões dos objetos a serem desenhados
     GtkWidget *buttonPonto;
@@ -676,6 +677,7 @@ static void on_buttonSimConfExclusao_clicked() {
     objetosPonto.clear();
 
     // TODO: LIMPAR STORE DE OBJETOS
+    // gtk_list_store_remove
     
     clear_surface();
     gtk_widget_queue_draw (windowPrincipal);
@@ -697,23 +699,57 @@ static void on_buttonRotateEsquerda_clicked() {
     gtk_text_buffer_insert(buffer, &end, "Botão rotação a esquerda pressionado!\n", -1);
 }
 
-static Ponto retornarPonto() {
+static Ponto* retornarPonto() {
     GtkTreeIter iter;
     GtkTreeModel *model;
     gchar* nomeDoObjeto;
 
     if (gtk_tree_selection_get_selected (objectSelected, &model, &iter)) {
         gtk_tree_model_get (model, &iter, COL_NAME, &nomeDoObjeto, -1);
-    }
-    string nome = (std::string)nomeDoObjeto;
-    std::vector<Ponto*>::iterator it;
-    for (std::vector<Ponto*>::iterator it = objetosPonto.begin(); it != objetosPonto.end(); it++) {
-        if(!nome.compare((*it)->getNome())) {
-            return (**it);
+        string nome = (std::string)nomeDoObjeto;
+        std::vector<Ponto*>::iterator it;
+        for (std::vector<Ponto*>::iterator it = objetosPonto.begin(); it != objetosPonto.end(); it++) {
+            if(!nome.compare((*it)->getNome())) {
+                return (*it);
+            }
         }
     }
-    it = objetosPonto.begin();
-    return (**it);
+    return nullptr;
+ }
+
+ static void on_bbuttonDeletarObjeto_clicked() {
+      
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+    gtk_text_buffer_insert(buffer, &end, "Botão deletar objeto pressionado!\n", -1);
+   
+    auto ponto = retornarPonto();
+    if(ponto == nullptr) {
+        gtk_text_buffer_insert(buffer, &end, "Você precisa selecionar ao menos um objeto para deletá-lo!\n", -1);
+    } else {
+        for (int i = 0; i < objetosPonto.size(); i++) {
+            if(objetosPonto.at(i)->getNome().compare(ponto->getNome()) == 0) {
+                objetosPonto.erase(objetosPonto.begin() + i);
+
+                std::ostringstream console;
+                console << "O ponto " << ponto->getNome() << " foi deletado.\n" << std::endl;
+                gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
+                
+                reDrawAll();
+
+                GtkTreeIter iter;
+                GtkTreeModel *model;
+                gchar* nomeDoObjeto;
+                if (gtk_tree_selection_get_selected (objectSelected, &model, &iter)) {
+                    gtk_tree_model_get (model, &iter, 0, &nomeDoObjeto, -1);
+                    gtk_list_store_remove(objectListStore, &iter);
+                }
+                
+                break;
+            }
+        }
+    }
 }
 
 // chama este método quando o botão cancelar da window de confirmação de exclusão é clicado
@@ -803,6 +839,7 @@ int main(int argc, char *argv[]) {
     buttonLimparTela = GTK_WIDGET(gtk_builder_get_object(builder, "buttonLimparTela"));
     buttonRotateDireita = GTK_WIDGET(gtk_builder_get_object(builder, "buttonRotateDireita"));
     buttonRotateEsquerda = GTK_WIDGET(gtk_builder_get_object(builder, "buttonRotateEsquerda"));
+    buttonDeletarObjeto = GTK_WIDGET(gtk_builder_get_object(builder, "buttonDeletarObjeto"));
 
     buttonSalvarPoint = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSalvarPoint"));
     buttonCancelarPoint = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCancelarPoint"));
@@ -848,6 +885,7 @@ int main(int argc, char *argv[]) {
     g_signal_connect(buttonLimparTela, "button-release-event", G_CALLBACK (on_buttonLimparTela_clicked), NULL);
     g_signal_connect(buttonRotateDireita, "button-release-event", G_CALLBACK (on_buttonRotateDireita_clicked), NULL);
     g_signal_connect(buttonRotateEsquerda, "button-release-event", G_CALLBACK (on_buttonRotateEsquerda_clicked), NULL);
+    g_signal_connect(buttonDeletarObjeto, "button-release-event", G_CALLBACK (on_bbuttonDeletarObjeto_clicked), NULL);
 
     g_signal_connect(buttonSalvarPoint, "button-release-event", G_CALLBACK (on_buttonSalvarPoint_clicked), NULL);
     g_signal_connect(buttonCancelarPoint, "button-release-event", G_CALLBACK (on_buttonCancelarPoint_clicked), NULL);
