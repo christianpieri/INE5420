@@ -31,6 +31,9 @@ using namespace std;
     GtkWidget *buttonEsquerda;
     GtkWidget *buttonDireita;
     GtkWidget *buttonLimparTela;
+    GtkWidget *buttonRotateDireita;
+    GtkWidget *buttonRotateEsquerda;
+    GtkWidget *buttonDeletarObjeto;
 
     // Botões dos objetos a serem desenhados
     GtkWidget *buttonPonto;
@@ -674,28 +677,209 @@ static void on_buttonSimConfExclusao_clicked() {
     objetosPonto.clear();
 
     // TODO: LIMPAR STORE DE OBJETOS
+    // gtk_list_store_remove
     
     clear_surface();
     gtk_widget_queue_draw (windowPrincipal);
 }
 
-static Ponto retornarPonto() {
+static void on_buttonRotateDireita_clicked() {
+    // gtk_widet_show(windowRotacao);
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+    gtk_text_buffer_insert(buffer, &end, "Botão rotação a direita pressionado!\n", -1);
+}
+
+static void on_buttonRotateEsquerda_clicked() {
+    // gtk_widet_show(windowRotacao);
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+    gtk_text_buffer_insert(buffer, &end, "Botão rotação a esquerda pressionado!\n", -1);
+}
+
+static Ponto* retornarPonto() {
     GtkTreeIter iter;
     GtkTreeModel *model;
     gchar* nomeDoObjeto;
 
     if (gtk_tree_selection_get_selected (objectSelected, &model, &iter)) {
         gtk_tree_model_get (model, &iter, COL_NAME, &nomeDoObjeto, -1);
-    }
-    string nome = (std::string)nomeDoObjeto;
-    std::vector<Ponto*>::iterator it;
-    for (std::vector<Ponto*>::iterator it = objetosPonto.begin(); it != objetosPonto.end(); it++) {
-        if(!nome.compare((*it)->getNome())) {
-            return (**it);
+        string nome = (std::string)nomeDoObjeto;
+        std::vector<Ponto*>::iterator it;
+        for (std::vector<Ponto*>::iterator it = objetosPonto.begin(); it != objetosPonto.end(); it++) {
+            if(!nome.compare((*it)->getNome())) {
+                return (*it);
+            }
         }
     }
-    it = objetosPonto.begin();
-    return (**it);
+    return nullptr;
+ }
+
+static Reta* retornarReta() {
+    GtkTreeIter iter;
+    GtkTreeModel *model;
+    gchar* nomeDoObjeto;
+
+    if (gtk_tree_selection_get_selected (objectSelected, &model, &iter)) {
+        gtk_tree_model_get (model, &iter, COL_NAME, &nomeDoObjeto, -1);
+        string nome = (std::string)nomeDoObjeto;
+        std::vector<Reta*>::iterator it;
+        for (std::vector<Reta*>::iterator it = objetosReta.begin(); it != objetosReta.end(); it++) {
+            if(!nome.compare((*it)->getNome())) {
+                return (*it);
+            }
+        }
+    }
+    return nullptr;
+}
+
+static Poligono* retornarPoligono() {
+    GtkTreeIter iter;
+    GtkTreeModel *model;
+    gchar* nomeDoObjeto;
+
+    if (gtk_tree_selection_get_selected (objectSelected, &model, &iter)) {
+        gtk_tree_model_get (model, &iter, COL_NAME, &nomeDoObjeto, -1);
+        string nome = (std::string)nomeDoObjeto;
+        std::vector<Poligono*>::iterator it;
+        for (std::vector<Poligono*>::iterator it = objetosPoligono.begin(); it != objetosPoligono.end(); it++) {
+            if(!nome.compare((*it)->getNome())) {
+                return (*it);
+            }
+        }
+    }
+    return nullptr;
+}
+
+ static void deletarObjetoPonto() {
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+
+    auto ponto = retornarPonto();
+    if(ponto == nullptr) {
+        gtk_text_buffer_insert(buffer, &end, "Você precisa selecionar ao menos um objeto para deletá-lo!\n", -1);
+    } else {
+        for (int i = 0; i < objetosPonto.size(); i++) {
+            if(objetosPonto.at(i)->getNome().compare(ponto->getNome()) == 0) {
+                objetosPonto.erase(objetosPonto.begin() + i);
+
+                std::ostringstream console;
+                console << "O ponto " << ponto->getNome() << " foi deletado." << std::endl;
+                gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
+                
+                reDrawAll();
+
+                GtkTreeIter iter;
+                GtkTreeModel *model;
+                gchar* nomeDoObjeto;
+                if (gtk_tree_selection_get_selected (objectSelected, &model, &iter)) {
+                    gtk_tree_model_get (model, &iter, 0, &nomeDoObjeto, -1);
+                    gtk_list_store_remove(objectListStore, &iter);
+                }
+                
+                break;
+            }
+        }
+    }
+ }
+
+ static void deletarObjetoReta() {
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+
+    auto reta = retornarReta();
+    if(reta == nullptr) {
+        gtk_text_buffer_insert(buffer, &end, "Você precisa selecionar ao menos um objeto para deletá-lo!\n", -1);
+    } else {
+        for (int i = 0; i < objetosReta.size(); i++) {
+            if(objetosReta.at(i)->getNome().compare(reta->getNome()) == 0) {
+                objetosReta.erase(objetosReta.begin() + i);
+
+                std::ostringstream console;
+                console << "A reta " << reta->getNome() << " foi deletada." << std::endl;
+                gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
+                
+                reDrawAll();
+
+                GtkTreeIter iter;
+                GtkTreeModel *model;
+                gchar* nomeDoObjeto;
+                if (gtk_tree_selection_get_selected (objectSelected, &model, &iter)) {
+                    gtk_tree_model_get (model, &iter, 0, &nomeDoObjeto, -1);
+                    gtk_list_store_remove(objectListStore, &iter);
+                }
+                
+                break;
+            }
+        }
+    }
+}
+
+static void deletarObjetoPoligono() {
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+
+    auto poligono = retornarPoligono();
+    if(poligono == nullptr) {
+        gtk_text_buffer_insert(buffer, &end, "Você precisa selecionar ao menos um objeto para deletá-lo!\n", -1);
+    } else {
+        for (int i = 0; i < objetosPoligono.size(); i++) {
+            if(objetosPoligono.at(i)->getNome().compare(poligono->getNome()) == 0) {
+                objetosPoligono.erase(objetosPoligono.begin() + i);
+
+                std::ostringstream console;
+                console << "O polígono " << poligono->getNome() << " foi deletado." << std::endl;
+                gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
+                
+                reDrawAll();
+
+                GtkTreeIter iter;
+                GtkTreeModel *model;
+                gchar* nomeDoObjeto;
+                if (gtk_tree_selection_get_selected (objectSelected, &model, &iter)) {
+                    gtk_tree_model_get (model, &iter, 0, &nomeDoObjeto, -1);
+                    gtk_list_store_remove(objectListStore, &iter);
+                }
+                
+                break;
+            }
+        }
+    }
+}
+
+static void on_bbuttonDeletarObjeto_clicked() {
+      
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+    gtk_text_buffer_insert(buffer, &end, "Botão deletar objeto pressionado!\n", -1);
+    
+
+    GtkTreeIter iter;
+    GtkTreeModel *model;
+    gchar* tipoDoObjeto;
+    if (gtk_tree_selection_get_selected (objectSelected, &model, &iter)) {
+        gtk_tree_model_get (model, &iter, COL_TYPE, &tipoDoObjeto, -1);
+        string tipo = (std::string)tipoDoObjeto;
+    
+    if(tipo.compare("Ponto") == 0) {
+        deletarObjetoPonto();
+        
+        } else if(tipo.compare("Reta") == 0) {
+                deletarObjetoReta();
+            
+            } else if (tipo.compare("Polígono") == 0) {
+                deletarObjetoPoligono();
+        }
+
+    } else {
+        gtk_text_buffer_insert(buffer, &end, "Você precisa selecionar ao menos um objeto para deletá-lo!\n", -1);
+    }
 }
 
 // chama este método quando o botão cancelar da window de confirmação de exclusão é clicado
@@ -783,6 +967,9 @@ int main(int argc, char *argv[]) {
     buttonZoomIn = GTK_WIDGET(gtk_builder_get_object(builder, "buttonZoomIn"));
     buttonZoomOut = GTK_WIDGET(gtk_builder_get_object(builder, "buttonZoomOut"));
     buttonLimparTela = GTK_WIDGET(gtk_builder_get_object(builder, "buttonLimparTela"));
+    buttonRotateDireita = GTK_WIDGET(gtk_builder_get_object(builder, "buttonRotateDireita"));
+    buttonRotateEsquerda = GTK_WIDGET(gtk_builder_get_object(builder, "buttonRotateEsquerda"));
+    buttonDeletarObjeto = GTK_WIDGET(gtk_builder_get_object(builder, "buttonDeletarObjeto"));
 
     buttonSalvarPoint = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSalvarPoint"));
     buttonCancelarPoint = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCancelarPoint"));
@@ -826,6 +1013,9 @@ int main(int argc, char *argv[]) {
     g_signal_connect(buttonPoligono, "button-release-event", G_CALLBACK (on_buttonPoligono_clicked), NULL);
     g_signal_connect(buttonReta, "button-release-event", G_CALLBACK (on_buttonReta_clicked), NULL);
     g_signal_connect(buttonLimparTela, "button-release-event", G_CALLBACK (on_buttonLimparTela_clicked), NULL);
+    g_signal_connect(buttonRotateDireita, "button-release-event", G_CALLBACK (on_buttonRotateDireita_clicked), NULL);
+    g_signal_connect(buttonRotateEsquerda, "button-release-event", G_CALLBACK (on_buttonRotateEsquerda_clicked), NULL);
+    g_signal_connect(buttonDeletarObjeto, "button-release-event", G_CALLBACK (on_bbuttonDeletarObjeto_clicked), NULL);
 
     g_signal_connect(buttonSalvarPoint, "button-release-event", G_CALLBACK (on_buttonSalvarPoint_clicked), NULL);
     g_signal_connect(buttonCancelarPoint, "button-release-event", G_CALLBACK (on_buttonCancelarPoint_clicked), NULL);
