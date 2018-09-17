@@ -484,8 +484,8 @@ novo ponto ao seu polígono:</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="tooltip_text" translatable="yes">Você precisa adicionar ao menos 1 ponto ao seu polígono.
-Ao criar um polígono com apenas 1 coordenada, ele será considerado como um ponto.
-Ao criar um polígono com 2 coordenadas, ele será considerado uma reta.</property>
+Ao criar um polígono com apenas 1 coordenada, ele será desenhado como um ponto.
+Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
             <property name="stock">gtk-info</property>
           </object>
           <packing>
@@ -1094,7 +1094,7 @@ Ao criar um polígono com 2 coordenadas, ele será considerado uma reta.</proper
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="tooltip_text" translatable="yes">Limpa a tela retirando todos os objetos da view</property>
+            <property name="tooltip_text" translatable="yes">Limpa a tela retirando todos os objetos da tela</property>
             <property name="image">imageLimparTela</property>
             <property name="image_position">right</property>
             <property name="always_show_image">True</property>

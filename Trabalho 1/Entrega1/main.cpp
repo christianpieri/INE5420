@@ -852,7 +852,7 @@ static void deletarObjetoPoligono() {
     }
 }
 
-static void on_bbuttonDeletarObjeto_clicked() {
+static void on_buttonDeletarObjeto_clicked() {
       
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
     GtkTextIter end;
@@ -1015,7 +1015,7 @@ int main(int argc, char *argv[]) {
     g_signal_connect(buttonLimparTela, "button-release-event", G_CALLBACK (on_buttonLimparTela_clicked), NULL);
     g_signal_connect(buttonRotateDireita, "button-release-event", G_CALLBACK (on_buttonRotateDireita_clicked), NULL);
     g_signal_connect(buttonRotateEsquerda, "button-release-event", G_CALLBACK (on_buttonRotateEsquerda_clicked), NULL);
-    g_signal_connect(buttonDeletarObjeto, "button-release-event", G_CALLBACK (on_bbuttonDeletarObjeto_clicked), NULL);
+    g_signal_connect(buttonDeletarObjeto, "button-release-event", G_CALLBACK (on_buttonDeletarObjeto_clicked), NULL);
 
     g_signal_connect(buttonSalvarPoint, "button-release-event", G_CALLBACK (on_buttonSalvarPoint_clicked), NULL);
     g_signal_connect(buttonCancelarPoint, "button-release-event", G_CALLBACK (on_buttonCancelarPoint_clicked), NULL);
