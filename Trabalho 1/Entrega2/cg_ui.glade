@@ -669,11 +669,6 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
       </object>
     </child>
   </object>
-  <object class="GtkImage" id="image1">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-media-forward</property>
-  </object>
   <object class="GtkImage" id="imageButtonBaixo">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -1281,7 +1276,6 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
             <property name="tooltip_text" translatable="yes">Ativa o clipping de objetos</property>
-            <property name="image">image1</property>
           </object>
           <packing>
             <property name="x">50</property>
