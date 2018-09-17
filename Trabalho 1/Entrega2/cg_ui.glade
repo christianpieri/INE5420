@@ -753,6 +753,11 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
       </object>
     </child>
   </object>
+  <object class="GtkImage" id="imageButtonCurva">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-edit</property>
+  </object>
   <object class="GtkImage" id="imageButtonDeletarObjeto">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -857,6 +862,11 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
     <property name="tooltip_text" translatable="yes">Rotacionar para esquerda</property>
     <property name="stock">gtk-undo</property>
   </object>
+  <object class="GtkImage" id="imageButtonSalvarObj">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-floppy</property>
+  </object>
   <object class="GtkImage" id="imageButtonZoomIn">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -866,6 +876,11 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-zoom-out</property>
+  </object>
+  <object class="GtkImage" id="imageCarregarObj">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-save</property>
   </object>
   <object class="GtkImage" id="imageLapisPoligono">
     <property name="visible">True</property>
@@ -1094,14 +1109,14 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="tooltip_text" translatable="yes">Limpa a tela retirando todos os objetos da tela</property>
+            <property name="tooltip_text" translatable="yes">Limpa a tela retirando todos os objetos dela</property>
             <property name="image">imageLimparTela</property>
             <property name="image_position">right</property>
             <property name="always_show_image">True</property>
           </object>
           <packing>
             <property name="x">50</property>
-            <property name="y">120</property>
+            <property name="y">150</property>
           </packing>
         </child>
         <child>
@@ -1195,7 +1210,124 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
           </object>
           <packing>
             <property name="x">50</property>
-            <property name="y">150</property>
+            <property name="y">180</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="buttonCurva">
+            <property name="label" translatable="yes">Desenhar Curva </property>
+            <property name="width_request">200</property>
+            <property name="height_request">30</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="tooltip_text" translatable="yes">Abre a caixa de construção de curvas</property>
+            <property name="image">imageButtonCurva</property>
+            <property name="image_position">right</property>
+            <property name="always_show_image">True</property>
+          </object>
+          <packing>
+            <property name="x">50</property>
+            <property name="y">120</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="buttonSalvarObj">
+            <property name="label" translatable="yes">Salvar </property>
+            <property name="width_request">100</property>
+            <property name="height_request">40</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="tooltip_text" translatable="yes">Permite o salvamento de arquivos em .obj</property>
+            <property name="image">imageButtonSalvarObj</property>
+            <property name="image_position">right</property>
+            <property name="always_show_image">True</property>
+          </object>
+          <packing>
+            <property name="x">50</property>
+            <property name="y">450</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="buttonCarregarObj">
+            <property name="label" translatable="yes">Carregar  </property>
+            <property name="width_request">100</property>
+            <property name="height_request">40</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="tooltip_text" translatable="yes">Carregar arquivo .obj para tela</property>
+            <property name="image">imageCarregarObj</property>
+            <property name="image_position">right</property>
+            <property name="always_show_image">True</property>
+          </object>
+          <packing>
+            <property name="x">150</property>
+            <property name="y">450</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkToggleButton" id="buttonOnOffClipping">
+            <property name="label" translatable="yes">Off</property>
+            <property name="width_request">50</property>
+            <property name="height_request">20</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="tooltip_text" translatable="yes">Clicar ativará o clipping de objetos</property>
+          </object>
+          <packing>
+            <property name="x">50</property>
+            <property name="y">245</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="labelClipping">
+            <property name="width_request">0</property>
+            <property name="height_request">30</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Clipping:</property>
+          </object>
+          <packing>
+            <property name="x">50</property>
+            <property name="y">220</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkRadioButton" id="buttonRadioClip1">
+            <property name="label" translatable="yes">r1</property>
+            <property name="width_request">50</property>
+            <property name="height_request">30</property>
+            <property name="visible">True</property>
+            <property name="sensitive">False</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
+            <property name="active">True</property>
+            <property name="draw_indicator">True</property>
+          </object>
+          <packing>
+            <property name="x">135</property>
+            <property name="y">245</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkRadioButton" id="buttonRadioClip2">
+            <property name="label" translatable="yes">r2</property>
+            <property name="width_request">50</property>
+            <property name="height_request">30</property>
+            <property name="visible">True</property>
+            <property name="sensitive">False</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
+            <property name="active">True</property>
+            <property name="draw_indicator">True</property>
+            <property name="group">buttonRadioClip1</property>
+          </object>
+          <packing>
+            <property name="x">190</property>
+            <property name="y">245</property>
           </packing>
         </child>
       </object>

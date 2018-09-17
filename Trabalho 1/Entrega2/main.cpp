@@ -35,11 +35,15 @@ using namespace std;
     GtkWidget *buttonRotateDireita;
     GtkWidget *buttonRotateEsquerda;
     GtkWidget *buttonDeletarObjeto;
+    GtkToggleButton *buttonOnOffClipping;
+    GtkRadioButton *buttonRadioClip1;
+    GtkRadioButton *buttonRadioClip2;
 
     // Botões dos objetos a serem desenhados
     GtkWidget *buttonPonto;
     GtkWidget *buttonReta;
     GtkWidget *buttonPoligono;
+    GtkWidget *buttonCurva;
 
     // Botões da window ponto
     GtkWidget *buttonSalvarPoint;
@@ -684,12 +688,11 @@ static void on_buttonSimConfExclusao_clicked() {
     gtk_text_buffer_get_end_iter(buffer, &end);
     gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
 
+    // TODO: LIMPAR TODA A LIST STORE
+
     objetosPoligono.clear();
     objetosReta.clear();
     objetosPonto.clear();
-
-    // TODO: LIMPAR STORE DE OBJETOS
-    // gtk_list_store_remove
     
     clear_surface();
     gtk_widget_queue_draw (windowPrincipal);
@@ -952,6 +955,21 @@ static void on_buttonCancelarConfExclusao_clicked() {
     gtk_text_buffer_insert(buffer, &end, "Exclusão de objetos e limpeza de tela canceladas!\n", -1);
 }
 
+// on - off do clipping
+static void on_buttonOnOffClipping_toggled() {
+    if(gtk_toggle_button_get_active(buttonOnOffClipping) == FALSE) {
+        gtk_button_set_label(GTK_BUTTON(buttonOnOffClipping), "Off");
+        gtk_widget_set_tooltip_text(GTK_WIDGET(GTK_BUTTON(buttonOnOffClipping)), "Clicar ativará o clipping de objetos");
+        gtk_widget_set_sensitive(GTK_WIDGET(GTK_BUTTON(buttonRadioClip1)), false);
+        gtk_widget_set_sensitive(GTK_WIDGET(GTK_BUTTON(buttonRadioClip2)), false);
+    } else {
+        gtk_button_set_label(GTK_BUTTON(buttonOnOffClipping), "On");
+        gtk_widget_set_tooltip_text(GTK_WIDGET(GTK_BUTTON(buttonOnOffClipping)), "Clicar desativará o clipping de objetos");
+        gtk_widget_set_sensitive(GTK_WIDGET(GTK_BUTTON(buttonRadioClip1)), true);
+        gtk_widget_set_sensitive(GTK_WIDGET(GTK_BUTTON(buttonRadioClip2)), true);
+    }
+}
+
 static void on_buttonOkWindowAviso_clicked() {
     gtk_widget_hide(windowAviso);
 }
@@ -1031,6 +1049,9 @@ int main(int argc, char *argv[]) {
     buttonRotateDireita = GTK_WIDGET(gtk_builder_get_object(builder, "buttonRotateDireita"));
     buttonRotateEsquerda = GTK_WIDGET(gtk_builder_get_object(builder, "buttonRotateEsquerda"));
     buttonDeletarObjeto = GTK_WIDGET(gtk_builder_get_object(builder, "buttonDeletarObjeto"));
+    buttonOnOffClipping = GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, "buttonOnOffClipping"));
+    buttonRadioClip1 = GTK_RADIO_BUTTON(gtk_builder_get_object(builder, "buttonRadioClip1"));
+    buttonRadioClip2 = GTK_RADIO_BUTTON(gtk_builder_get_object(builder, "buttonRadioClip2"));
 
     buttonSalvarPoint = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSalvarPoint"));
     buttonCancelarPoint = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCancelarPoint"));
@@ -1087,6 +1108,7 @@ int main(int argc, char *argv[]) {
     g_signal_connect(buttonRotateDireita, "button-release-event", G_CALLBACK (on_buttonRotateDireita_clicked), NULL);
     g_signal_connect(buttonRotateEsquerda, "button-release-event", G_CALLBACK (on_buttonRotateEsquerda_clicked), NULL);
     g_signal_connect(buttonDeletarObjeto, "button-release-event", G_CALLBACK (on_buttonDeletarObjeto_clicked), NULL);
+    g_signal_connect(buttonOnOffClipping, "toggled", G_CALLBACK(on_buttonOnOffClipping_toggled), NULL);
 
     g_signal_connect(buttonSalvarPoint, "button-release-event", G_CALLBACK (on_buttonSalvarPoint_clicked), NULL);
     g_signal_connect(buttonCancelarPoint, "button-release-event", G_CALLBACK (on_buttonCancelarPoint_clicked), NULL);
