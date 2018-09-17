@@ -1275,7 +1275,7 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
-            <property name="tooltip_text" translatable="yes">Ativa o clipping de objetos</property>
+            <property name="tooltip_text" translatable="yes">Clicar ativará o clipping de objetos</property>
           </object>
           <packing>
             <property name="x">50</property>
@@ -1301,6 +1301,7 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
             <property name="width_request">50</property>
             <property name="height_request">30</property>
             <property name="visible">True</property>
+            <property name="sensitive">False</property>
             <property name="can_focus">True</property>
             <property name="receives_default">False</property>
             <property name="active">True</property>
@@ -1317,6 +1318,7 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
             <property name="width_request">50</property>
             <property name="height_request">30</property>
             <property name="visible">True</property>
+            <property name="sensitive">False</property>
             <property name="can_focus">True</property>
             <property name="receives_default">False</property>
             <property name="active">True</property>
