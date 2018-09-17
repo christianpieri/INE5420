@@ -684,12 +684,11 @@ static void on_buttonSimConfExclusao_clicked() {
     gtk_text_buffer_get_end_iter(buffer, &end);
     gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
 
+    // TODO: LIMPAR TODA A LIST STORE
+
     objetosPoligono.clear();
     objetosReta.clear();
     objetosPonto.clear();
-
-    // TODO: LIMPAR STORE DE OBJETOS
-    // gtk_list_store_remove
     
     clear_surface();
     gtk_widget_queue_draw (windowPrincipal);
