@@ -21,6 +21,7 @@ using namespace std;
     GtkWidget *windowPoligono;
     GtkWidget *windowConfirmacaoExclusao;
     GtkWidget *windowAviso;
+    GtkWidget *windowRotacionarObjeto;
     Window     tela;
 
     // Botões da caixa de controle
@@ -95,6 +96,16 @@ using namespace std;
     std::vector<Reta*> objetosReta;
     std::vector<Poligono*> objetosPoligono;
     std::vector<Ponto*> pontosAuxiliarPoligono;
+
+    // Widgets da view de rotação
+    GtkWidget *textEntryRotacaoPersonalizado;
+    GtkToggleButton *radioButtonRotacaoOutro;
+    GtkWidget *labelSentidoWindowRotacao;
+    GtkWidget *buttonCancelarRotacao;
+    GtkToggleButton *radioButtonPontoQualquer;
+    GtkWidget *labelQualPontoRotacao;
+    GtkWidget *textEntryQualX;
+    GtkWidget *textEntryQualY;
 
     // Surface
     static cairo_surface_t *surface = NULL;
@@ -684,7 +695,10 @@ static void on_buttonSimConfExclusao_clicked() {
 }
 
 static void on_buttonRotateDireita_clicked() {
-    // gtk_widet_show(windowRotacao);
+
+    gtk_label_set_text(GTK_LABEL(labelSentidoWindowRotacao), "Rotacionando seu objeto para a direita:");
+    gtk_widget_show(windowRotacionarObjeto);
+    
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
     GtkTextIter end;
     gtk_text_buffer_get_end_iter(buffer, &end);
@@ -692,7 +706,10 @@ static void on_buttonRotateDireita_clicked() {
 }
 
 static void on_buttonRotateEsquerda_clicked() {
-    // gtk_widet_show(windowRotacao);
+    
+    gtk_label_set_text(GTK_LABEL(labelSentidoWindowRotacao), "Rotacionando seu objeto para a esquerda:");
+    gtk_widget_show(windowRotacionarObjeto);
+    
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
     GtkTextIter end;
     gtk_text_buffer_get_end_iter(buffer, &end);
@@ -882,6 +899,43 @@ static void on_buttonDeletarObjeto_clicked() {
     }
 }
 
+static void on_radioButtonRotacaoOutro_toggled() {
+   
+    if(gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radioButtonRotacaoOutro))==TRUE) {
+        gtk_widget_set_sensitive(textEntryRotacaoPersonalizado, true);
+    } else {
+       gtk_widget_set_sensitive(textEntryRotacaoPersonalizado, false);
+    }
+
+
+}
+
+static void on_radioButtonPontoQualquer_toggled() {
+   
+    if(gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radioButtonPontoQualquer))==TRUE) {
+        gtk_widget_set_sensitive(labelQualPontoRotacao, true);
+        gtk_widget_set_sensitive(textEntryQualX, true);
+        gtk_widget_set_sensitive(textEntryQualY, true);
+    } else {
+        gtk_widget_set_sensitive(labelQualPontoRotacao, false);
+        gtk_widget_set_sensitive(textEntryQualX, false);
+        gtk_widget_set_sensitive(textEntryQualY, false);
+    }
+
+
+}
+
+// chama este método quando o botão cancelar da window de rotação de objeto é clicado
+static void on_buttonCancelarRotacao_clicked() {
+    gtk_widget_hide(windowRotacionarObjeto);
+
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+    gtk_text_buffer_insert(buffer, &end, "Rotação de objeto cancelada!\n", -1);
+}
+
+
 // chama este método quando o botão cancelar da window de confirmação de exclusão é clicado
 static void on_buttonCancelarConfExclusao_clicked() {
     gtk_widget_hide(windowConfirmacaoExclusao);
@@ -943,6 +997,7 @@ int main(int argc, char *argv[]) {
     windowPoligono = GTK_WIDGET(gtk_builder_get_object(builder, "windowPoligono"));
     windowConfirmacaoExclusao = GTK_WIDGET(gtk_builder_get_object(builder, "windowConfirmacaoExclusao"));
     windowAviso = GTK_WIDGET(gtk_builder_get_object(builder, "windowAviso"));
+    windowRotacionarObjeto = GTK_WIDGET(gtk_builder_get_object(builder, "windowRotacionarObjeto"));
     drawingArea = GTK_WIDGET(gtk_builder_get_object(builder, "drawingArea"));
     
     textConsole = GTK_WIDGET(gtk_builder_get_object(builder, "textConsole"));
@@ -1003,6 +1058,15 @@ int main(int argc, char *argv[]) {
     mensagemTituloAviso = GTK_WIDGET(gtk_builder_get_object(builder, "mensagemTituloAviso"));
     mensagemAviso = GTK_WIDGET(gtk_builder_get_object(builder, "mensagemAviso"));
 
+    textEntryRotacaoPersonalizado = GTK_WIDGET(gtk_builder_get_object(builder, "textEntryRotacaoPersonalizado"));
+    radioButtonRotacaoOutro = GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, "radioButtonRotacaoOutro"));
+    radioButtonPontoQualquer = GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, "radioButtonPontoQualquer"));
+    labelSentidoWindowRotacao = GTK_WIDGET(gtk_builder_get_object(builder, "labelSentidoWindowRotacao"));
+    labelQualPontoRotacao = GTK_WIDGET(gtk_builder_get_object(builder, "labelQualPontoRotacao"));
+    textEntryQualX = GTK_WIDGET(gtk_builder_get_object(builder, "textEntryQualX"));
+    textEntryQualY = GTK_WIDGET(gtk_builder_get_object(builder, "textEntryQualY"));
+    buttonCancelarRotacao = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCancelarRotacao"));
+
     g_signal_connect(buttonBaixo, "button-release-event", G_CALLBACK (on_buttonBaixo_clicked), NULL);
     g_signal_connect(buttonCima, "button-release-event", G_CALLBACK (on_buttonCima_clicked), NULL);
     g_signal_connect(buttonEsquerda, "button-release-event", G_CALLBACK (on_buttonEsquerda_clicked), NULL);
@@ -1032,6 +1096,9 @@ int main(int argc, char *argv[]) {
     
     g_signal_connect(buttonOkWindowAviso, "button-release-event", G_CALLBACK (on_buttonOkWindowAviso_clicked), NULL);
 
+    g_signal_connect(radioButtonRotacaoOutro, "toggled", G_CALLBACK(on_radioButtonRotacaoOutro_toggled), NULL);
+    g_signal_connect(radioButtonPontoQualquer, "toggled", G_CALLBACK(on_radioButtonPontoQualquer_toggled), NULL);
+    g_signal_connect(buttonCancelarRotacao, "button-release-event", G_CALLBACK (on_buttonCancelarRotacao_clicked), NULL);
 
     g_signal_connect(drawingArea, "draw", G_CALLBACK(draw_cb), NULL);
     g_signal_connect(drawingArea, "configure-event", G_CALLBACK(configure_event_cb), NULL);
