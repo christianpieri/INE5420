@@ -106,6 +106,7 @@ using namespace std;
     GtkWidget *labelQualPontoRotacao;
     GtkWidget *textEntryQualX;
     GtkWidget *textEntryQualY;
+    GtkWidget *buttonSalvarRotacao;
 
     // Surface
     static cairo_surface_t *surface = NULL;
@@ -803,7 +804,7 @@ static Poligono* retornarPoligono() {
     }
  }
 
- static void deletarObjetoReta() {
+static void deletarObjetoReta() {
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
     GtkTextIter end;
     gtk_text_buffer_get_end_iter(buffer, &end);
@@ -906,8 +907,6 @@ static void on_radioButtonRotacaoOutro_toggled() {
     } else {
        gtk_widget_set_sensitive(textEntryRotacaoPersonalizado, false);
     }
-
-
 }
 
 static void on_radioButtonPontoQualquer_toggled() {
@@ -921,8 +920,6 @@ static void on_radioButtonPontoQualquer_toggled() {
         gtk_widget_set_sensitive(textEntryQualX, false);
         gtk_widget_set_sensitive(textEntryQualY, false);
     }
-
-
 }
 
 // chama este método quando o botão cancelar da window de rotação de objeto é clicado
@@ -935,6 +932,15 @@ static void on_buttonCancelarRotacao_clicked() {
     gtk_text_buffer_insert(buffer, &end, "Rotação de objeto cancelada!\n", -1);
 }
 
+// chama este método quando o botão salvar da window de rotação de objeto é clicado
+static void on_buttonSalvarRotacao_clicked() {
+    gtk_widget_hide(windowRotacionarObjeto);
+
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+    gtk_text_buffer_insert(buffer, &end, "Salvando rotação!\n", -1);
+}
 
 // chama este método quando o botão cancelar da window de confirmação de exclusão é clicado
 static void on_buttonCancelarConfExclusao_clicked() {
@@ -1066,6 +1072,7 @@ int main(int argc, char *argv[]) {
     textEntryQualX = GTK_WIDGET(gtk_builder_get_object(builder, "textEntryQualX"));
     textEntryQualY = GTK_WIDGET(gtk_builder_get_object(builder, "textEntryQualY"));
     buttonCancelarRotacao = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCancelarRotacao"));
+    buttonSalvarRotacao = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSalvarRotacao"));
 
     g_signal_connect(buttonBaixo, "button-release-event", G_CALLBACK (on_buttonBaixo_clicked), NULL);
     g_signal_connect(buttonCima, "button-release-event", G_CALLBACK (on_buttonCima_clicked), NULL);
@@ -1099,6 +1106,7 @@ int main(int argc, char *argv[]) {
     g_signal_connect(radioButtonRotacaoOutro, "toggled", G_CALLBACK(on_radioButtonRotacaoOutro_toggled), NULL);
     g_signal_connect(radioButtonPontoQualquer, "toggled", G_CALLBACK(on_radioButtonPontoQualquer_toggled), NULL);
     g_signal_connect(buttonCancelarRotacao, "button-release-event", G_CALLBACK (on_buttonCancelarRotacao_clicked), NULL);
+    g_signal_connect(buttonSalvarRotacao, "button-release-event", G_CALLBACK (on_buttonSalvarRotacao_clicked), NULL);
 
     g_signal_connect(drawingArea, "draw", G_CALLBACK(draw_cb), NULL);
     g_signal_connect(drawingArea, "configure-event", G_CALLBACK(configure_event_cb), NULL);
