@@ -669,6 +669,355 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
       </object>
     </child>
   </object>
+  <object class="GtkAdjustment" id="adjustmentCurvaControlX1">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustmentCurvaControlX2">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustmentCurvaControlY1">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustmentCurvaControlY2">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustmentCurvaX1">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustmentCurvaX2">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustmentCurvaY1">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="adjustmentCurvaY2">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkWindow" id="windowCurva">
+    <property name="width_request">400</property>
+    <property name="height_request">400</property>
+    <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Desenhar Curva</property>
+    <property name="resizable">False</property>
+    <property name="modal">True</property>
+    <property name="default_width">400</property>
+    <property name="default_height">300</property>
+    <property name="deletable">False</property>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <object class="GtkFixed" id="fixedWindowCurva">
+        <property name="name">fixedWindowPonto</property>
+        <property name="width_request">32</property>
+        <property name="height_request">32</property>
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <child>
+          <object class="GtkEntry" id="textEntryCurvaName">
+            <property name="width_request">300</property>
+            <property name="height_request">30</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="placeholder_text" translatable="yes">Nome da curva</property>
+          </object>
+          <packing>
+            <property name="x">50</property>
+            <property name="y">310</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="buttonCancelarCurva">
+            <property name="label" translatable="yes">Cancelar</property>
+            <property name="width_request">100</property>
+            <property name="height_request">50</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+          </object>
+          <packing>
+            <property name="x">10</property>
+            <property name="y">345</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="buttonSalvarCurva">
+            <property name="label" translatable="yes">Salvar</property>
+            <property name="width_request">100</property>
+            <property name="height_request">50</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+          </object>
+          <packing>
+            <property name="x">290</property>
+            <property name="y">345</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="labelCurva1x">
+            <property name="width_request">100</property>
+            <property name="height_request">30</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Coordenada x:</property>
+          </object>
+          <packing>
+            <property name="x">140</property>
+            <property name="y">85</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="labelCurva1y">
+            <property name="width_request">100</property>
+            <property name="height_request">30</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Coordenada y:</property>
+          </object>
+          <packing>
+            <property name="x">250</property>
+            <property name="y">85</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="labelWindowCurva">
+            <property name="width_request">100</property>
+            <property name="height_request">30</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Escolha as coordenadas da sua nova curva de Bezier</property>
+          </object>
+          <packing>
+            <property name="x">35</property>
+            <property name="y">10</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="labelNomeCurva">
+            <property name="width_request">300</property>
+            <property name="height_request">30</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Por favor, dê um nome para a sua nova curva:</property>
+          </object>
+          <packing>
+            <property name="x">50</property>
+            <property name="y">280</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSpinButton" id="spinCurvaY1">
+            <property name="width_request">110</property>
+            <property name="height_request">31</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="text" translatable="yes">0</property>
+            <property name="adjustment">adjustmentCurvaY1</property>
+          </object>
+          <packing>
+            <property name="x">245</property>
+            <property name="y">120</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSpinButton" id="spinCurvaX1">
+            <property name="width_request">110</property>
+            <property name="height_request">31</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="text" translatable="yes">0</property>
+            <property name="adjustment">adjustmentCurvaX1</property>
+          </object>
+          <packing>
+            <property name="x">135</property>
+            <property name="y">120</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSpinButton" id="spinCurvaX2">
+            <property name="width_request">110</property>
+            <property name="height_request">31</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="text" translatable="yes">0</property>
+            <property name="adjustment">adjustmentCurvaX2</property>
+          </object>
+          <packing>
+            <property name="x">135</property>
+            <property name="y">160</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSpinButton" id="spinCurvaY2">
+            <property name="width_request">110</property>
+            <property name="height_request">31</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="text" translatable="yes">0</property>
+            <property name="adjustment">adjustmentCurvaY2</property>
+          </object>
+          <packing>
+            <property name="x">245</property>
+            <property name="y">160</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="labelCurvaControle">
+            <property name="width_request">63</property>
+            <property name="height_request">30</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Controle:</property>
+          </object>
+          <packing>
+            <property name="x">40</property>
+            <property name="y">200</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkRadioButton" id="buttonRadioBezier">
+            <property name="label" translatable="yes">Curva de Bezier</property>
+            <property name="width_request">110</property>
+            <property name="height_request">20</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
+            <property name="active">True</property>
+            <property name="draw_indicator">True</property>
+          </object>
+          <packing>
+            <property name="x">50</property>
+            <property name="y">50</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkRadioButton" id="buttonRadioSpline">
+            <property name="label" translatable="yes">Curva b-Spline</property>
+            <property name="width_request">123</property>
+            <property name="height_request">20</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">False</property>
+            <property name="active">True</property>
+            <property name="draw_indicator">True</property>
+            <property name="group">buttonRadioBezier</property>
+          </object>
+          <packing>
+            <property name="x">230</property>
+            <property name="y">50</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="labelCurvaFinal">
+            <property name="width_request">77</property>
+            <property name="height_request">30</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Ponto final:</property>
+          </object>
+          <packing>
+            <property name="x">40</property>
+            <property name="y">160</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSpinButton" id="spinCurvaControleX1">
+            <property name="width_request">110</property>
+            <property name="height_request">31</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="adjustment">adjustmentCurvaControlX1</property>
+          </object>
+          <packing>
+            <property name="x">135</property>
+            <property name="y">200</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSpinButton" id="spinCurvaControleY1">
+            <property name="width_request">108</property>
+            <property name="height_request">31</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="adjustment">adjustmentCurvaControlY1</property>
+          </object>
+          <packing>
+            <property name="x">245</property>
+            <property name="y">200</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSpinButton" id="spinCurvaControleX2">
+            <property name="width_request">110</property>
+            <property name="height_request">31</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="adjustment">adjustmentCurvaControlX2</property>
+          </object>
+          <packing>
+            <property name="x">135</property>
+            <property name="y">240</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSpinButton" id="spinCurvaControleY2">
+            <property name="width_request">108</property>
+            <property name="height_request">31</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="adjustment">adjustmentCurvaControlY2</property>
+          </object>
+          <packing>
+            <property name="x">245</property>
+            <property name="y">240</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="labelCurvaInicial">
+            <property name="width_request">87</property>
+            <property name="height_request">30</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Ponto inicial:</property>
+          </object>
+          <packing>
+            <property name="x">40</property>
+            <property name="y">120</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="labelCurvaControle2">
+            <property name="width_request">74</property>
+            <property name="height_request">30</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Controle 2:</property>
+          </object>
+          <packing>
+            <property name="x">40</property>
+            <property name="y">240</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
   <object class="GtkImage" id="imageButtonBaixo">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -1328,311 +1677,6 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
           <packing>
             <property name="x">190</property>
             <property name="y">245</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-  </object>
-  <object class="GtkWindow" id="windowCurvas">
-    <property name="width_request">400</property>
-    <property name="height_request">400</property>
-    <property name="can_focus">False</property>
-    <property name="title" translatable="yes">Desenhar Curva</property>
-    <property name="resizable">False</property>
-    <property name="modal">True</property>
-    <property name="default_width">400</property>
-    <property name="default_height">300</property>
-    <property name="deletable">False</property>
-    <child>
-      <placeholder/>
-    </child>
-    <child>
-      <object class="GtkFixed" id="fixedWindowCurva">
-        <property name="name">fixedWindowPonto</property>
-        <property name="width_request">32</property>
-        <property name="height_request">32</property>
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <child>
-          <object class="GtkEntry" id="textEntryCurvaName">
-            <property name="width_request">300</property>
-            <property name="height_request">30</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="placeholder_text" translatable="yes">Nome da curva</property>
-          </object>
-          <packing>
-            <property name="x">50</property>
-            <property name="y">310</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="buttonCancelarCurva">
-            <property name="label" translatable="yes">Cancelar</property>
-            <property name="width_request">100</property>
-            <property name="height_request">50</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-          </object>
-          <packing>
-            <property name="x">10</property>
-            <property name="y">345</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="buttonSalvarCurva">
-            <property name="label" translatable="yes">Salvar</property>
-            <property name="width_request">100</property>
-            <property name="height_request">50</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-          </object>
-          <packing>
-            <property name="x">290</property>
-            <property name="y">345</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel" id="labelCurva1x">
-            <property name="width_request">100</property>
-            <property name="height_request">30</property>
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="label" translatable="yes">Coordenada x:</property>
-          </object>
-          <packing>
-            <property name="x">140</property>
-            <property name="y">85</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel" id="labelCurva1y">
-            <property name="width_request">100</property>
-            <property name="height_request">30</property>
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="label" translatable="yes">Coordenada y:</property>
-          </object>
-          <packing>
-            <property name="x">250</property>
-            <property name="y">85</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel" id="labelWindowCurva">
-            <property name="width_request">100</property>
-            <property name="height_request">30</property>
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="label" translatable="yes">Escolha as coordenadas da sua nova curva de Bezier</property>
-          </object>
-          <packing>
-            <property name="x">35</property>
-            <property name="y">10</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel" id="labelNomeCurva">
-            <property name="width_request">300</property>
-            <property name="height_request">30</property>
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="label" translatable="yes">Por favor, dê um nome para a sua nova curva:</property>
-          </object>
-          <packing>
-            <property name="x">50</property>
-            <property name="y">280</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkSpinButton" id="spinCurvaY1">
-            <property name="width_request">110</property>
-            <property name="height_request">31</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="text" translatable="yes">0</property>
-            <property name="adjustment">adjustmentCoordY1Reta</property>
-          </object>
-          <packing>
-            <property name="x">245</property>
-            <property name="y">120</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkSpinButton" id="spinCurvaX1">
-            <property name="width_request">110</property>
-            <property name="height_request">31</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="text" translatable="yes">0</property>
-            <property name="adjustment">adjustmentCoordX1Reta</property>
-          </object>
-          <packing>
-            <property name="x">135</property>
-            <property name="y">120</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkSpinButton" id="spinCurvaX2">
-            <property name="width_request">110</property>
-            <property name="height_request">31</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="text" translatable="yes">0</property>
-            <property name="adjustment">adjustmentCoordX2Reta</property>
-          </object>
-          <packing>
-            <property name="x">135</property>
-            <property name="y">160</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkSpinButton" id="spinCurvaY2">
-            <property name="width_request">110</property>
-            <property name="height_request">31</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="text" translatable="yes">0</property>
-            <property name="adjustment">adjustmentCoordY2Reta</property>
-          </object>
-          <packing>
-            <property name="x">245</property>
-            <property name="y">160</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel" id="labelCurvaControle">
-            <property name="width_request">63</property>
-            <property name="height_request">30</property>
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="label" translatable="yes">Controle:</property>
-          </object>
-          <packing>
-            <property name="x">40</property>
-            <property name="y">200</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkRadioButton" id="buttonRadioBezier">
-            <property name="label" translatable="yes">Curva de Bezier</property>
-            <property name="width_request">110</property>
-            <property name="height_request">20</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">False</property>
-            <property name="active">True</property>
-            <property name="draw_indicator">True</property>
-          </object>
-          <packing>
-            <property name="x">50</property>
-            <property name="y">50</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkRadioButton" id="buttonRadioSpline">
-            <property name="label" translatable="yes">Curva b-Spline</property>
-            <property name="width_request">123</property>
-            <property name="height_request">20</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">False</property>
-            <property name="active">True</property>
-            <property name="draw_indicator">True</property>
-            <property name="group">buttonRadioBezier</property>
-          </object>
-          <packing>
-            <property name="x">230</property>
-            <property name="y">50</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel" id="labelCurvaFinal">
-            <property name="width_request">77</property>
-            <property name="height_request">30</property>
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="label" translatable="yes">Ponto final:</property>
-          </object>
-          <packing>
-            <property name="x">40</property>
-            <property name="y">160</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkSpinButton" id="spinCurvaControleX1">
-            <property name="width_request">110</property>
-            <property name="height_request">31</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-          </object>
-          <packing>
-            <property name="x">135</property>
-            <property name="y">200</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkSpinButton" id="spinCurvaControleY1">
-            <property name="width_request">108</property>
-            <property name="height_request">31</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-          </object>
-          <packing>
-            <property name="x">245</property>
-            <property name="y">200</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkSpinButton" id="spinCurvaControleX2">
-            <property name="width_request">110</property>
-            <property name="height_request">31</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-          </object>
-          <packing>
-            <property name="x">135</property>
-            <property name="y">240</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkSpinButton" id="spinCurvaControleY2">
-            <property name="width_request">108</property>
-            <property name="height_request">31</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-          </object>
-          <packing>
-            <property name="x">245</property>
-            <property name="y">240</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel" id="labelCurvaInicial">
-            <property name="width_request">87</property>
-            <property name="height_request">30</property>
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="label" translatable="yes">Ponto inicial:</property>
-          </object>
-          <packing>
-            <property name="x">40</property>
-            <property name="y">120</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel" id="labelCurvaControle2">
-            <property name="width_request">74</property>
-            <property name="height_request">30</property>
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="label" translatable="yes">Controle 2:</property>
-          </object>
-          <packing>
-            <property name="x">40</property>
-            <property name="y">240</property>
           </packing>
         </child>
       </object>

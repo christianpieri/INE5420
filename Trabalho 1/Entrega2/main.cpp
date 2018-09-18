@@ -22,6 +22,7 @@ using namespace std;
     GtkWidget *windowConfirmacaoExclusao;
     GtkWidget *windowAviso;
     GtkWidget *windowRotacionarObjeto;
+    GtkWidget *windowCurva;
     Window     tela;
 
     // Botões da caixa de controle
@@ -38,6 +39,8 @@ using namespace std;
     GtkToggleButton *buttonOnOffClipping;
     GtkRadioButton *buttonRadioClip1;
     GtkRadioButton *buttonRadioClip2;
+    GtkWidget *buttonSalvarObj;
+    GtkWidget *buttonCarregarObj;
 
     // Botões dos objetos a serem desenhados
     GtkWidget *buttonPonto;
@@ -72,6 +75,11 @@ using namespace std;
     GtkWidget *spinPoligonoY;
     GtkWidget *spinPoligonoZ;
     GtkWidget *textEntryPoligonoName;
+
+    // Botões da window curva
+    GtkWidget *buttonSalvarCurva;
+    GtkWidget *buttonCancelarCurva;
+    GtkWidget *textEntryCurvaName;
 
     // Botões da window de confirmação de exclusão
     GtkWidget *buttonSimConfExclusao;
@@ -925,6 +933,52 @@ static void on_radioButtonPontoQualquer_toggled() {
     }
 }
 
+// chama este método quando o botão salvar obj da window principal é clicado
+static void on_buttonSalvarObj_clicked() {
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+    gtk_text_buffer_insert(buffer, &end, "Botão salvar objeto pressionado!\n", -1);
+}
+
+// chama este método quando o botão carregar obj da window principal é clicado
+static void on_buttonCarregarObj_clicked() {
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+    gtk_text_buffer_insert(buffer, &end, "Botão carregar objeto pressionado!\n", -1);
+}
+
+// chama este método quando o botão desenhar curva da window principal é clicado
+static void on_buttonCurva_clicked() {
+    gtk_widget_show(windowCurva);
+
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+    gtk_text_buffer_insert(buffer, &end, "Botão desenhar curva pressionado!\n", -1);
+}
+
+// chama este método quando o botão salvar da window de curvas é clicado
+static void on_buttonSalvarCurva_clicked() {
+    gtk_widget_hide(windowCurva);
+
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+    gtk_text_buffer_insert(buffer, &end, "Botão salvar curva pressionado!\n", -1);
+}
+
+// chama este método quando o botão cancelar da window de curvas é clicado
+static void on_buttonCancelarCurva_clicked() {
+    gtk_widget_hide(windowCurva);
+
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+    gtk_text_buffer_insert(buffer, &end, "Inclusão de curva cancelada!\n", -1);
+}
+
 // chama este método quando o botão cancelar da window de rotação de objeto é clicado
 static void on_buttonCancelarRotacao_clicked() {
     gtk_widget_hide(windowRotacionarObjeto);
@@ -1022,6 +1076,7 @@ int main(int argc, char *argv[]) {
     windowConfirmacaoExclusao = GTK_WIDGET(gtk_builder_get_object(builder, "windowConfirmacaoExclusao"));
     windowAviso = GTK_WIDGET(gtk_builder_get_object(builder, "windowAviso"));
     windowRotacionarObjeto = GTK_WIDGET(gtk_builder_get_object(builder, "windowRotacionarObjeto"));
+    windowCurva = GTK_WIDGET(gtk_builder_get_object(builder, "windowCurva"));
     drawingArea = GTK_WIDGET(gtk_builder_get_object(builder, "drawingArea"));
     
     textConsole = GTK_WIDGET(gtk_builder_get_object(builder, "textConsole"));
@@ -1049,9 +1104,12 @@ int main(int argc, char *argv[]) {
     buttonRotateDireita = GTK_WIDGET(gtk_builder_get_object(builder, "buttonRotateDireita"));
     buttonRotateEsquerda = GTK_WIDGET(gtk_builder_get_object(builder, "buttonRotateEsquerda"));
     buttonDeletarObjeto = GTK_WIDGET(gtk_builder_get_object(builder, "buttonDeletarObjeto"));
+    buttonCurva = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCurva"));
     buttonOnOffClipping = GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, "buttonOnOffClipping"));
     buttonRadioClip1 = GTK_RADIO_BUTTON(gtk_builder_get_object(builder, "buttonRadioClip1"));
     buttonRadioClip2 = GTK_RADIO_BUTTON(gtk_builder_get_object(builder, "buttonRadioClip2"));
+    buttonSalvarObj = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSalvarObj"));
+    buttonCarregarObj = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCarregarObj"));
 
     buttonSalvarPoint = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSalvarPoint"));
     buttonCancelarPoint = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCancelarPoint"));
@@ -1077,6 +1135,10 @@ int main(int argc, char *argv[]) {
     spinRetaY2 = GTK_WIDGET(gtk_builder_get_object(builder, "spinRetaY2"));
     spinRetaZ2 = GTK_WIDGET(gtk_builder_get_object(builder, "spinRetaZ2"));
     textEntryRetaName = GTK_WIDGET(gtk_builder_get_object(builder, "textEntryRetaName"));
+
+    buttonSalvarCurva = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSalvarCurva"));
+    buttonCancelarCurva = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCancelarCurva"));
+    textEntryCurvaName = GTK_WIDGET(gtk_builder_get_object(builder, "textEntryCurvaName"));
 
     buttonSimConfExclusao = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSimConfExclusao"));
     buttonCancelarConfExclusao = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCancelarConfExclusao"));
@@ -1108,7 +1170,12 @@ int main(int argc, char *argv[]) {
     g_signal_connect(buttonRotateDireita, "button-release-event", G_CALLBACK (on_buttonRotateDireita_clicked), NULL);
     g_signal_connect(buttonRotateEsquerda, "button-release-event", G_CALLBACK (on_buttonRotateEsquerda_clicked), NULL);
     g_signal_connect(buttonDeletarObjeto, "button-release-event", G_CALLBACK (on_buttonDeletarObjeto_clicked), NULL);
+    g_signal_connect(buttonCurva, "button-release-event", G_CALLBACK (on_buttonCurva_clicked), NULL);
+    g_signal_connect(buttonSalvarCurva, "button-release-event", G_CALLBACK (on_buttonSalvarCurva_clicked), NULL);
+    g_signal_connect(buttonCancelarCurva, "button-release-event", G_CALLBACK (on_buttonCancelarCurva_clicked), NULL);
     g_signal_connect(buttonOnOffClipping, "toggled", G_CALLBACK(on_buttonOnOffClipping_toggled), NULL);
+    g_signal_connect(buttonSalvarObj, "button-release-event", G_CALLBACK(on_buttonSalvarObj_clicked), NULL);
+    g_signal_connect(buttonCarregarObj, "button-release-event", G_CALLBACK(on_buttonCarregarObj_clicked), NULL);
 
     g_signal_connect(buttonSalvarPoint, "button-release-event", G_CALLBACK (on_buttonSalvarPoint_clicked), NULL);
     g_signal_connect(buttonCancelarPoint, "button-release-event", G_CALLBACK (on_buttonCancelarPoint_clicked), NULL);
