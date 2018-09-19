@@ -145,14 +145,12 @@ using namespace std;
 // Transformada de ViewPort de X
 static double transformadaViewPortCoordenadaX(double x) {
     double auxiliar = (x - tela.getValorXMinimo()) / (tela.getValorXMaximo() - tela.getValorXMinimo());
-
     return auxiliar * (xViewPortMax - xViewPortMin);
 }
 
 // Transformada de ViewPort de Y
 static double transformadaViewPortCoordenadaY(double y) {   
     double auxiliar = (y - tela.getValorYMinimo()) / (tela.getValorYMaximo() - tela.getValorYMinimo());
-
     return (1 - auxiliar) * (yViewPortMax - yViewPortMin);
 }
 
@@ -164,13 +162,11 @@ static void monstrarMensagemNoConsole(std::string mensagem) {
 }
 // Limpa a tela toda
 static void clear_surface () {
-  
-  cairo_t *cr;
-  cr = cairo_create (surface);
-  cairo_set_source_rgb (cr, 1, 1, 1);
-  cairo_paint (cr);
-  cairo_destroy (cr);
- 
+    cairo_t *cr;
+    cr = cairo_create (surface);
+    cairo_set_source_rgb (cr, 1, 1, 1);
+    cairo_paint (cr);
+    cairo_destroy (cr);
 }
 
 // Desenha os objetos após passar pelas transformadas
@@ -200,7 +196,6 @@ static void redesenhaPontos() {
                       transformadaViewPortCoordenadaX(x),
                       transformadaViewPortCoordenadaY(y));
     }
-
 }
 
 // Redesenha retas
@@ -221,7 +216,6 @@ static void redesenhaRetas() {
                       transformadaViewPortCoordenadaY(y1),
                       transformadaViewPortCoordenadaX(x2),
                       transformadaViewPortCoordenadaY(y2));
-
     }
 }
 
@@ -233,7 +227,6 @@ static void redesenhaPoligonos() {
     for (std::vector<Poligono*>::iterator it = objetosPoligono.begin(); it != objetosPoligono.end(); ++it) {
 
         auto listaDePontos = (*it)->getListaDePontos();
-
         auto ponto = listaDePontos.at(0);
         
         cairo_t *cr;
@@ -254,7 +247,6 @@ static void redesenhaPoligonos() {
     
         cairo_stroke (cr);    
     }
-
     gtk_widget_queue_draw (windowPrincipal);
 }
 
@@ -265,7 +257,6 @@ static void reDrawAll () {
     redesenhaPontos();
     redesenhaRetas();
     redesenhaPoligonos();
-  
 }
 
 // chama este método quando o botão limpar tela é clicado
@@ -387,28 +378,22 @@ static void on_buttonZoomOut_clicked() {
 // chama este método quando o botão reta é clicado
 static void on_buttonReta_clicked() {
     
-    monstrarMensagemNoConsole("Botão reta pressionado!\n");
-
     gtk_widget_show(windowReta);
-
+    monstrarMensagemNoConsole("Botão reta pressionado!\n");
 }
 
 // chama este método quando o botão poligono é clicado
 static void on_buttonPoligono_clicked() {
     
-    monstrarMensagemNoConsole("Botão poligono pressionado!\n");
-
     gtk_widget_show(windowPoligono);
-    
+    monstrarMensagemNoConsole("Botão poligono pressionado!\n");
 }
 
 // chama este método quando o botão ponto é clicado
 static void on_buttonPonto_clicked() {
     
-    monstrarMensagemNoConsole("Botão ponto pressionado!\n");
-
     gtk_widget_show(windowPonto);
-
+    monstrarMensagemNoConsole("Botão ponto pressionado!\n");
 }
 
 // chama este método quando o botão salvar da window ponto é clicado
@@ -468,12 +453,7 @@ static void on_buttonSalvarPoint_clicked() {
 static void on_buttonCancelarPoint_clicked() {
 
     gtk_widget_hide(windowPonto);
-
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Inclusão de ponto cancelada!\n", -1);
-
+    monstrarMensagemNoConsole("Inclusão de ponto cancelada!\n");
 }
 
 // chama este método quando o botão salvar da window reta é clicado
@@ -536,7 +516,6 @@ static void on_buttonSalvarReta_clicked() {
 static void on_buttonCancelarReta_clicked() {
 
     gtk_widget_hide(windowReta);
-
     monstrarMensagemNoConsole("Inclusão de reta cancelada!\n");
 
 }
@@ -637,7 +616,6 @@ static void on_buttonCancelarPoligono_clicked() {
     gtk_widget_hide(windowPoligono);
     pontosAuxiliarPoligono.clear();
     monstrarMensagemNoConsole("Inclusão de polígono cancelada!\n");
-
 }
 
 // chama este método quando o botão sim da window de confirmação de exclusão é clicado
@@ -1015,7 +993,6 @@ static void on_buttonEditObjeto_clicked() {
     } else {
         monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para editá-lo!\n");
     }
-    
 }
 
 // chama quando botão cancelar da edicao é clicado
@@ -1044,7 +1021,6 @@ static void transladarPonto() {
         console << "O ponto " << ponto->getNome() << " foi redesenhado no local (" << ponto->getValorX() << ", " << ponto->getValorY() << ")." << std::endl;
         monstrarMensagemNoConsole(console.str().c_str());
         reDrawAll();
-
     }        
 }
 
@@ -1072,25 +1048,21 @@ static void on_buttonSalvarEdicao_clicked() {
     } else {
         monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para editá-lo!\n");
     }
-
 }
-
 
 /*Creates the surface*/
 static gboolean configure_event_cb (GtkWidget *widget, GdkEventConfigure *event, gpointer data) {
  
- if (surface) {
-    cairo_surface_destroy (surface);
- }
+    if (surface) {
+        cairo_surface_destroy (surface);
+    }
 
-  surface = gdk_window_create_similar_surface (gtk_widget_get_window (widget),
-                                       CAIRO_CONTENT_COLOR,
-                                       gtk_widget_get_allocated_width (widget),
-                                       gtk_widget_get_allocated_height (widget));
-  clear_surface();
-  
-  return TRUE;
-
+    surface = gdk_window_create_similar_surface (gtk_widget_get_window (widget),
+                                                CAIRO_CONTENT_COLOR,
+                                                gtk_widget_get_allocated_width (widget),
+                                                gtk_widget_get_allocated_height (widget));
+    clear_surface();
+    return TRUE;
 }
 
 /* Redraw the screen from the surface */
@@ -1099,7 +1071,6 @@ static gboolean draw_cb (GtkWidget *widget, cairo_t   *cr,  gpointer   data) {
   cairo_set_source_surface (cr, surface, 0, 0);
   cairo_paint (cr);
   return FALSE;
-
 }
 
 static void on_buttonFecharWindowPrincipal(GtkWidget *windowPrincipal, gpointer data) {
