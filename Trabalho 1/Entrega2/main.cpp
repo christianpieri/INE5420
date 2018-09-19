@@ -791,27 +791,37 @@ static void deletarObjetoPoligono() {
     }
 }
 
-// chama este método quando o botão deletar objeto é clicado
-static void on_buttonDeletarObjeto_clicked() {
-      
-    monstrarMensagemNoConsole("Botão deletar objeto pressionado!\n");
-    
+
+static std::string retornarTipoObjeto() {
     GtkTreeIter iter;
     GtkTreeModel *model;
     gchar* tipoDoObjeto;
     if (gtk_tree_selection_get_selected (objectSelected, &model, &iter)) {
         gtk_tree_model_get (model, &iter, COL_TYPE, &tipoDoObjeto, -1);
         string tipo = (std::string)tipoDoObjeto;
+        return tipo;
+    } else {
+        return "-1";
+    }
+}
+
+// chama este método quando o botão deletar objeto é clicado
+static void on_buttonDeletarObjeto_clicked() {
+      
+    monstrarMensagemNoConsole("Botão deletar objeto pressionado!\n");
     
-    if(tipo.compare("Ponto") == 0) {
-        deletarObjetoPonto();
-        
-        } else if(tipo.compare("Reta") == 0) {
-                deletarObjetoReta();
+    string tipo = retornarTipoObjeto();
+    
+    if(tipo.compare("-1") != 0) {
+        if(tipo.compare("Ponto") == 0) {
+            deletarObjetoPonto();
             
-            } else if (tipo.compare("Polígono") == 0) {
-                    deletarObjetoPoligono();
-        }
+            } else if(tipo.compare("Reta") == 0) {
+                    deletarObjetoReta();
+                
+                } else if (tipo.compare("Polígono") == 0) {
+                        deletarObjetoPoligono();
+            }
     } else {
         monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para deletá-lo!\n");
     }
@@ -951,20 +961,6 @@ static void editarObjetoPoligono() {
     gtk_widget_set_tooltip_text(GTK_WIDGET(GTK_BUTTON(GTK_RADIO_BUTTON(radioButtonEscalonar))), "");
     on_radioButtonTransladar_toggled();
     gtk_widget_show(windowEditarObjeto);
-}
-
-
-static std::string retornarTipoObjeto() {
-    GtkTreeIter iter;
-    GtkTreeModel *model;
-    gchar* tipoDoObjeto;
-    if (gtk_tree_selection_get_selected (objectSelected, &model, &iter)) {
-        gtk_tree_model_get (model, &iter, COL_TYPE, &tipoDoObjeto, -1);
-        string tipo = (std::string)tipoDoObjeto;
-        return tipo;
-    } else {
-        return "-1";
-    }
 }
 
 // chama quando botão editar objeto é clicado
