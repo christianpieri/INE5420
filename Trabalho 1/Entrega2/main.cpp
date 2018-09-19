@@ -1030,7 +1030,7 @@ static void transladarReta() {
     } else {
         
         int x = atoi(gtk_entry_get_text(GTK_ENTRY(textEntryEditarX)));
-        int y = atoi(gtk_entry_get_text(GTK_ENTRY(textEntryEditarX)));
+        int y = atoi(gtk_entry_get_text(GTK_ENTRY(textEntryEditarY)));
         
         reta->setValorXInicial(reta->getValorXInicial() + x);
         reta->setValorYInicial(reta->getValorYInicial() + x);
@@ -1053,7 +1053,7 @@ static void transladarPoligono() {
     } else {
         
         int x = atoi(gtk_entry_get_text(GTK_ENTRY(textEntryEditarX)));
-        int y = atoi(gtk_entry_get_text(GTK_ENTRY(textEntryEditarX)));
+        int y = atoi(gtk_entry_get_text(GTK_ENTRY(textEntryEditarY)));
        
         for(int i = 0; i < poligono->getListaDePontos().size(); i++) {
             auto ponto = poligono->getListaDePontos().at(i);
@@ -1100,7 +1100,37 @@ static void escalonarReta() {
 }
 
 static void escalonarPoligono() {
-    monstrarMensagemNoConsole("Escalonando poligono!");
+    auto poligono = retornarPoligono();
+    if(poligono == nullptr) {
+        monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para editá-lo!\n");
+    } else {
+
+        double recebido = atof(gtk_entry_get_text(GTK_ENTRY(textEntryEditarEscalonar)));
+
+        double somaX = 0;
+        double somaY = 0;
+        
+        for(int i = 0; i < poligono->getListaDePontos().size(); i++) {
+            auto ponto = poligono->getListaDePontos().at(i);
+            somaX = somaX + ponto->getValorX();
+            somaY = somaY + ponto->getValorY();
+        }
+
+        double pontoMedioX = somaX/poligono->getListaDePontos().size();
+        double pontoMedioY = somaY/poligono->getListaDePontos().size();
+
+        for(int i = 0; i < poligono->getListaDePontos().size(); i++) {
+            auto ponto = poligono->getListaDePontos().at(i);
+            ponto->setValorX((ponto->getValorX() - pontoMedioX) * recebido + pontoMedioX);
+            ponto->setValorY((ponto->getValorY() - pontoMedioY) * recebido + pontoMedioY);
+        }
+
+
+        reDrawAll();
+        std::ostringstream console;
+        console << "O polígono " << poligono->getNome() << " foi escalonado." << std::endl;
+        monstrarMensagemNoConsole(console.str().c_str());
+    }
 }
 
 // chama quando botão salvar da edição é clicado
