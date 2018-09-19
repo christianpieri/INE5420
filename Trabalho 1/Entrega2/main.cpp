@@ -243,7 +243,7 @@ static void redesenhaPoligonos() {
         }  
 
         cairo_line_to (cr, transformadaViewPortCoordenadaX(ponto->getValorX()),
-                        transformadaViewPortCoordenadaY(ponto->getValorY()));
+                           transformadaViewPortCoordenadaY(ponto->getValorY()));
     
         cairo_stroke (cr);    
     }
@@ -396,6 +396,12 @@ static void on_buttonPonto_clicked() {
     monstrarMensagemNoConsole("Botão ponto pressionado!\n");
 }
 
+
+static void colocaObjetoNaListStore(std::string nome, std::string tipo) {
+    GtkTreeIter iter;
+    gtk_list_store_append(objectListStore, &iter);
+    gtk_list_store_set(objectListStore, &iter, COL_NAME, nome.c_str(), COL_TYPE, tipo.c_str(), -1);
+}
 // chama este método quando o botão salvar da window ponto é clicado
 static void on_buttonSalvarPoint_clicked() {
 
@@ -442,9 +448,7 @@ static void on_buttonSalvarPoint_clicked() {
             Ponto *ponto = new Ponto(x, y, nome);
             objetosPonto.push_back(ponto);
 
-            GtkTreeIter iter;
-            gtk_list_store_append(objectListStore, &iter);
-            gtk_list_store_set(objectListStore, &iter, COL_NAME, gtk_entry_get_text(GTK_ENTRY(textEntryPointName)), COL_TYPE, "Ponto", -1);
+            colocaObjetoNaListStore(nome, "Ponto");
         }
     }
 }
@@ -505,9 +509,7 @@ static void on_buttonSalvarReta_clicked() {
             Reta *reta = new Reta(x1, y1, x2, y2, nome);
             objetosReta.push_back(reta);
 
-            GtkTreeIter iter;
-            gtk_list_store_append(objectListStore, &iter);
-            gtk_list_store_set(objectListStore, &iter, COL_NAME, gtk_entry_get_text(GTK_ENTRY(textEntryRetaName)), COL_TYPE, "Reta", -1);
+            colocaObjetoNaListStore(nome, "Reta");
         }
     }
 }
@@ -602,9 +604,7 @@ static void on_buttonSalvarPoligono_clicked() {
                 objetosPoligono.push_back(poligono);
                 pontosAuxiliarPoligono.clear();
 
-                GtkTreeIter iter;
-                gtk_list_store_append(objectListStore, &iter);
-                gtk_list_store_set(objectListStore, &iter, COL_NAME, gtk_entry_get_text(GTK_ENTRY(textEntryPoligonoName)), COL_TYPE, "Polígono", -1);
+                colocaObjetoNaListStore(nome, "Polígono");
             }
         }
     }
