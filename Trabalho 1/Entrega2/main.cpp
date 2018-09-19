@@ -715,7 +715,17 @@ static Poligono* retornarPoligono() {
     return nullptr;
 }
 
- static void deletarObjetoPonto() {
+static void removerObjetoDaListStore() {
+    GtkTreeIter iter;
+    GtkTreeModel *model;
+    gchar* nomeDoObjeto;
+    if (gtk_tree_selection_get_selected (objectSelected, &model, &iter)) {
+        gtk_tree_model_get (model, &iter, 0, &nomeDoObjeto, -1);
+        gtk_list_store_remove(objectListStore, &iter);
+    }
+}
+
+static void deletarObjetoPonto() {
     
     auto ponto = retornarPonto();
     if(ponto == nullptr) {
@@ -730,15 +740,7 @@ static Poligono* retornarPoligono() {
                 monstrarMensagemNoConsole(console.str().c_str());
                 
                 reDrawAll();
-
-                GtkTreeIter iter;
-                GtkTreeModel *model;
-                gchar* nomeDoObjeto;
-                if (gtk_tree_selection_get_selected (objectSelected, &model, &iter)) {
-                    gtk_tree_model_get (model, &iter, 0, &nomeDoObjeto, -1);
-                    gtk_list_store_remove(objectListStore, &iter);
-                }
-                
+                removerObjetoDaListStore();        
                 break;
             }
         }
@@ -760,15 +762,7 @@ static void deletarObjetoReta() {
                 monstrarMensagemNoConsole(console.str().c_str());
                 
                 reDrawAll();
-
-                GtkTreeIter iter;
-                GtkTreeModel *model;
-                gchar* nomeDoObjeto;
-                if (gtk_tree_selection_get_selected (objectSelected, &model, &iter)) {
-                    gtk_tree_model_get (model, &iter, 0, &nomeDoObjeto, -1);
-                    gtk_list_store_remove(objectListStore, &iter);
-                }
-                
+                removerObjetoDaListStore();
                 break;
             }
         }
@@ -790,15 +784,7 @@ static void deletarObjetoPoligono() {
                 monstrarMensagemNoConsole(console.str().c_str());
                 
                 reDrawAll();
-
-                GtkTreeIter iter;
-                GtkTreeModel *model;
-                gchar* nomeDoObjeto;
-                if (gtk_tree_selection_get_selected (objectSelected, &model, &iter)) {
-                    gtk_tree_model_get (model, &iter, 0, &nomeDoObjeto, -1);
-                    gtk_list_store_remove(objectListStore, &iter);
-                }
-                
+                removerObjetoDaListStore();                
                 break;
             }
         }
@@ -824,9 +810,8 @@ static void on_buttonDeletarObjeto_clicked() {
                 deletarObjetoReta();
             
             } else if (tipo.compare("Polígono") == 0) {
-                deletarObjetoPoligono();
+                    deletarObjetoPoligono();
         }
-
     } else {
         monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para deletá-lo!\n");
     }
@@ -968,6 +953,20 @@ static void editarObjetoPoligono() {
     gtk_widget_show(windowEditarObjeto);
 }
 
+
+static std::string retornarTipoObjeto() {
+    GtkTreeIter iter;
+    GtkTreeModel *model;
+    gchar* tipoDoObjeto;
+    if (gtk_tree_selection_get_selected (objectSelected, &model, &iter)) {
+        gtk_tree_model_get (model, &iter, COL_TYPE, &tipoDoObjeto, -1);
+        string tipo = (std::string)tipoDoObjeto;
+        return tipo;
+    } else {
+        return "-1";
+    }
+}
+
 // chama quando botão editar objeto é clicado
 static void on_buttonEditObjeto_clicked() {
 
@@ -979,7 +978,9 @@ static void on_buttonEditObjeto_clicked() {
     if (gtk_tree_selection_get_selected (objectSelected, &model, &iter)) {
         gtk_tree_model_get (model, &iter, COL_TYPE, &tipoDoObjeto, -1);
         string tipo = (std::string)tipoDoObjeto;
-    
+
+    // std::string tipo = retornarTipoObjeto();
+
     if(tipo.compare("Ponto") == 0) {
         editarObjetoPonto();
         
@@ -988,10 +989,11 @@ static void on_buttonEditObjeto_clicked() {
             
             } else if (tipo.compare("Polígono") == 0) {
                 editarObjetoPoligono();
-        }
-
-    } else {
-        monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para editá-lo!\n");
+            
+            }
+            
+        } else {
+            monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para editá-lo!\n");
     }
 }
 
@@ -1008,12 +1010,9 @@ static void transladarPonto() {
         monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para editá-lo!\n");
     } else {
         
-        // int x = gtk_entry_get_text(GTK_ENTRY(textEntryEditarX));
-        // int y = gtk_entry_get_text(GTK_ENTRY(textEntryEditarX));
-            
-        int x = 100;
-        int y = 100;
-
+        int x = atoi(gtk_entry_get_text(GTK_ENTRY(textEntryEditarX)));
+        int y = atoi(gtk_entry_get_text(GTK_ENTRY(textEntryEditarX)));
+        
         ponto->setValorX(ponto->getValorX() + x);
         ponto->setValorY(ponto->getValorY() + y);
             
@@ -1022,6 +1021,86 @@ static void transladarPonto() {
         monstrarMensagemNoConsole(console.str().c_str());
         reDrawAll();
     }        
+}
+
+static void transladarReta() {
+    auto reta = retornarReta();
+    if(reta == nullptr) {
+        monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para editá-lo!\n");
+    } else {
+        
+        int x = atoi(gtk_entry_get_text(GTK_ENTRY(textEntryEditarX)));
+        int y = atoi(gtk_entry_get_text(GTK_ENTRY(textEntryEditarX)));
+        
+        reta->setValorXInicial(reta->getValorXInicial() + x);
+        reta->setValorYInicial(reta->getValorYInicial() + x);
+        reta->setValorXFinal(reta->getValorXFinal() + x);
+        reta->setValorYFinal(reta->getValorYFinal() + x);
+            
+        std::ostringstream console;
+        console << "A reta " << reta->getNome() << " foi redesenhada no local (" << 
+            reta->getValorXInicial() << ", " << reta->getValorYInicial() << ") -> (" << 
+            reta->getValorXFinal() << ", " << reta->getValorYFinal() << ")." << std::endl;
+        monstrarMensagemNoConsole(console.str().c_str());
+        reDrawAll();
+    }
+}
+
+static void transladarPoligono() {
+    auto poligono = retornarPoligono();
+    if(poligono == nullptr) {
+        monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para editá-lo!\n");
+    } else {
+        
+        int x = atoi(gtk_entry_get_text(GTK_ENTRY(textEntryEditarX)));
+        int y = atoi(gtk_entry_get_text(GTK_ENTRY(textEntryEditarX)));
+       
+        for(int i = 0; i < poligono->getListaDePontos().size(); i++) {
+            auto ponto = poligono->getListaDePontos().at(i);
+            ponto->setValorX(ponto->getValorX() + x);
+            ponto->setValorY(ponto->getValorY() + y);
+        }
+            
+        std::ostringstream console;
+        console << "O polígono " << poligono->getNome() << " foi redesenhado em (" << 
+                x << ", " << y << ") a mais." << std::endl;
+        monstrarMensagemNoConsole(console.str().c_str());
+        reDrawAll();
+    }
+}
+
+static void escalonarReta() {
+    auto reta = retornarReta();
+    if(reta == nullptr) {
+        monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para editá-lo!\n");
+    } else {
+
+        int recebido = atoi(gtk_entry_get_text(GTK_ENTRY(textEntryEditarEscalonar)));
+
+        double pontoMedioX = (reta->getValorXInicial() + reta->getValorXFinal())/2;
+        double pontoMedioY = (reta->getValorYInicial() + reta->getValorYFinal())/2;
+        
+        double novoXInicial = (reta->getValorXInicial() - pontoMedioX) * recebido + pontoMedioX;
+        double novoYInicial = (reta->getValorYInicial() - pontoMedioY) * recebido + pontoMedioY;
+        double novoXFinal = (reta->getValorXFinal() - pontoMedioX) * recebido + pontoMedioX;
+        double novoYFinal = (reta->getValorYFinal() - pontoMedioY) * recebido + pontoMedioY;
+        
+        reta->setValorXInicial(novoXInicial);
+        reta->setValorYInicial(novoYInicial);
+        reta->setValorXFinal(novoXFinal);
+        reta->setValorYFinal(novoYFinal);
+
+        reDrawAll();
+        std::ostringstream console;
+        console << "A reta " << reta->getNome() << " foi escalonada e agora é (" << 
+            reta->getValorXInicial() << ", " << reta->getValorYInicial() << ") -> (" << 
+            reta->getValorXFinal() << ", " << reta->getValorYFinal() << ")." << std::endl;
+        monstrarMensagemNoConsole(console.str().c_str());
+    }
+}
+
+static void escalonarPoligono() {
+    monstrarMensagemNoConsole("Escalonando poligono!");
 }
 
 // chama quando botão salvar da edição é clicado
@@ -1035,16 +1114,27 @@ static void on_buttonSalvarEdicao_clicked() {
         gtk_tree_model_get (model, &iter, COL_TYPE, &tipoDoObjeto, -1);
         string tipo = (std::string)tipoDoObjeto;
     
-    if(tipo.compare("Ponto") == 0) {
-        transladarPonto();
-        
-        } else if(tipo.compare("Reta") == 0) {
+        if(gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radioButtonTransladar))==TRUE) {
+            if(tipo.compare("Ponto") == 0) {
                 transladarPonto();
-            
-            } else if (tipo.compare("Polígono") == 0) {
-                transladarPonto();
+                
+                } else if(tipo.compare("Reta") == 0) {
+                        transladarReta();
+                    
+                    } else if (tipo.compare("Polígono") == 0) {
+                        transladarPoligono();
+                }
+        } else {
+            if(tipo.compare("Ponto") == 0) {
+                monstrarMensagemNoConsole("Você é o Magaiver? Um objeto ponto não pode ser escalonado");
+                
+                } else if(tipo.compare("Reta") == 0) {
+                        escalonarReta();
+                    
+                    } else if (tipo.compare("Polígono") == 0) {
+                        escalonarPoligono();   
+                    }       
         }
-
     } else {
         monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para editá-lo!\n");
     }
