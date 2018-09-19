@@ -22,6 +22,8 @@ using namespace std;
     GtkWidget *windowConfirmacaoExclusao;
     GtkWidget *windowAviso;
     GtkWidget *windowRotacionarObjeto;
+    GtkWidget *windowCurva;
+    GtkWidget *windowEditarObjeto;
     Window     tela;
 
     // Botões da caixa de controle
@@ -35,9 +37,12 @@ using namespace std;
     GtkWidget *buttonRotateDireita;
     GtkWidget *buttonRotateEsquerda;
     GtkWidget *buttonDeletarObjeto;
+    GtkWidget *buttonEditObjeto;
     GtkToggleButton *buttonOnOffClipping;
     GtkRadioButton *buttonRadioClip1;
     GtkRadioButton *buttonRadioClip2;
+    GtkWidget *buttonSalvarObj;
+    GtkWidget *buttonCarregarObj;
 
     // Botões dos objetos a serem desenhados
     GtkWidget *buttonPonto;
@@ -72,6 +77,11 @@ using namespace std;
     GtkWidget *spinPoligonoY;
     GtkWidget *spinPoligonoZ;
     GtkWidget *textEntryPoligonoName;
+
+    // Botões da window curva
+    GtkWidget *buttonSalvarCurva;
+    GtkWidget *buttonCancelarCurva;
+    GtkWidget *textEntryCurvaName;
 
     // Botões da window de confirmação de exclusão
     GtkWidget *buttonSimConfExclusao;
@@ -111,6 +121,17 @@ using namespace std;
     GtkWidget *textEntryQualX;
     GtkWidget *textEntryQualY;
     GtkWidget *buttonSalvarRotacao;
+
+    // Botões da view de Editar Objeto
+    GtkWidget *labelWindowEditar;
+    GtkWidget *labelTransladarEscalonar;
+    GtkWidget *textEntryEditarX;
+    GtkWidget *textEntryEditarY;
+    GtkWidget *textEntryEditarEscalonar;
+    GtkWidget *buttonCancelarEdicao;
+    GtkWidget *buttonSalvarEdicao;
+    GtkToggleButton *radioButtonTransladar;
+    GtkRadioButton *radioButtonEscalonar;
 
     // Surface
     static cairo_surface_t *surface = NULL;
@@ -698,6 +719,7 @@ static void on_buttonSimConfExclusao_clicked() {
     gtk_widget_queue_draw (windowPrincipal);
 }
 
+// chama este método quando o botão rotacionar a direita da window principal é clicado
 static void on_buttonRotateDireita_clicked() {
 
     gtk_label_set_text(GTK_LABEL(labelSentidoWindowRotacao), "Rotacionando seu objeto para a direita:");
@@ -709,6 +731,7 @@ static void on_buttonRotateDireita_clicked() {
     gtk_text_buffer_insert(buffer, &end, "Botão rotação a direita pressionado!\n", -1);
 }
 
+// chama este método quando o botão rotacionar a esquerda da window principal é clicado
 static void on_buttonRotateEsquerda_clicked() {
     
     gtk_label_set_text(GTK_LABEL(labelSentidoWindowRotacao), "Rotacionando seu objeto para a esquerda:");
@@ -873,6 +896,7 @@ static void deletarObjetoPoligono() {
     }
 }
 
+// chama este método quando o botão deletar objeto é clicado
 static void on_buttonDeletarObjeto_clicked() {
       
     GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
@@ -925,6 +949,52 @@ static void on_radioButtonPontoQualquer_toggled() {
     }
 }
 
+// chama este método quando o botão salvar obj da window principal é clicado
+static void on_buttonSalvarObj_clicked() {
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+    gtk_text_buffer_insert(buffer, &end, "Botão salvar objeto pressionado!\n", -1);
+}
+
+// chama este método quando o botão carregar obj da window principal é clicado
+static void on_buttonCarregarObj_clicked() {
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+    gtk_text_buffer_insert(buffer, &end, "Botão carregar objeto pressionado!\n", -1);
+}
+
+// chama este método quando o botão desenhar curva da window principal é clicado
+static void on_buttonCurva_clicked() {
+    gtk_widget_show(windowCurva);
+
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+    gtk_text_buffer_insert(buffer, &end, "Botão desenhar curva pressionado!\n", -1);
+}
+
+// chama este método quando o botão salvar da window de curvas é clicado
+static void on_buttonSalvarCurva_clicked() {
+    gtk_widget_hide(windowCurva);
+
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+    gtk_text_buffer_insert(buffer, &end, "Botão salvar curva pressionado!\n", -1);
+}
+
+// chama este método quando o botão cancelar da window de curvas é clicado
+static void on_buttonCancelarCurva_clicked() {
+    gtk_widget_hide(windowCurva);
+
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+    gtk_text_buffer_insert(buffer, &end, "Inclusão de curva cancelada!\n", -1);
+}
+
 // chama este método quando o botão cancelar da window de rotação de objeto é clicado
 static void on_buttonCancelarRotacao_clicked() {
     gtk_widget_hide(windowRotacionarObjeto);
@@ -970,9 +1040,156 @@ static void on_buttonOnOffClipping_toggled() {
     }
 }
 
+// chama quando o botão ok da window aviso é clicado
 static void on_buttonOkWindowAviso_clicked() {
     gtk_widget_hide(windowAviso);
 }
+
+// chama para fazer a troca de transladar com escalonar
+static void on_radioButtonTransladar_toggled() {
+   
+    if(gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radioButtonTransladar))==TRUE) {
+        gtk_widget_set_sensitive(textEntryEditarX, true);
+        gtk_widget_set_sensitive(textEntryEditarY, true);
+        gtk_widget_set_sensitive(textEntryEditarEscalonar, false);
+        gtk_label_set_text(GTK_LABEL(labelTransladarEscalonar), "Você gostaria de transladar o seu objeto em quantos x e y?");
+    } else {
+        gtk_widget_set_sensitive(textEntryEditarX, false);
+        gtk_widget_set_sensitive(textEntryEditarY, false);
+        gtk_widget_set_sensitive(textEntryEditarEscalonar, true);
+        gtk_label_set_text(GTK_LABEL(labelTransladarEscalonar), "Você gostaria de escalonar o seu objeto em quantos %?");
+    }
+}
+
+static void editarObjetoPonto() {
+    gtk_toggle_button_set_active(radioButtonTransladar, true);
+    gtk_label_set_text(GTK_LABEL(labelWindowEditar), "Editando seu objeto ponto:");
+    gtk_widget_set_sensitive(GTK_WIDGET(GTK_BUTTON(GTK_RADIO_BUTTON(radioButtonEscalonar))), false);
+    gtk_label_set_text(GTK_LABEL(labelTransladarEscalonar), "Você gostaria de transladar  o seu objeto em quantos x e y?");
+    gtk_widget_set_sensitive(textEntryEditarEscalonar, false);
+    gtk_widget_set_tooltip_text(GTK_WIDGET(GTK_BUTTON(GTK_RADIO_BUTTON(radioButtonEscalonar))), "Um objeto do tipo ponto não pode ser escalonado");
+    gtk_widget_show(windowEditarObjeto);
+}
+
+static void editarObjetoReta() {
+    gtk_toggle_button_set_active(radioButtonTransladar, true);
+    gtk_label_set_text(GTK_LABEL(labelWindowEditar), "Editando seu objeto reta:");
+    gtk_widget_set_sensitive(GTK_WIDGET(GTK_BUTTON(GTK_RADIO_BUTTON(radioButtonEscalonar))), true);
+    gtk_label_set_text(GTK_LABEL(labelTransladarEscalonar), "Você gostaria de transladar  o seu objeto em quantos x e y?");
+    gtk_widget_set_sensitive(textEntryEditarEscalonar, true);
+    gtk_widget_set_tooltip_text(GTK_WIDGET(GTK_BUTTON(GTK_RADIO_BUTTON(radioButtonEscalonar))), "");
+    on_radioButtonTransladar_toggled();
+    gtk_widget_show(windowEditarObjeto);
+}
+
+static void editarObjetoPoligono() {
+    gtk_toggle_button_set_active(radioButtonTransladar, true);
+    gtk_label_set_text(GTK_LABEL(labelWindowEditar), "Editando seu objeto polígono:");
+    gtk_widget_set_sensitive(GTK_WIDGET(GTK_BUTTON(GTK_RADIO_BUTTON(radioButtonEscalonar))), true);
+    gtk_label_set_text(GTK_LABEL(labelTransladarEscalonar), "Você gostaria de transladar o seu objeto em quantos x e y?");
+    gtk_widget_set_sensitive(textEntryEditarEscalonar, true);
+    gtk_widget_set_tooltip_text(GTK_WIDGET(GTK_BUTTON(GTK_RADIO_BUTTON(radioButtonEscalonar))), "");
+    on_radioButtonTransladar_toggled();
+    gtk_widget_show(windowEditarObjeto);
+}
+
+// chama quando botão editar objeto é clicado
+static void on_buttonEditObjeto_clicked() {
+
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+    gtk_text_buffer_insert(buffer, &end, "Botão editar objeto pressionado!\n", -1);
+
+    GtkTreeIter iter;
+    GtkTreeModel *model;
+    gchar* tipoDoObjeto;
+    if (gtk_tree_selection_get_selected (objectSelected, &model, &iter)) {
+        gtk_tree_model_get (model, &iter, COL_TYPE, &tipoDoObjeto, -1);
+        string tipo = (std::string)tipoDoObjeto;
+    
+    if(tipo.compare("Ponto") == 0) {
+        editarObjetoPonto();
+        
+        } else if(tipo.compare("Reta") == 0) {
+                editarObjetoReta();
+            
+            } else if (tipo.compare("Polígono") == 0) {
+                editarObjetoPoligono();
+        }
+
+    } else {
+        gtk_text_buffer_insert(buffer, &end, "Você precisa selecionar ao menos um objeto para editá-lo!\n", -1);
+    }
+    
+}
+
+// chama quando botão cancelar da edicao é clicado
+static void on_buttonCancelarEdicao_clicked() {
+    gtk_widget_hide(windowEditarObjeto);
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+    gtk_text_buffer_insert(buffer, &end, "Edição de objeto cancelada!\n", -1);
+}
+
+static void transladarPonto() {
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+    
+    auto ponto = retornarPonto();
+    if(ponto == nullptr) {
+        gtk_text_buffer_insert(buffer, &end, "Você precisa selecionar ao menos um objeto para editá-lo!\n", -1);
+    } else {
+        
+        // int x = gtk_entry_get_text(GTK_ENTRY(textEntryEditarX));
+        // int y = gtk_entry_get_text(GTK_ENTRY(textEntryEditarX));
+            
+        int x = 100;
+        int y = 100;
+
+        ponto->setValorX(ponto->getValorX() + x);
+        ponto->setValorY(ponto->getValorY() + y);
+            
+        std::ostringstream console;
+        console << "O ponto " << ponto->getNome() << " foi redesenhado no local (" << ponto->getValorX() << ", " << ponto->getValorY() << ")." << std::endl;
+        gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
+        reDrawAll();
+
+    }        
+}
+
+// chama quando botão salvar da edição é clicado
+static void on_buttonSalvarEdicao_clicked() {
+    gtk_widget_hide(windowEditarObjeto);
+
+    GtkTreeIter iter;
+    GtkTreeModel *model;
+    gchar* tipoDoObjeto;
+    if (gtk_tree_selection_get_selected (objectSelected, &model, &iter)) {
+        gtk_tree_model_get (model, &iter, COL_TYPE, &tipoDoObjeto, -1);
+        string tipo = (std::string)tipoDoObjeto;
+    
+    if(tipo.compare("Ponto") == 0) {
+        transladarPonto();
+        
+        } else if(tipo.compare("Reta") == 0) {
+                transladarPonto();
+            
+            } else if (tipo.compare("Polígono") == 0) {
+                transladarPonto();
+        }
+
+    } else {
+        GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+        GtkTextIter end;
+        gtk_text_buffer_get_end_iter(buffer, &end);
+        gtk_text_buffer_insert(buffer, &end, "Você precisa selecionar ao menos um objeto para editá-lo!\n", -1);
+    }
+
+}
+
 
 /*Creates the surface*/
 static gboolean configure_event_cb (GtkWidget *widget, GdkEventConfigure *event, gpointer data) {
@@ -1022,6 +1239,8 @@ int main(int argc, char *argv[]) {
     windowConfirmacaoExclusao = GTK_WIDGET(gtk_builder_get_object(builder, "windowConfirmacaoExclusao"));
     windowAviso = GTK_WIDGET(gtk_builder_get_object(builder, "windowAviso"));
     windowRotacionarObjeto = GTK_WIDGET(gtk_builder_get_object(builder, "windowRotacionarObjeto"));
+    windowCurva = GTK_WIDGET(gtk_builder_get_object(builder, "windowCurva"));
+    windowEditarObjeto = GTK_WIDGET(gtk_builder_get_object(builder, "windowEditarObjeto"));
     drawingArea = GTK_WIDGET(gtk_builder_get_object(builder, "drawingArea"));
     
     textConsole = GTK_WIDGET(gtk_builder_get_object(builder, "textConsole"));
@@ -1049,10 +1268,14 @@ int main(int argc, char *argv[]) {
     buttonRotateDireita = GTK_WIDGET(gtk_builder_get_object(builder, "buttonRotateDireita"));
     buttonRotateEsquerda = GTK_WIDGET(gtk_builder_get_object(builder, "buttonRotateEsquerda"));
     buttonDeletarObjeto = GTK_WIDGET(gtk_builder_get_object(builder, "buttonDeletarObjeto"));
+    buttonCurva = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCurva"));
     buttonOnOffClipping = GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, "buttonOnOffClipping"));
     buttonRadioClip1 = GTK_RADIO_BUTTON(gtk_builder_get_object(builder, "buttonRadioClip1"));
     buttonRadioClip2 = GTK_RADIO_BUTTON(gtk_builder_get_object(builder, "buttonRadioClip2"));
-
+    buttonSalvarObj = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSalvarObj"));
+    buttonCarregarObj = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCarregarObj"));
+    buttonEditObjeto = GTK_WIDGET(gtk_builder_get_object(builder, "buttonEditObjeto"));
+    
     buttonSalvarPoint = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSalvarPoint"));
     buttonCancelarPoint = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCancelarPoint"));
     spinPontoX = GTK_WIDGET(gtk_builder_get_object(builder, "spinPontoX"));
@@ -1078,6 +1301,10 @@ int main(int argc, char *argv[]) {
     spinRetaZ2 = GTK_WIDGET(gtk_builder_get_object(builder, "spinRetaZ2"));
     textEntryRetaName = GTK_WIDGET(gtk_builder_get_object(builder, "textEntryRetaName"));
 
+    buttonSalvarCurva = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSalvarCurva"));
+    buttonCancelarCurva = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCancelarCurva"));
+    textEntryCurvaName = GTK_WIDGET(gtk_builder_get_object(builder, "textEntryCurvaName"));
+
     buttonSimConfExclusao = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSimConfExclusao"));
     buttonCancelarConfExclusao = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCancelarConfExclusao"));
 
@@ -1095,6 +1322,16 @@ int main(int argc, char *argv[]) {
     buttonCancelarRotacao = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCancelarRotacao"));
     buttonSalvarRotacao = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSalvarRotacao"));
 
+    labelWindowEditar = GTK_WIDGET(gtk_builder_get_object(builder, "labelWindowEditar"));
+    labelTransladarEscalonar = GTK_WIDGET(gtk_builder_get_object(builder, "labelTransladarEscalonar"));
+    textEntryEditarX = GTK_WIDGET(gtk_builder_get_object(builder, "textEntryEditarX"));
+    textEntryEditarY = GTK_WIDGET(gtk_builder_get_object(builder, "textEntryEditarY"));
+    textEntryEditarEscalonar = GTK_WIDGET(gtk_builder_get_object(builder, "textEntryEditarEscalonar"));
+    buttonSalvarEdicao = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSalvarEdicao"));
+    buttonCancelarEdicao = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCancelarEdicao"));
+    radioButtonTransladar = GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, "radioButtonTransladar"));
+    radioButtonEscalonar = GTK_RADIO_BUTTON(gtk_builder_get_object(builder, "radioButtonEscalonar"));
+
     g_signal_connect(buttonBaixo, "button-release-event", G_CALLBACK (on_buttonBaixo_clicked), NULL);
     g_signal_connect(buttonCima, "button-release-event", G_CALLBACK (on_buttonCima_clicked), NULL);
     g_signal_connect(buttonEsquerda, "button-release-event", G_CALLBACK (on_buttonEsquerda_clicked), NULL);
@@ -1108,8 +1345,14 @@ int main(int argc, char *argv[]) {
     g_signal_connect(buttonRotateDireita, "button-release-event", G_CALLBACK (on_buttonRotateDireita_clicked), NULL);
     g_signal_connect(buttonRotateEsquerda, "button-release-event", G_CALLBACK (on_buttonRotateEsquerda_clicked), NULL);
     g_signal_connect(buttonDeletarObjeto, "button-release-event", G_CALLBACK (on_buttonDeletarObjeto_clicked), NULL);
+    g_signal_connect(buttonCurva, "button-release-event", G_CALLBACK (on_buttonCurva_clicked), NULL);
+    g_signal_connect(buttonSalvarCurva, "button-release-event", G_CALLBACK (on_buttonSalvarCurva_clicked), NULL);
+    g_signal_connect(buttonCancelarCurva, "button-release-event", G_CALLBACK (on_buttonCancelarCurva_clicked), NULL);
     g_signal_connect(buttonOnOffClipping, "toggled", G_CALLBACK(on_buttonOnOffClipping_toggled), NULL);
-
+    g_signal_connect(buttonSalvarObj, "button-release-event", G_CALLBACK(on_buttonSalvarObj_clicked), NULL);
+    g_signal_connect(buttonCarregarObj, "button-release-event", G_CALLBACK(on_buttonCarregarObj_clicked), NULL);
+    g_signal_connect(buttonEditObjeto, "button-release-event", G_CALLBACK(on_buttonEditObjeto_clicked), NULL);
+    
     g_signal_connect(buttonSalvarPoint, "button-release-event", G_CALLBACK (on_buttonSalvarPoint_clicked), NULL);
     g_signal_connect(buttonCancelarPoint, "button-release-event", G_CALLBACK (on_buttonCancelarPoint_clicked), NULL);
 
@@ -1129,6 +1372,10 @@ int main(int argc, char *argv[]) {
     g_signal_connect(radioButtonPontoQualquer, "toggled", G_CALLBACK(on_radioButtonPontoQualquer_toggled), NULL);
     g_signal_connect(buttonCancelarRotacao, "button-release-event", G_CALLBACK (on_buttonCancelarRotacao_clicked), NULL);
     g_signal_connect(buttonSalvarRotacao, "button-release-event", G_CALLBACK (on_buttonSalvarRotacao_clicked), NULL);
+
+    g_signal_connect(buttonCancelarEdicao, "button-release-event", G_CALLBACK (on_buttonCancelarEdicao_clicked), NULL);
+    g_signal_connect(buttonSalvarEdicao, "button-release-event", G_CALLBACK (on_buttonSalvarEdicao_clicked), NULL);
+    g_signal_connect(radioButtonTransladar, "toggled", G_CALLBACK(on_radioButtonTransladar_toggled), NULL);
 
     g_signal_connect(drawingArea, "draw", G_CALLBACK(draw_cb), NULL);
     g_signal_connect(drawingArea, "configure-event", G_CALLBACK(configure_event_cb), NULL);
