@@ -211,7 +211,6 @@ static void redesenhaRetas() {
         x2 = (*it)->getValorXFinal();
         y2 = (*it)->getValorYFinal();
 
-
         desenharLinha(transformadaViewPortCoordenadaX(x1),
                       transformadaViewPortCoordenadaY(y1),
                       transformadaViewPortCoordenadaX(x2),
@@ -635,8 +634,7 @@ static void on_buttonSimConfExclusao_clicked() {
     
     monstrarMensagemNoConsole(console.str().c_str());
 
-    // TODO: LIMPAR TODA A LIST STORE
-
+    gtk_list_store_clear(objectListStore);
     objetosPoligono.clear();
     objetosReta.clear();
     objetosPonto.clear();
