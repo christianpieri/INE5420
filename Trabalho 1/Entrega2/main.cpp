@@ -156,6 +156,12 @@ static double transformadaViewPortCoordenadaY(double y) {
     return (1 - auxiliar) * (yViewPortMax - yViewPortMin);
 }
 
+static void monstrarMensagemNoConsole(std::string mensagem) {
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
+    GtkTextIter end;
+    gtk_text_buffer_get_end_iter(buffer, &end);
+    gtk_text_buffer_insert(buffer, &end, mensagem.c_str(), -1);
+}
 // Limpa a tela toda
 static void clear_surface () {
   
@@ -266,20 +272,13 @@ static void reDrawAll () {
 static void on_buttonLimparTela_clicked() {
   
     gtk_widget_show(windowConfirmacaoExclusao);
-
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Botão limpar tela pressionado!\n", -1);
+    monstrarMensagemNoConsole("Botão limpar tela pressionado!\n");
 }
 
 // chama este método quando o botão baixo é clicado
 static void on_buttonBaixo_clicked() {
     
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Botão baixo pressionado! Movendo-se +10.\n", -1);
+    monstrarMensagemNoConsole("Botão baixo pressionado! Movendo-se +10.\n");
 
     double xMaximo = tela.getValorXMaximo();
     double xMinimo = tela.getValorXMinimo();
@@ -299,10 +298,7 @@ static void on_buttonBaixo_clicked() {
 // chama este método quando o botão cima é clicado
 static void on_buttonCima_clicked() {
     
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Botão cima pressionado! Movendo-se +10.\n", -1);
+    monstrarMensagemNoConsole("Botão cima pressionado! Movendo-se +10.\n");
 
     double xMaximo = tela.getValorXMaximo();
     double xMinimo = tela.getValorXMinimo();
@@ -321,10 +317,7 @@ static void on_buttonCima_clicked() {
 // chama este método quando o botão esquerda é clicado
 static void on_buttonEsquerda_clicked() {
     
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Botão esquerda pressionado! Movendo-se +10.\n", -1);
+    monstrarMensagemNoConsole("Botão esquerda pressionado! Movendo-se +10.\n");
 
     double xMaximo = tela.getValorXMaximo();
     double xMinimo = tela.getValorXMinimo();
@@ -343,10 +336,7 @@ static void on_buttonEsquerda_clicked() {
 // chama este método quando o botão direita é clicado
 static void on_buttonDireita_clicked() {
     
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Botão direita pressionado! Movendo-se +10.\n", -1);
+   monstrarMensagemNoConsole("Botão direita pressionado! Movendo-se +10.\n");
 
     double xMaximo = tela.getValorXMaximo();
     double xMinimo = tela.getValorXMinimo();
@@ -365,10 +355,7 @@ static void on_buttonDireita_clicked() {
 // chama este método quando o botão zoomIn é clicado
 static void on_buttonZoomIn_clicked() {
     
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Botão zoom in pressionado!\n", -1);
+    monstrarMensagemNoConsole("Botão zoom in pressionado!\n");
 
     double xMaximo = tela.getValorXMaximo();
     double xMinimo = tela.getValorXMinimo();
@@ -384,10 +371,7 @@ static void on_buttonZoomIn_clicked() {
 // chama este método quando o botão zoomOut é clicado
 static void on_buttonZoomOut_clicked() {
     
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Botão zoom out pressionado!\n", -1);
+    monstrarMensagemNoConsole("Botão zoom out pressionado!\n");
 
     double xMaximo = tela.getValorXMaximo();
     double xMinimo = tela.getValorXMinimo();
@@ -403,10 +387,7 @@ static void on_buttonZoomOut_clicked() {
 // chama este método quando o botão reta é clicado
 static void on_buttonReta_clicked() {
     
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Botão reta pressionado!\n", -1);
+    monstrarMensagemNoConsole("Botão reta pressionado!\n");
 
     gtk_widget_show(windowReta);
 
@@ -415,10 +396,7 @@ static void on_buttonReta_clicked() {
 // chama este método quando o botão poligono é clicado
 static void on_buttonPoligono_clicked() {
     
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Botão poligono pressionado!\n", -1);
+    monstrarMensagemNoConsole("Botão poligono pressionado!\n");
 
     gtk_widget_show(windowPoligono);
     
@@ -427,10 +405,7 @@ static void on_buttonPoligono_clicked() {
 // chama este método quando o botão ponto é clicado
 static void on_buttonPonto_clicked() {
     
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Botão ponto pressionado!\n", -1);
+    monstrarMensagemNoConsole("Botão ponto pressionado!\n");
 
     gtk_widget_show(windowPonto);
 
@@ -477,11 +452,7 @@ static void on_buttonSalvarPoint_clicked() {
 
             std::ostringstream console;
             console << "O ponto " << nome << "(" << x << ", " << y << ") foi desenhado." << std::endl;
-            
-            GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-            GtkTextIter end;
-            gtk_text_buffer_get_end_iter(buffer, &end);
-            gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
+            monstrarMensagemNoConsole(console.str().c_str());
 
             Ponto *ponto = new Ponto(x, y, nome);
             objetosPonto.push_back(ponto);
@@ -549,11 +520,7 @@ static void on_buttonSalvarReta_clicked() {
 
             std::ostringstream console;
             console << "A reta " << nome << "(" << x1 << ", " << y1 << ") -> (" << x2 << ", " << y2 << ") foi desenhada." << std::endl;
-            
-            GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-            GtkTextIter end;
-            gtk_text_buffer_get_end_iter(buffer, &end);
-            gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
+            monstrarMensagemNoConsole(console.str().c_str());
 
             Reta *reta = new Reta(x1, y1, x2, y2, nome);
             objetosReta.push_back(reta);
@@ -570,10 +537,7 @@ static void on_buttonCancelarReta_clicked() {
 
     gtk_widget_hide(windowReta);
 
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Inclusão de reta cancelada!\n", -1);
+    monstrarMensagemNoConsole("Inclusão de reta cancelada!\n");
 
 }
 
@@ -587,11 +551,7 @@ static void on_buttonAddPontoAoPoligono_clicked() {
 
     std::ostringstream console;
     console << "O ponto (" << x << ", " << y << ") foi adicionado a lista de pontos do seu polígono." << std::endl;
-        
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
+    monstrarMensagemNoConsole(console.str().c_str());
 }
 
 // chama este método quando o botão salvar da window poligono é clicado
@@ -657,11 +617,7 @@ static void on_buttonSalvarPoligono_clicked() {
 
                 std::ostringstream console;
                 console << "O poligono " << nome << " foi desenhado." << std::endl;
-                
-                GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-                GtkTextIter end;
-                gtk_text_buffer_get_end_iter(buffer, &end);
-                gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
+                monstrarMensagemNoConsole(console.str().c_str());
 
                 Poligono *poligono = new Poligono(pontosAuxiliarPoligono, nome);
                 objetosPoligono.push_back(poligono);
@@ -679,13 +635,8 @@ static void on_buttonSalvarPoligono_clicked() {
 static void on_buttonCancelarPoligono_clicked() {
 
     gtk_widget_hide(windowPoligono);
-
     pontosAuxiliarPoligono.clear();
-
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Inclusão de polígono cancelada!\n", -1);
+    monstrarMensagemNoConsole("Inclusão de polígono cancelada!\n");
 
 }
 
@@ -704,10 +655,7 @@ static void on_buttonSimConfExclusao_clicked() {
         console << quantidade << " objetos foram excluídos." << std::endl;
     }
     
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
+    monstrarMensagemNoConsole(console.str().c_str());
 
     // TODO: LIMPAR TODA A LIST STORE
 
@@ -724,11 +672,7 @@ static void on_buttonRotateDireita_clicked() {
 
     gtk_label_set_text(GTK_LABEL(labelSentidoWindowRotacao), "Rotacionando seu objeto para a direita:");
     gtk_widget_show(windowRotacionarObjeto);
-    
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Botão rotação a direita pressionado!\n", -1);
+    monstrarMensagemNoConsole("Botão rotação a direita pressionado!\n");
 }
 
 // chama este método quando o botão rotacionar a esquerda da window principal é clicado
@@ -736,11 +680,7 @@ static void on_buttonRotateEsquerda_clicked() {
     
     gtk_label_set_text(GTK_LABEL(labelSentidoWindowRotacao), "Rotacionando seu objeto para a esquerda:");
     gtk_widget_show(windowRotacionarObjeto);
-    
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Botão rotação a esquerda pressionado!\n", -1);
+    monstrarMensagemNoConsole("Botão rotação a esquerda pressionado!\n");
 }
 
 static Ponto* retornarPonto() {
@@ -798,13 +738,10 @@ static Poligono* retornarPoligono() {
 }
 
  static void deletarObjetoPonto() {
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-
+    
     auto ponto = retornarPonto();
     if(ponto == nullptr) {
-        gtk_text_buffer_insert(buffer, &end, "Você precisa selecionar ao menos um objeto para deletá-lo!\n", -1);
+        monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para deletá-lo!\n");
     } else {
         for (int i = 0; i < objetosPonto.size(); i++) {
             if(objetosPonto.at(i)->getNome().compare(ponto->getNome()) == 0) {
@@ -812,7 +749,7 @@ static Poligono* retornarPoligono() {
 
                 std::ostringstream console;
                 console << "O ponto " << ponto->getNome() << " foi deletado." << std::endl;
-                gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
+                monstrarMensagemNoConsole(console.str().c_str());
                 
                 reDrawAll();
 
@@ -831,13 +768,10 @@ static Poligono* retornarPoligono() {
  }
 
 static void deletarObjetoReta() {
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-
+    
     auto reta = retornarReta();
     if(reta == nullptr) {
-        gtk_text_buffer_insert(buffer, &end, "Você precisa selecionar ao menos um objeto para deletá-lo!\n", -1);
+        monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para deletá-lo!\n");
     } else {
         for (int i = 0; i < objetosReta.size(); i++) {
             if(objetosReta.at(i)->getNome().compare(reta->getNome()) == 0) {
@@ -845,7 +779,7 @@ static void deletarObjetoReta() {
 
                 std::ostringstream console;
                 console << "A reta " << reta->getNome() << " foi deletada." << std::endl;
-                gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
+                monstrarMensagemNoConsole(console.str().c_str());
                 
                 reDrawAll();
 
@@ -864,13 +798,10 @@ static void deletarObjetoReta() {
 }
 
 static void deletarObjetoPoligono() {
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-
+   
     auto poligono = retornarPoligono();
     if(poligono == nullptr) {
-        gtk_text_buffer_insert(buffer, &end, "Você precisa selecionar ao menos um objeto para deletá-lo!\n", -1);
+        monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para deletá-lo!\n");
     } else {
         for (int i = 0; i < objetosPoligono.size(); i++) {
             if(objetosPoligono.at(i)->getNome().compare(poligono->getNome()) == 0) {
@@ -878,7 +809,7 @@ static void deletarObjetoPoligono() {
 
                 std::ostringstream console;
                 console << "O polígono " << poligono->getNome() << " foi deletado." << std::endl;
-                gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
+                monstrarMensagemNoConsole(console.str().c_str());
                 
                 reDrawAll();
 
@@ -899,12 +830,8 @@ static void deletarObjetoPoligono() {
 // chama este método quando o botão deletar objeto é clicado
 static void on_buttonDeletarObjeto_clicked() {
       
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Botão deletar objeto pressionado!\n", -1);
+    monstrarMensagemNoConsole("Botão deletar objeto pressionado!\n");
     
-
     GtkTreeIter iter;
     GtkTreeModel *model;
     gchar* tipoDoObjeto;
@@ -923,7 +850,7 @@ static void on_buttonDeletarObjeto_clicked() {
         }
 
     } else {
-        gtk_text_buffer_insert(buffer, &end, "Você precisa selecionar ao menos um objeto para deletá-lo!\n", -1);
+        monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para deletá-lo!\n");
     }
 }
 
@@ -951,78 +878,48 @@ static void on_radioButtonPontoQualquer_toggled() {
 
 // chama este método quando o botão salvar obj da window principal é clicado
 static void on_buttonSalvarObj_clicked() {
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Botão salvar objeto pressionado!\n", -1);
+    monstrarMensagemNoConsole("Botão salvar objeto pressionado!\n");
 }
 
 // chama este método quando o botão carregar obj da window principal é clicado
 static void on_buttonCarregarObj_clicked() {
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Botão carregar objeto pressionado!\n", -1);
+    monstrarMensagemNoConsole("Botão carregar objeto pressionado!\n");
 }
 
 // chama este método quando o botão desenhar curva da window principal é clicado
 static void on_buttonCurva_clicked() {
     gtk_widget_show(windowCurva);
-
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Botão desenhar curva pressionado!\n", -1);
+    monstrarMensagemNoConsole("Botão desenhar curva pressionado!\n");
 }
 
 // chama este método quando o botão salvar da window de curvas é clicado
 static void on_buttonSalvarCurva_clicked() {
     gtk_widget_hide(windowCurva);
-
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Botão salvar curva pressionado!\n", -1);
+    monstrarMensagemNoConsole("Botão salvar curva pressionado!\n");
 }
 
 // chama este método quando o botão cancelar da window de curvas é clicado
 static void on_buttonCancelarCurva_clicked() {
     gtk_widget_hide(windowCurva);
-
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Inclusão de curva cancelada!\n", -1);
+    monstrarMensagemNoConsole("Inclusão de curva cancelada!\n");
 }
 
 // chama este método quando o botão cancelar da window de rotação de objeto é clicado
 static void on_buttonCancelarRotacao_clicked() {
     gtk_widget_hide(windowRotacionarObjeto);
-
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Rotação de objeto cancelada!\n", -1);
+    monstrarMensagemNoConsole("Rotação de objeto cancelada!\n");
 }
 
 // chama este método quando o botão salvar da window de rotação de objeto é clicado
 static void on_buttonSalvarRotacao_clicked() {
     gtk_widget_hide(windowRotacionarObjeto);
-
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Salvando rotação!\n", -1);
+    monstrarMensagemNoConsole("Salvando rotação!\n");
 }
 
 // chama este método quando o botão cancelar da window de confirmação de exclusão é clicado
 static void on_buttonCancelarConfExclusao_clicked() {
     gtk_widget_hide(windowConfirmacaoExclusao);
-
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Exclusão de objetos e limpeza de tela canceladas!\n", -1);
+    monstrarMensagemNoConsole("Exclusão de objetos e limpeza de tela canceladas!\n");
 }
 
 // on - off do clipping
@@ -1096,10 +993,7 @@ static void editarObjetoPoligono() {
 // chama quando botão editar objeto é clicado
 static void on_buttonEditObjeto_clicked() {
 
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Botão editar objeto pressionado!\n", -1);
+    monstrarMensagemNoConsole("Botão editar objeto pressionado!\n");
 
     GtkTreeIter iter;
     GtkTreeModel *model;
@@ -1119,7 +1013,7 @@ static void on_buttonEditObjeto_clicked() {
         }
 
     } else {
-        gtk_text_buffer_insert(buffer, &end, "Você precisa selecionar ao menos um objeto para editá-lo!\n", -1);
+        monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para editá-lo!\n");
     }
     
 }
@@ -1127,20 +1021,14 @@ static void on_buttonEditObjeto_clicked() {
 // chama quando botão cancelar da edicao é clicado
 static void on_buttonCancelarEdicao_clicked() {
     gtk_widget_hide(windowEditarObjeto);
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    gtk_text_buffer_insert(buffer, &end, "Edição de objeto cancelada!\n", -1);
+    monstrarMensagemNoConsole("Edição de objeto cancelada!\n");
 }
 
 static void transladarPonto() {
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-    GtkTextIter end;
-    gtk_text_buffer_get_end_iter(buffer, &end);
-    
+       
     auto ponto = retornarPonto();
     if(ponto == nullptr) {
-        gtk_text_buffer_insert(buffer, &end, "Você precisa selecionar ao menos um objeto para editá-lo!\n", -1);
+        monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para editá-lo!\n");
     } else {
         
         // int x = gtk_entry_get_text(GTK_ENTRY(textEntryEditarX));
@@ -1154,7 +1042,7 @@ static void transladarPonto() {
             
         std::ostringstream console;
         console << "O ponto " << ponto->getNome() << " foi redesenhado no local (" << ponto->getValorX() << ", " << ponto->getValorY() << ")." << std::endl;
-        gtk_text_buffer_insert(buffer, &end, console.str().c_str(), -1);
+        monstrarMensagemNoConsole(console.str().c_str());
         reDrawAll();
 
     }        
@@ -1182,10 +1070,7 @@ static void on_buttonSalvarEdicao_clicked() {
         }
 
     } else {
-        GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textConsole));
-        GtkTextIter end;
-        gtk_text_buffer_get_end_iter(buffer, &end);
-        gtk_text_buffer_insert(buffer, &end, "Você precisa selecionar ao menos um objeto para editá-lo!\n", -1);
+        monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para editá-lo!\n");
     }
 
 }
