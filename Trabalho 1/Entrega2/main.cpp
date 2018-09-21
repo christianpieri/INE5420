@@ -9,11 +9,13 @@ using namespace std;
 #include <vector>
 #include <iterator>
 #include "Validator.hpp"
+#include <cmath>
 
 #define xViewPortMax 500
 #define xViewPortMin 0
 #define yViewPortMax 500
 #define yViewPortMin 0
+#define PI 3.14159265
 
     GtkWidget *windowPrincipal;
     GtkWidget *windowPonto;
@@ -121,6 +123,12 @@ using namespace std;
     GtkWidget *textEntryQualX;
     GtkWidget *textEntryQualY;
     GtkWidget *buttonSalvarRotacao;
+    GtkWidget *radioButtonRotacao90;
+    GtkWidget *radioButtonRotacao180;
+    GtkWidget *radioButtonRotacao270;
+    GtkWidget *radioButtonCentroMundo;
+    GtkWidget *radioButtonCentroObjeto;
+    std::string sentidoRotacao;
 
     // Botões da view de Editar Objeto
     GtkWidget *labelWindowEditar;
@@ -643,20 +651,47 @@ static void on_buttonSimConfExclusao_clicked() {
     gtk_widget_queue_draw (windowPrincipal);
 }
 
+static std::string retornarTipoObjeto() {
+    GtkTreeIter iter;
+    GtkTreeModel *model;
+    gchar* tipoDoObjeto;
+    if (gtk_tree_selection_get_selected (objectSelected, &model, &iter)) {
+        gtk_tree_model_get (model, &iter, COL_TYPE, &tipoDoObjeto, -1);
+        string tipo = (std::string)tipoDoObjeto;
+        return tipo;
+    } else {
+        return "-1";
+    }
+}
+
 // chama este método quando o botão rotacionar a direita da window principal é clicado
 static void on_buttonRotateDireita_clicked() {
 
-    gtk_label_set_text(GTK_LABEL(labelSentidoWindowRotacao), "Rotacionando seu objeto para a direita:");
-    gtk_widget_show(windowRotacionarObjeto);
+    std::string tipo = retornarTipoObjeto();
     monstrarMensagemNoConsole("Botão rotação a direita pressionado!\n");
+
+    if(tipo.compare("-1") == 0) {
+        monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para rotacioná-lo!\n");
+    } else {
+        sentidoRotacao = "Direita";
+        gtk_label_set_text(GTK_LABEL(labelSentidoWindowRotacao), "Rotacionando seu objeto para a direita:");
+        gtk_widget_show(windowRotacionarObjeto);
+    }
 }
 
 // chama este método quando o botão rotacionar a esquerda da window principal é clicado
 static void on_buttonRotateEsquerda_clicked() {
     
-    gtk_label_set_text(GTK_LABEL(labelSentidoWindowRotacao), "Rotacionando seu objeto para a esquerda:");
-    gtk_widget_show(windowRotacionarObjeto);
+    std::string tipo = retornarTipoObjeto();
     monstrarMensagemNoConsole("Botão rotação a esquerda pressionado!\n");
+
+    if(tipo.compare("-1") == 0) {
+        monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para rotacioná-lo!\n");
+    } else {
+        sentidoRotacao = "Esquerda";
+        gtk_label_set_text(GTK_LABEL(labelSentidoWindowRotacao), "Rotacionando seu objeto para a esquerda:");
+        gtk_widget_show(windowRotacionarObjeto);
+    }
 }
 
 static Ponto* retornarPonto() {
@@ -789,20 +824,6 @@ static void deletarObjetoPoligono() {
     }
 }
 
-
-static std::string retornarTipoObjeto() {
-    GtkTreeIter iter;
-    GtkTreeModel *model;
-    gchar* tipoDoObjeto;
-    if (gtk_tree_selection_get_selected (objectSelected, &model, &iter)) {
-        gtk_tree_model_get (model, &iter, COL_TYPE, &tipoDoObjeto, -1);
-        string tipo = (std::string)tipoDoObjeto;
-        return tipo;
-    } else {
-        return "-1";
-    }
-}
-
 // chama este método quando o botão deletar objeto é clicado
 static void on_buttonDeletarObjeto_clicked() {
       
@@ -881,10 +902,174 @@ static void on_buttonCancelarRotacao_clicked() {
     monstrarMensagemNoConsole("Rotação de objeto cancelada!\n");
 }
 
+static double getValorAnguloRotacao() {
+    double angulo;
+        if(gtk_toggle_button_get_active((GTK_TOGGLE_BUTTON(radioButtonRotacao90))) == TRUE) {angulo = 90;}
+        if(gtk_toggle_button_get_active((GTK_TOGGLE_BUTTON(radioButtonRotacao180))) == TRUE) {angulo = 180;}
+        if(gtk_toggle_button_get_active((GTK_TOGGLE_BUTTON(radioButtonRotacao270))) == TRUE) {angulo = 270;}
+        if(gtk_toggle_button_get_active(radioButtonRotacaoOutro) == TRUE) {
+            angulo = atof(gtk_entry_get_text(GTK_ENTRY(textEntryRotacaoPersonalizado)));
+        }
+
+        if(sentidoRotacao.compare("Esquerda") == 0) {
+            angulo = angulo * (-1);
+        }
+
+        return angulo = angulo * PI / 180;
+}
+
+static void rotacionarPonto() {
+    auto ponto = retornarPonto();
+    if(ponto == nullptr) {
+        monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para editá-lo!\n");
+    } else {
+
+        double angulo = getValorAnguloRotacao();
+
+        double x;
+        double y;
+
+        if(gtk_toggle_button_get_active((GTK_TOGGLE_BUTTON(radioButtonCentroObjeto))) == TRUE) {
+            
+            x = ponto->getValorX();
+            y = ponto->getValorY();
+        }
+
+        if(gtk_toggle_button_get_active((GTK_TOGGLE_BUTTON(radioButtonCentroMundo))) == TRUE) {
+            x = 0;
+            y = 0;
+        }
+
+        if(gtk_toggle_button_get_active(radioButtonPontoQualquer) == TRUE) {
+            x = atof(gtk_entry_get_text(GTK_ENTRY(textEntryQualX)));
+            y = atof(gtk_entry_get_text(GTK_ENTRY(textEntryQualY)));
+        }
+        
+        double novoX = (ponto->getValorX() - x) * cos(angulo) + (ponto->getValorY() - y) * sin(angulo) + x;
+        double novoY = (ponto->getValorX() - x) * -sin(angulo) + (ponto->getValorY() - y) * cos(angulo) + y;
+        ponto->setValorX(novoX);
+        ponto->setValorY(novoY);
+               
+        reDrawAll();
+        std::ostringstream console;
+        console << "O ponto " << ponto->getNome() << " foi rotacionado e agora é (" << 
+                ponto->getValorX() << ", " << ponto->getValorY() << ")." << std::endl;
+        monstrarMensagemNoConsole(console.str().c_str());
+    }
+}
+
+static void rotacionarReta() {
+    auto reta = retornarReta();
+    if(reta == nullptr) {
+        monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para editá-lo!\n");
+    } else {
+
+        double angulo = getValorAnguloRotacao();
+
+        double x;
+        double y;
+
+        if(gtk_toggle_button_get_active((GTK_TOGGLE_BUTTON(radioButtonCentroObjeto))) == TRUE) {
+            x = (reta->getValorXInicial() + reta->getValorXFinal())/2;
+            y = (reta->getValorYInicial() + reta->getValorYFinal())/2;
+        }
+
+        if(gtk_toggle_button_get_active((GTK_TOGGLE_BUTTON(radioButtonCentroMundo))) == TRUE) {
+            x = 0;
+            y = 0;
+        }
+
+        if(gtk_toggle_button_get_active(radioButtonPontoQualquer) == TRUE) {
+            x = atof(gtk_entry_get_text(GTK_ENTRY(textEntryQualX)));
+            y = atof(gtk_entry_get_text(GTK_ENTRY(textEntryQualY)));
+        }
+        
+        double novoXInicial = (reta->getValorXInicial() - x) * cos(angulo) + (reta->getValorYInicial() - y) * sin(angulo) + x;
+        double novoYInicial = (reta->getValorXInicial() - x) * -sin(angulo) + (reta->getValorYInicial() - y) * cos(angulo) + y;
+        double novoXFinal = (reta->getValorXFinal() - x) * cos(angulo) + (reta->getValorYFinal() - y) * sin(angulo) + x;
+        double novoYFinal = (reta->getValorXFinal() - x) * -sin(angulo) + (reta->getValorYFinal() - y) * cos(angulo) + y;
+        
+        reta->setValorXInicial(novoXInicial);
+        reta->setValorYInicial(novoYInicial);
+        reta->setValorXFinal(novoXFinal);
+        reta->setValorYFinal(novoYFinal);
+        
+        reDrawAll();
+        std::ostringstream console;
+        console << "A reta " << reta->getNome() << " foi rotacionada e agora é (" << 
+            reta->getValorXInicial() << ", " << reta->getValorYInicial() << ") -> (" << 
+            reta->getValorXFinal() << ", " << reta->getValorYFinal() << ")." << std::endl;
+        monstrarMensagemNoConsole(console.str().c_str());
+    }
+}
+
+static void rotacionarPoligono() {
+    auto poligono = retornarPoligono();
+    if(poligono == nullptr) {
+        monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para editá-lo!\n");
+    } else {
+
+        double angulo = getValorAnguloRotacao();
+
+        double x;
+        double y;
+
+        if(gtk_toggle_button_get_active((GTK_TOGGLE_BUTTON(radioButtonCentroObjeto))) == TRUE) {
+            double somaX = 0;
+            double somaY = 0;
+        
+            for(int i = 0; i < poligono->getListaDePontos().size(); i++) {
+                auto ponto = poligono->getListaDePontos().at(i);
+                somaX = somaX + ponto->getValorX();
+                somaY = somaY + ponto->getValorY();
+            }
+
+            x = somaX/poligono->getListaDePontos().size();
+            y = somaY/poligono->getListaDePontos().size();
+        }
+
+        if(gtk_toggle_button_get_active((GTK_TOGGLE_BUTTON(radioButtonCentroMundo))) == TRUE) {
+            x = 0;
+            y = 0;
+        }
+
+        if(gtk_toggle_button_get_active(radioButtonPontoQualquer) == TRUE) {
+            x = atof(gtk_entry_get_text(GTK_ENTRY(textEntryQualX)));
+            y = atof(gtk_entry_get_text(GTK_ENTRY(textEntryQualY)));
+        }
+        
+        for(int i = 0; i < poligono->getListaDePontos().size(); i++) {
+            auto ponto = poligono->getListaDePontos().at(i);
+            double novoX = (ponto->getValorX() - x) * cos(angulo) + (ponto->getValorY() - y) * sin(angulo) + x;
+            double novoY = (ponto->getValorX() - x) * -sin(angulo) + (ponto->getValorY() - y) * cos(angulo) + y;
+            ponto->setValorX(novoX);
+            ponto->setValorY(novoY);
+        }
+       
+        reDrawAll();
+        std::ostringstream console;
+        console << "O polígono " << poligono->getNome() << " foi rotacionado." << std::endl;
+        monstrarMensagemNoConsole(console.str().c_str());
+    }
+}
+
 // chama este método quando o botão salvar da window de rotação de objeto é clicado
 static void on_buttonSalvarRotacao_clicked() {
     gtk_widget_hide(windowRotacionarObjeto);
-    monstrarMensagemNoConsole("Salvando rotação!\n");
+
+    std::string tipo = retornarTipoObjeto();
+
+    if(tipo.compare("-1") != 0) {
+        if(tipo.compare("Ponto") == 0) {
+                rotacionarPonto();
+            } else if(tipo.compare("Reta") == 0) {
+                    rotacionarReta();
+                    } else if (tipo.compare("Polígono") == 0) {
+                            rotacionarPoligono();
+                    }
+    } else {
+        monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para editá-lo!\n");
+    }
 }
 
 // chama este método quando o botão cancelar da window de confirmação de exclusão é clicado
@@ -1018,9 +1203,9 @@ static void transladarReta() {
         double y = atof(gtk_entry_get_text(GTK_ENTRY(textEntryEditarY)));
         
         reta->setValorXInicial(reta->getValorXInicial() + x);
-        reta->setValorYInicial(reta->getValorYInicial() + x);
+        reta->setValorYInicial(reta->getValorYInicial() + y);
         reta->setValorXFinal(reta->getValorXFinal() + x);
-        reta->setValorYFinal(reta->getValorYFinal() + x);
+        reta->setValorYFinal(reta->getValorYFinal() + y);
             
         std::ostringstream console;
         console << "A reta " << reta->getNome() << " foi transladada para o local (" << 
@@ -1275,6 +1460,11 @@ int main(int argc, char *argv[]) {
     textEntryQualY = GTK_WIDGET(gtk_builder_get_object(builder, "textEntryQualY"));
     buttonCancelarRotacao = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCancelarRotacao"));
     buttonSalvarRotacao = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSalvarRotacao"));
+    radioButtonRotacao90 = GTK_WIDGET(gtk_builder_get_object(builder, "radioButtonRotacao90"));
+    radioButtonRotacao180 = GTK_WIDGET(gtk_builder_get_object(builder, "radioButtonRotacao180"));
+    radioButtonRotacao270 = GTK_WIDGET(gtk_builder_get_object(builder, "radioButtonRotacao270"));
+    radioButtonCentroMundo = GTK_WIDGET(gtk_builder_get_object(builder, "radioButtonCentroMundo"));
+    radioButtonCentroObjeto = GTK_WIDGET(gtk_builder_get_object(builder, "radioButtonCentroObjeto"));
 
     labelWindowEditar = GTK_WIDGET(gtk_builder_get_object(builder, "labelWindowEditar"));
     labelTransladarEscalonar = GTK_WIDGET(gtk_builder_get_object(builder, "labelTransladarEscalonar"));
