@@ -66,7 +66,7 @@
       <placeholder/>
     </child>
     <child>
-      <object class="GtkFixed" id="fixedWindowPonto1">
+      <object class="GtkFixed" id="fixedWindowReta">
         <property name="name">fixedWindowPonto</property>
         <property name="width_request">32</property>
         <property name="height_request">32</property>
