@@ -1399,7 +1399,6 @@ static void on_qualquerTeclaTeclado_Pressed(GtkWidget *widget, GdkEventKey *even
     if(event->keyval == GDK_KEY_plus || event->keyval == GDK_KEY_KP_Add) {
          on_buttonZoomIn_clicked();
     }
-
 }
 
 int main(int argc, char *argv[]) {
