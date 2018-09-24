@@ -10,6 +10,7 @@ using namespace std;
 #include <iterator>
 #include "Validator.hpp"
 #include <cmath>
+#include "SaveLoadObj.cpp"
 
 #define xViewPortMax 500
 #define xViewPortMin 0
@@ -871,11 +872,16 @@ static void on_radioButtonPontoQualquer_toggled() {
 // chama este método quando o botão salvar obj da window principal é clicado
 static void on_buttonSalvarObj_clicked() {
     monstrarMensagemNoConsole("Botão salvar objeto pressionado!\n");
+    salvarObjetosPontoEmArquivo(objetosPonto);
+    salvarObjetosRetaEmArquivo(objetosReta);
+    salvarObjetosPoligonoEmArquivo(objetosPoligono);
 }
 
 // chama este método quando o botão carregar obj da window principal é clicado
 static void on_buttonCarregarObj_clicked() {
     monstrarMensagemNoConsole("Botão carregar objeto pressionado!\n");
+    objetosPoligono = lerObjetosDoArquivo();
+    reDrawAll();
 }
 
 // chama este método quando o botão desenhar curva da window principal é clicado
