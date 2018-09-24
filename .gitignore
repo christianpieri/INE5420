@@ -8,3 +8,6 @@ vpl_wexecution
 
 # Ignorar as configs do vscode
 .vscode
+
+# Ignorar os arquivos .obj gerados
+*.obj
