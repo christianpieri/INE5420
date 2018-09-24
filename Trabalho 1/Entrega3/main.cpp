@@ -11,6 +11,7 @@ using namespace std;
 #include "Validator.hpp"
 #include <cmath>
 #include "SaveLoadObj.cpp"
+#include <gdk/gdkkeysyms.h>
 
 #define xViewPortMax 500
 #define xViewPortMin 0
@@ -1366,6 +1367,41 @@ static void on_buttonFecharWindowPrincipal(GtkWidget *windowPrincipal, gpointer 
     gtk_main_quit();
 }
 
+static void on_qualquerTeclaTeclado_Pressed(GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
+    if(event->keyval == GDK_KEY_F1) {
+        system("xdg-open http://google.com");
+    } 
+    
+    if(event->keyval == GDK_KEY_Up) {
+         on_buttonCima_clicked();
+    }
+
+    if(event->keyval == GDK_KEY_Down) {
+         on_buttonBaixo_clicked();
+    }
+
+    if(event->keyval == GDK_KEY_Left) {
+         on_buttonEsquerda_clicked();
+    }
+
+    if(event->keyval == GDK_KEY_Right) {
+         on_buttonDireita_clicked();
+    }
+
+    if(event->keyval == GDK_KEY_Delete) {
+         on_buttonDeletarObjeto_clicked();
+    }
+
+    if(event->keyval == GDK_KEY_minus || event->keyval == GDK_KEY_KP_Subtract) {
+         on_buttonZoomOut_clicked();
+    }
+
+    if(event->keyval == GDK_KEY_plus || event->keyval == GDK_KEY_KP_Add) {
+         on_buttonZoomIn_clicked();
+    }
+
+}
+
 int main(int argc, char *argv[]) {
    
     tela = Window(0, 0, 500, 500);
@@ -1531,6 +1567,9 @@ int main(int argc, char *argv[]) {
     g_signal_connect(drawingArea, "configure-event", G_CALLBACK(configure_event_cb), NULL);
 
     g_signal_connect(windowPrincipal, "destroy", G_CALLBACK(on_buttonFecharWindowPrincipal), NULL);
+
+    gtk_widget_add_events(windowPrincipal, GDK_KEY_PRESS_MASK);
+    g_signal_connect(windowPrincipal, "key-release-event", G_CALLBACK(on_qualquerTeclaTeclado_Pressed),NULL);
 
     gtk_builder_connect_signals(builder, NULL);
 
