@@ -1369,7 +1369,7 @@ static void on_buttonFecharWindowPrincipal(GtkWidget *windowPrincipal, gpointer 
 
 static void on_qualquerTeclaTeclado_Pressed(GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
     if(event->keyval == GDK_KEY_F1) {
-        system("xdg-open http://google.com");
+        system("xdg-open https://christianpieri.github.io/docCg/");
     } 
     
     if(event->keyval == GDK_KEY_Up) {
@@ -1398,6 +1398,14 @@ static void on_qualquerTeclaTeclado_Pressed(GtkWidget *widget, GdkEventKey *even
 
     if(event->keyval == GDK_KEY_plus || event->keyval == GDK_KEY_KP_Add) {
          on_buttonZoomIn_clicked();
+    }
+
+    if(event->keyval == GDK_KEY_s && GDK_CONTROL_MASK) {
+        on_buttonSalvarObj_clicked();
+    }
+
+    if(event->keyval == GDK_KEY_o && GDK_CONTROL_MASK) {
+        on_buttonCarregarObj_clicked();
     }
 }
 
