@@ -1369,7 +1369,7 @@ static void on_buttonFecharWindowPrincipal(GtkWidget *windowPrincipal, gpointer 
 
 static void on_qualquerTeclaTeclado_Pressed(GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
     if(event->keyval == GDK_KEY_F1) {
-        system("xdg-open http://google.com");
+        system("xdg-open https://christianpieri.github.io/docCg/");
     } 
     
     if(event->keyval == GDK_KEY_Up) {
