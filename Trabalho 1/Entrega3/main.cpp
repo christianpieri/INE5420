@@ -29,6 +29,7 @@ using namespace std;
     GtkWidget *windowRotacionarObjeto;
     GtkWidget *windowCurva;
     GtkWidget *windowEditarObjeto;
+    GtkWidget *windowConfirmacaoCarregar;
     Window     tela;
 
     // Botões da caixa de controle
@@ -89,6 +90,10 @@ using namespace std;
     GtkWidget *textEntryCurvaName;
 
     // Botões da window de confirmação de exclusão
+    GtkWidget *buttonSimConfCarregar;
+    GtkWidget *buttonCancelarConfCarregar;
+
+    // Botões da window de confirmação de carregamento
     GtkWidget *buttonSimConfExclusao;
     GtkWidget *buttonCancelarConfExclusao;
 
@@ -886,11 +891,58 @@ static void on_buttonSalvarObj_clicked() {
     salvarObjetosPoligonoEmArquivo(objetosPoligono);
 }
 
+static void on_buttonCancelarConfCarregar_clicked() {
+    monstrarMensagemNoConsole("Cancelado importação de arquivo .obj!\n");
+    gtk_widget_hide(windowConfirmacaoCarregar);
+}
+
+static void on_buttonSimConfCarregar_clicked() {
+    gtk_widget_hide(windowConfirmacaoCarregar);
+    gtk_list_store_clear(objectListStore);
+    objetosPoligono.clear();
+    objetosReta.clear();
+    objetosPonto.clear();
+    clear_surface();
+
+    std::vector<Poligono*> objetosVindosDoArquivo;
+    objetosVindosDoArquivo = lerObjetosDoArquivo();
+
+    for(int i = 0; i < objetosVindosDoArquivo.size(); i ++) {
+        Poligono *p = objetosVindosDoArquivo.at(i);
+        if(p->getListaDePontos().size() == 1) {
+            double x = p->getListaDePontos().at(0)->getValorX();
+            double y = p->getListaDePontos().at(0)->getValorY();
+            std::string nome = p->getNome();
+            Ponto *ponto = new Ponto(x, y, nome);
+            objetosPonto.push_back(ponto);
+            colocaObjetoNaListStore(nome, "Ponto");
+        } else if(p->getListaDePontos().size() == 2) {
+            double x1 = p->getListaDePontos().at(0)->getValorX();
+            double y1 = p->getListaDePontos().at(0)->getValorY();
+            double x2 = p->getListaDePontos().at(1)->getValorX();
+            double y2 = p->getListaDePontos().at(1)->getValorY();
+            std::string nome = p->getNome();
+            Reta *reta = new Reta(x1, y1, x2, y2, nome);
+            objetosReta.push_back(reta);
+            colocaObjetoNaListStore(nome, "Reta");
+        } else {
+            std::string nome = p->getNome();
+            objetosPoligono.push_back(p);
+            colocaObjetoNaListStore(nome, "Polígono");
+        }
+    }
+    monstrarMensagemNoConsole("Arquivo importado!\n");
+    reDrawAll();
+}
+
 // chama este método quando o botão carregar obj da window principal é clicado
 static void on_buttonCarregarObj_clicked() {
     monstrarMensagemNoConsole("Botão carregar objeto pressionado!\n");
-    objetosPoligono = lerObjetosDoArquivo();
-    reDrawAll();
+    if(objetosPoligono.size() + objetosReta.size() + objetosPonto.size() > 0) {
+        gtk_widget_show(windowConfirmacaoCarregar);    
+    } else {
+        on_buttonSimConfCarregar_clicked();
+    }
 }
 
 // chama este método quando o botão desenhar curva da window principal é clicado
@@ -1437,6 +1489,7 @@ int main(int argc, char *argv[]) {
     windowRotacionarObjeto = GTK_WIDGET(gtk_builder_get_object(builder, "windowRotacionarObjeto"));
     windowCurva = GTK_WIDGET(gtk_builder_get_object(builder, "windowCurva"));
     windowEditarObjeto = GTK_WIDGET(gtk_builder_get_object(builder, "windowEditarObjeto"));
+    windowConfirmacaoCarregar = GTK_WIDGET(gtk_builder_get_object(builder, "windowConfirmacaoCarregar"));
     drawingArea = GTK_WIDGET(gtk_builder_get_object(builder, "drawingArea"));
     
     textConsole = GTK_WIDGET(gtk_builder_get_object(builder, "textConsole"));
@@ -1504,6 +1557,9 @@ int main(int argc, char *argv[]) {
     buttonSimConfExclusao = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSimConfExclusao"));
     buttonCancelarConfExclusao = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCancelarConfExclusao"));
 
+    buttonSimConfCarregar = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSimConfCarregar"));
+    buttonCancelarConfCarregar = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCancelarConfCarregar"));
+
     buttonOkWindowAviso = GTK_WIDGET(gtk_builder_get_object(builder, "buttonOkWindowAviso"));
     mensagemTituloAviso = GTK_WIDGET(gtk_builder_get_object(builder, "mensagemTituloAviso"));
     mensagemAviso = GTK_WIDGET(gtk_builder_get_object(builder, "mensagemAviso"));
@@ -1566,6 +1622,9 @@ int main(int argc, char *argv[]) {
 
     g_signal_connect(buttonSimConfExclusao, "button-release-event", G_CALLBACK (on_buttonSimConfExclusao_clicked), NULL);
     g_signal_connect(buttonCancelarConfExclusao, "button-release-event", G_CALLBACK (on_buttonCancelarConfExclusao_clicked), NULL);
+
+    g_signal_connect(buttonSimConfCarregar, "button-release-event", G_CALLBACK (on_buttonSimConfCarregar_clicked), NULL);
+    g_signal_connect(buttonCancelarConfCarregar, "button-release-event", G_CALLBACK (on_buttonCancelarConfCarregar_clicked), NULL);
     
     g_signal_connect(buttonOkWindowAviso, "button-release-event", G_CALLBACK (on_buttonOkWindowAviso_clicked), NULL);
 
