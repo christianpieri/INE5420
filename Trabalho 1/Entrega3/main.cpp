@@ -11,6 +11,7 @@ using namespace std;
 #include "Validator.hpp"
 #include <cmath>
 #include "SaveLoadObj.cpp"
+#include "RotacaoWindow.cpp"
 #include <gdk/gdkkeysyms.h>
 
 #define xViewPortMax 500
@@ -666,16 +667,23 @@ static std::string retornarTipoObjeto() {
     }
 }
 
+static void rotacionaWindow() {
+    objetosPonto = rotacionaTodosOsPontos(sentidoRotacao, objetosPonto, tela.getValorXMinimo(), tela.getValorYMinimo());
+    objetosReta = rotacionaTodasAsRetas(sentidoRotacao, objetosReta, tela.getValorXMinimo(), tela.getValorYMinimo());
+    objetosPoligono = rotacionaTodosOsPoligonos(sentidoRotacao, objetosPoligono, tela.getValorXMinimo(), tela.getValorYMinimo());
+    reDrawAll();
+}
+
 // chama este método quando o botão rotacionar a direita da window principal é clicado
 static void on_buttonRotateDireita_clicked() {
 
-    std::string tipo = retornarTipoObjeto();
+    sentidoRotacao = "Direita";
     monstrarMensagemNoConsole("Botão rotação a direita pressionado!\n");
 
+    std::string tipo = retornarTipoObjeto();
     if(tipo.compare("-1") == 0) {
-        monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para rotacioná-lo!\n");
+        rotacionaWindow();
     } else {
-        sentidoRotacao = "Direita";
         gtk_label_set_text(GTK_LABEL(labelSentidoWindowRotacao), "Rotacionando seu objeto para a direita:");
         gtk_widget_show(windowRotacionarObjeto);
     }
@@ -684,13 +692,13 @@ static void on_buttonRotateDireita_clicked() {
 // chama este método quando o botão rotacionar a esquerda da window principal é clicado
 static void on_buttonRotateEsquerda_clicked() {
     
-    std::string tipo = retornarTipoObjeto();
+    sentidoRotacao = "Esquerda";
     monstrarMensagemNoConsole("Botão rotação a esquerda pressionado!\n");
 
+    std::string tipo = retornarTipoObjeto();
     if(tipo.compare("-1") == 0) {
-        monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para rotacioná-lo!\n");
+        rotacionaWindow();
     } else {
-        sentidoRotacao = "Esquerda";
         gtk_label_set_text(GTK_LABEL(labelSentidoWindowRotacao), "Rotacionando seu objeto para a esquerda:");
         gtk_widget_show(windowRotacionarObjeto);
     }
@@ -1581,6 +1589,8 @@ int main(int argc, char *argv[]) {
     gtk_builder_connect_signals(builder, NULL);
 
     gtk_widget_show(windowPrincipal);                
+    monstrarMensagemNoConsole("Pressione o botao F1 para obter ajuda e/ou ler a documentação.\n");
+
     gtk_main();
 
     return 0;
