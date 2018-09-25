@@ -89,11 +89,11 @@ using namespace std;
     GtkWidget *buttonCancelarCurva;
     GtkWidget *textEntryCurvaName;
 
-    // Botões da window de confirmação de exclusão
+    // Botões da window de confirmação de carregamento
     GtkWidget *buttonSimConfCarregar;
     GtkWidget *buttonCancelarConfCarregar;
 
-    // Botões da window de confirmação de carregamento
+    // Botões da window de confirmação de exclusão
     GtkWidget *buttonSimConfExclusao;
     GtkWidget *buttonCancelarConfExclusao;
 
