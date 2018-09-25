@@ -3,51 +3,61 @@
 <interface>
   <requires lib="gtk+" version="3.10"/>
   <object class="GtkAdjustment" id="adjustmentCoordX1Reta">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentCoordX2Reta">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentCoordXPoligono">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentCoordXPonto">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentCoordY1Reta">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentCoordY2Reta">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentCoordYPoligono">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentCoordYPonto">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentCoordZ1Reta">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentCoordZ2Reta">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
@@ -289,6 +299,7 @@
     </child>
   </object>
   <object class="GtkAdjustment" id="adjustmentCoordZPoligono">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
@@ -497,6 +508,7 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
     </child>
   </object>
   <object class="GtkAdjustment" id="adjustmentCoordZPonto">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
@@ -670,42 +682,50 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
     </child>
   </object>
   <object class="GtkAdjustment" id="adjustmentCurvaControlX1">
-    <property name="upper">100</property>
+    <property name="lower">-1000</property>
+    <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentCurvaControlX2">
-    <property name="upper">100</property>
+    <property name="lower">-1000</property>
+    <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentCurvaControlY1">
-    <property name="upper">100</property>
+    <property name="lower">-1000</property>
+    <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentCurvaControlY2">
-    <property name="upper">100</property>
+    <property name="lower">-1000</property>
+    <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentCurvaX1">
-    <property name="upper">100</property>
+    <property name="lower">-1000</property>
+    <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentCurvaX2">
-    <property name="upper">100</property>
+    <property name="lower">-1000</property>
+    <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentCurvaY1">
-    <property name="upper">100</property>
+    <property name="lower">-1000</property>
+    <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentCurvaY2">
-    <property name="upper">100</property>
+    <property name="lower">-1000</property>
+    <property name="upper">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
@@ -1063,6 +1083,101 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-ok</property>
   </object>
+  <object class="GtkWindow" id="windowConfirmacaoCarregar">
+    <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Confirmação</property>
+    <property name="resizable">False</property>
+    <property name="modal">True</property>
+    <property name="default_width">400</property>
+    <property name="default_height">200</property>
+    <property name="deletable">False</property>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <object class="GtkFixed" id="fixedWindowConfirmacaoCarregar">
+        <property name="width_request">400</property>
+        <property name="height_request">200</property>
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <child>
+          <object class="GtkLabel" id="mensagemConfirmacaoCarregar">
+            <property name="width_request">265</property>
+            <property name="height_request">51</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes"> Ao carregar um novo arquivo, todos os 
+objetos e desenhos serão descartados. 
+</property>
+          </object>
+          <packing>
+            <property name="x">85</property>
+            <property name="y">35</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="buttonSimConfCarregar">
+            <property name="label" translatable="yes">Sim </property>
+            <property name="width_request">100</property>
+            <property name="height_request">50</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="image">imageButtonConfirmarCarregar</property>
+            <property name="image_position">right</property>
+            <property name="always_show_image">True</property>
+          </object>
+          <packing>
+            <property name="x">250</property>
+            <property name="y">130</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="buttonCancelarConfCarregar">
+            <property name="label" translatable="yes">Cancelar </property>
+            <property name="width_request">100</property>
+            <property name="height_request">50</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <property name="image">imageButtonCancelCarregar</property>
+            <property name="image_position">right</property>
+            <property name="always_show_image">True</property>
+          </object>
+          <packing>
+            <property name="x">50</property>
+            <property name="y">130</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkImage" id="imagemInterrogacaoCarregar">
+            <property name="width_request">100</property>
+            <property name="height_request">80</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="stock">gtk-help</property>
+            <property name="icon_size">6</property>
+          </object>
+          <packing>
+            <property name="y">10</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="labelVoceQuerContinuar">
+            <property name="width_request">271</property>
+            <property name="height_request">30</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Você quer continuar com esta operação?</property>
+          </object>
+          <packing>
+            <property name="x">65</property>
+            <property name="y">90</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
   <object class="GtkImage" id="imageButtonConfirmarExclusao">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -1091,8 +1206,8 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
             <property name="label" translatable="yes">Você realmente deseja excluir todos os objetos?</property>
           </object>
           <packing>
-            <property name="x">30</property>
-            <property name="y">20</property>
+            <property name="x">40</property>
+            <property name="y">65</property>
           </packing>
         </child>
         <child>
@@ -1108,8 +1223,8 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
             <property name="always_show_image">True</property>
           </object>
           <packing>
-            <property name="x">220</property>
-            <property name="y">60</property>
+            <property name="x">250</property>
+            <property name="y">90</property>
           </packing>
         </child>
         <child>
@@ -1126,7 +1241,33 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
           </object>
           <packing>
             <property name="x">50</property>
-            <property name="y">60</property>
+            <property name="y">90</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkImage" id="imagemInterrogacaoExclusao">
+            <property name="width_request">70</property>
+            <property name="height_request">70</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="stock">gtk-help</property>
+            <property name="icon_size">6</property>
+          </object>
+          <packing>
+            <property name="x">10</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="labelExcluirTudo">
+            <property name="width_request">100</property>
+            <property name="height_request">30</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Esta ação não poderá ser desfeita!</property>
+          </object>
+          <packing>
+            <property name="x">90</property>
+            <property name="y">25</property>
           </packing>
         </child>
       </object>
@@ -1160,7 +1301,6 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
     </child>
     <child>
       <object class="GtkFixed" id="fixedWindowAviso">
-        <property name="width_request">32</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>
@@ -1708,101 +1848,6 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
           <packing>
             <property name="x">220</property>
             <property name="y">30</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-  </object>
-  <object class="GtkWindow" id="windowConfirmacaoCarregar">
-    <property name="can_focus">False</property>
-    <property name="title" translatable="yes">Confirmação</property>
-    <property name="resizable">False</property>
-    <property name="modal">True</property>
-    <property name="default_width">400</property>
-    <property name="default_height">200</property>
-    <property name="deletable">False</property>
-    <child>
-      <placeholder/>
-    </child>
-    <child>
-      <object class="GtkFixed" id="fixedWindowConfirmacaoCarregar">
-        <property name="width_request">400</property>
-        <property name="height_request">200</property>
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <child>
-          <object class="GtkLabel" id="mensagemConfirmacaoCarregar">
-            <property name="width_request">265</property>
-            <property name="height_request">51</property>
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="label" translatable="yes"> Ao carregar um novo arquivo, todos os 
-objetos e desenhos serão descartados. 
-</property>
-          </object>
-          <packing>
-            <property name="x">85</property>
-            <property name="y">35</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="buttonSimConfCarregar">
-            <property name="label" translatable="yes">Sim </property>
-            <property name="width_request">100</property>
-            <property name="height_request">50</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="image">imageButtonConfirmarCarregar</property>
-            <property name="image_position">right</property>
-            <property name="always_show_image">True</property>
-          </object>
-          <packing>
-            <property name="x">250</property>
-            <property name="y">130</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="buttonCancelarConfCarregar">
-            <property name="label" translatable="yes">Cancelar </property>
-            <property name="width_request">100</property>
-            <property name="height_request">50</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="image">imageButtonCancelCarregar</property>
-            <property name="image_position">right</property>
-            <property name="always_show_image">True</property>
-          </object>
-          <packing>
-            <property name="x">50</property>
-            <property name="y">130</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkImage" id="imagemInterrogacaoCarregar">
-            <property name="width_request">100</property>
-            <property name="height_request">80</property>
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="stock">gtk-help</property>
-            <property name="icon_size">6</property>
-          </object>
-          <packing>
-            <property name="y">10</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkLabel" id="labelVoceQuerContinuar">
-            <property name="width_request">271</property>
-            <property name="height_request">30</property>
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="label" translatable="yes">Você quer continuar com esta operação?</property>
-          </object>
-          <packing>
-            <property name="x">65</property>
-            <property name="y">90</property>
           </packing>
         </child>
       </object>
