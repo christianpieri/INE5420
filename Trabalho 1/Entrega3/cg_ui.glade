@@ -1091,8 +1091,8 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
             <property name="label" translatable="yes">Você realmente deseja excluir todos os objetos?</property>
           </object>
           <packing>
-            <property name="x">30</property>
-            <property name="y">20</property>
+            <property name="x">40</property>
+            <property name="y">65</property>
           </packing>
         </child>
         <child>
@@ -1108,8 +1108,8 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
             <property name="always_show_image">True</property>
           </object>
           <packing>
-            <property name="x">220</property>
-            <property name="y">60</property>
+            <property name="x">250</property>
+            <property name="y">90</property>
           </packing>
         </child>
         <child>
@@ -1126,7 +1126,33 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
           </object>
           <packing>
             <property name="x">50</property>
-            <property name="y">60</property>
+            <property name="y">90</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkImage" id="imagemInterrogacaoExclusao">
+            <property name="width_request">70</property>
+            <property name="height_request">70</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="stock">gtk-help</property>
+            <property name="icon_size">6</property>
+          </object>
+          <packing>
+            <property name="x">10</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="labelExcluirTudo">
+            <property name="width_request">100</property>
+            <property name="height_request">30</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Esta ação não poderá ser desfeita!</property>
+          </object>
+          <packing>
+            <property name="x">90</property>
+            <property name="y">25</property>
           </packing>
         </child>
       </object>
@@ -1160,7 +1186,6 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
     </child>
     <child>
       <object class="GtkFixed" id="fixedWindowAviso">
-        <property name="width_request">32</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>
