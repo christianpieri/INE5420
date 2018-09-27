@@ -5,6 +5,7 @@ using namespace std;
 #include "Ponto.hpp"
 #include "Reta.hpp"
 #include "Poligono.hpp"
+#include "Curva.hpp"
 #include <sstream>
 #include <vector>
 #include <iterator>
