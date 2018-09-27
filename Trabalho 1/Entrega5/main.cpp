@@ -89,6 +89,14 @@ using namespace std;
     GtkWidget *buttonSalvarCurva;
     GtkWidget *buttonCancelarCurva;
     GtkWidget *textEntryCurvaName;
+    GtkWidget *spinCurvaX1;
+    GtkWidget *spinCurvaY1;
+    GtkWidget *spinCurvaX2;
+    GtkWidget *spinCurvaY2;
+    GtkWidget *spinCurvaControleX1;
+    GtkWidget *spinCurvaControleY1;
+    GtkWidget *spinCurvaControleX2;
+    GtkWidget *spinCurvaControleY2;
 
     // Botões da window de confirmação de carregamento
     GtkWidget *buttonSimConfCarregar;
@@ -120,6 +128,7 @@ using namespace std;
     std::vector<Ponto*> objetosPonto;
     std::vector<Reta*> objetosReta;
     std::vector<Poligono*> objetosPoligono;
+    std::vector<Curva*> objetosCurva;
     std::vector<Ponto*> pontosAuxiliarPoligono;
 
     // Widgets da view de rotação
@@ -266,6 +275,35 @@ static void redesenhaPoligonos() {
     gtk_widget_queue_draw (windowPrincipal);
 }
 
+// Redesenha curvas
+static void redesenhaCurvas() {
+    double x;
+    double y;
+
+    for (std::vector<Curva*>::iterator it = objetosCurva.begin(); it != objetosCurva.end(); ++it) {
+
+        auto listaDePontos = (*it)->getListaDePontos();
+        auto ponto = listaDePontos.at(0);
+        
+        cairo_t *cr;
+        cr = cairo_create (surface);
+        cairo_set_line_width (cr, 5);
+        cairo_set_line_cap  (cr, CAIRO_LINE_CAP_ROUND); 
+        cairo_move_to (cr, transformadaViewPortCoordenadaX(ponto->getValorX()),
+                        transformadaViewPortCoordenadaY(ponto->getValorY()));
+
+        for (std::vector<Ponto*>::iterator it = listaDePontos.begin(); it != listaDePontos.end(); ++it) {
+            x = (*it)->getValorX();
+            y = (*it)->getValorY();
+            cairo_line_to (cr, transformadaViewPortCoordenadaX(x), transformadaViewPortCoordenadaY(y));
+        }  
+
+        cairo_stroke (cr);    
+    }
+    gtk_widget_queue_draw (windowPrincipal);
+}
+
+
 // Redesenha tudo
 static void reDrawAll () {
     clear_surface();
@@ -273,6 +311,7 @@ static void reDrawAll () {
     redesenhaPontos();
     redesenhaRetas();
     redesenhaPoligonos();
+    redesenhaCurvas();
 }
 
 // chama este método quando o botão limpar tela é clicado
@@ -954,8 +993,71 @@ static void on_buttonCurva_clicked() {
 
 // chama este método quando o botão salvar da window de curvas é clicado
 static void on_buttonSalvarCurva_clicked() {
-    gtk_widget_hide(windowCurva);
-    monstrarMensagemNoConsole("Botão salvar curva pressionado!\n");
+    
+    string nome = gtk_entry_get_text(GTK_ENTRY(textEntryCurvaName));
+    if(nome.empty()) {
+            gtk_label_set_text(GTK_LABEL(mensagemTituloAviso), "Objeto precisa ter um nome!");
+            gtk_label_set_text(GTK_LABEL(mensagemAviso), "Por favor, digite um nome para o seu novo objeto curva.");
+            gtk_widget_show(windowAviso);
+    
+    } else {
+
+        bool nomeJaExistente = false;
+        for (std::vector<Curva*>::iterator it = objetosCurva.begin(); it != objetosCurva.end(); ++it)  {
+            
+            if(nome.compare((*it)->getNome()) == 0) {
+                nomeJaExistente = true;
+                break;
+            }
+        }
+        
+        if(nomeJaExistente) {
+            gtk_label_set_text(GTK_LABEL(mensagemTituloAviso), "Nome de objeto já existente!");
+            gtk_label_set_text(GTK_LABEL(mensagemAviso), "Nome já utilizado em outra curva! Por favor, troque-o.");
+            gtk_widget_show(windowAviso);
+        } else {
+
+            gtk_widget_hide(windowCurva);
+            double xInicial = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinCurvaX1));
+            double yInicial = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinCurvaY1));
+            double xFinal = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinCurvaX2));
+            double yFinal = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinCurvaY2));
+            double xControle1 = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinCurvaControleX1));
+            double yControle1 = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinCurvaControleY1));
+            double xControle2 = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinCurvaControleX2));
+            double yControle2 = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinCurvaControleY2));
+
+            std::vector<Ponto*> pontosAuxiliarCurva;
+            Ponto *p;
+            double x;
+            double y;
+
+            for(double t = 0; t < 1; t = t + 0.05) {
+                x = (pow((1 - t), 3) * xInicial) + 
+                    (3 * t * pow((1 - t), 2) * xControle1) +
+                    (3 * pow(t, 2) * (1 - t) * xControle2) +
+                    (pow(t, 3) * xFinal);
+
+                y = (pow((1 - t), 3) * yInicial) + 
+                    (3 * t * pow((1 - t), 2) * yControle1) +
+                    (3 * pow(t, 2) * (1 - t) * yControle2) +
+                    (pow(t, 3) * yFinal);
+
+                p = new Ponto(x, y);
+                pontosAuxiliarCurva.push_back(p);
+            }
+
+            Curva *curva = new Curva(pontosAuxiliarCurva, nome);
+            objetosCurva.push_back(curva);
+            reDrawAll();
+            pontosAuxiliarCurva.clear();
+
+            std::ostringstream console;
+            console << "A curva " << nome << " foi desenhada." << std::endl;
+            monstrarMensagemNoConsole(console.str().c_str());
+            colocaObjetoNaListStore(nome, "Curva");
+        }    
+    }
 }
 
 // chama este método quando o botão cancelar da window de curvas é clicado
@@ -1554,6 +1656,14 @@ int main(int argc, char *argv[]) {
     buttonSalvarCurva = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSalvarCurva"));
     buttonCancelarCurva = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCancelarCurva"));
     textEntryCurvaName = GTK_WIDGET(gtk_builder_get_object(builder, "textEntryCurvaName"));
+    spinCurvaX1 = GTK_WIDGET(gtk_builder_get_object(builder, "spinCurvaX1"));
+    spinCurvaY1 = GTK_WIDGET(gtk_builder_get_object(builder, "spinCurvaY1"));
+    spinCurvaX2 = GTK_WIDGET(gtk_builder_get_object(builder, "spinCurvaX2"));
+    spinCurvaY2 = GTK_WIDGET(gtk_builder_get_object(builder, "spinCurvaY2"));
+    spinCurvaControleX1 = GTK_WIDGET(gtk_builder_get_object(builder, "spinCurvaControleX1"));
+    spinCurvaControleY1 = GTK_WIDGET(gtk_builder_get_object(builder, "spinCurvaControleY1"));
+    spinCurvaControleX2 = GTK_WIDGET(gtk_builder_get_object(builder, "spinCurvaControleX2"));
+    spinCurvaControleY2 = GTK_WIDGET(gtk_builder_get_object(builder, "spinCurvaControleY2"));
 
     buttonSimConfExclusao = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSimConfExclusao"));
     buttonCancelarConfExclusao = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCancelarConfExclusao"));
