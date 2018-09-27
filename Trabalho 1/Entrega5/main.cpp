@@ -15,10 +15,10 @@ using namespace std;
 #include "RotacaoWindow.cpp"
 #include <gdk/gdkkeysyms.h>
 
-#define xViewPortMax 500
-#define xViewPortMin 0
-#define yViewPortMax 500
-#define yViewPortMin 0
+#define xViewPortMax 500.0
+#define xViewPortMin 0.0
+#define yViewPortMax 500.0
+#define yViewPortMin 0.0
 #define PI 3.14159265
 
     GtkWidget *windowPrincipal;
@@ -943,6 +943,7 @@ static void on_buttonSimConfCarregar_clicked() {
     objetosPoligono.clear();
     objetosReta.clear();
     objetosPonto.clear();
+    objetosCurva.clear();
     clear_surface();
 
     std::vector<Poligono*> objetosVindosDoArquivo;
@@ -1049,6 +1050,8 @@ static void on_buttonSalvarCurva_clicked() {
                     (3 * pow(t, 2) * (1 - t) * yControle2) +
                     (pow(t, 3) * yFinal);
 
+
+                std::cout << x << ", " << y << std::endl;
                 p = new Ponto(x, y);
                 pontosAuxiliarCurva.push_back(p);
             }
