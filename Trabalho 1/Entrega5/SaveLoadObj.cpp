@@ -6,6 +6,7 @@ using namespace std;
 #include "Ponto.hpp"
 #include "Reta.hpp"
 #include "Poligono.hpp"
+
 static void salvarObjetosPontoEmArquivo(std::vector<Ponto*> objetosPonto) {
     ofstream escreve;
     escreve.open("saida.obj");
@@ -17,6 +18,7 @@ static void salvarObjetosPontoEmArquivo(std::vector<Ponto*> objetosPonto) {
     }
     escreve.close();
 }
+
 static void salvarObjetosRetaEmArquivo(std::vector<Reta*> objetosReta) {
     ofstream escreve;
     escreve.open("saida.obj", ofstream::ios_base::app);
@@ -29,6 +31,7 @@ static void salvarObjetosRetaEmArquivo(std::vector<Reta*> objetosReta) {
     }
     escreve.close();
 }
+
 static void salvarObjetosPoligonoEmArquivo(std::vector<Poligono*> objetosPoligono) {
     ofstream escreve;
     escreve.open("saida.obj", ofstream::ios_base::app);
@@ -43,6 +46,7 @@ static void salvarObjetosPoligonoEmArquivo(std::vector<Poligono*> objetosPoligon
     }
     escreve.close();
 }
+
 static std::vector<Poligono*> lerObjetosDoArquivo() {
     ifstream leitura;
     leitura.open("saida.obj");
