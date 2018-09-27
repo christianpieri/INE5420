@@ -929,6 +929,7 @@ static void on_buttonSalvarObj_clicked() {
     salvarObjetosPontoEmArquivo(objetosPonto);
     salvarObjetosRetaEmArquivo(objetosReta);
     salvarObjetosPoligonoEmArquivo(objetosPoligono);
+    salvarObjetosCurvaEmArquivo(objetosCurva);
 }
 
 static void on_buttonCancelarConfCarregar_clicked() {
@@ -965,6 +966,11 @@ static void on_buttonSimConfCarregar_clicked() {
             Reta *reta = new Reta(x1, y1, x2, y2, nome);
             objetosReta.push_back(reta);
             colocaObjetoNaListStore(nome, "Reta");
+        } else if(p->getListaDePontos().size() >= 20) {
+            std::string nome = p->getNome();
+            Curva *curva = new Curva(p->getListaDePontos(), nome);
+            objetosCurva.push_back(curva);
+            colocaObjetoNaListStore(nome, "Curva");
         } else {
             std::string nome = p->getNome();
             objetosPoligono.push_back(p);
@@ -978,7 +984,7 @@ static void on_buttonSimConfCarregar_clicked() {
 // chama este método quando o botão carregar obj da window principal é clicado
 static void on_buttonCarregarObj_clicked() {
     monstrarMensagemNoConsole("Botão carregar objeto pressionado!\n");
-    if(objetosPoligono.size() + objetosReta.size() + objetosPonto.size() > 0) {
+    if(objetosCurva.size() + objetosPoligono.size() + objetosReta.size() + objetosPonto.size() > 0) {
         gtk_widget_show(windowConfirmacaoCarregar);    
     } else {
         on_buttonSimConfCarregar_clicked();
