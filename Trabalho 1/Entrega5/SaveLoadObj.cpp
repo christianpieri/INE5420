@@ -6,6 +6,8 @@ using namespace std;
 #include "Ponto.hpp"
 #include "Reta.hpp"
 #include "Poligono.hpp"
+#include "Curva.hpp"
+
 static void salvarObjetosPontoEmArquivo(std::vector<Ponto*> objetosPonto) {
     ofstream escreve;
     escreve.open("saida.obj");
@@ -17,6 +19,7 @@ static void salvarObjetosPontoEmArquivo(std::vector<Ponto*> objetosPonto) {
     }
     escreve.close();
 }
+
 static void salvarObjetosRetaEmArquivo(std::vector<Reta*> objetosReta) {
     ofstream escreve;
     escreve.open("saida.obj", ofstream::ios_base::app);
@@ -29,6 +32,7 @@ static void salvarObjetosRetaEmArquivo(std::vector<Reta*> objetosReta) {
     }
     escreve.close();
 }
+
 static void salvarObjetosPoligonoEmArquivo(std::vector<Poligono*> objetosPoligono) {
     ofstream escreve;
     escreve.open("saida.obj", ofstream::ios_base::app);
@@ -43,6 +47,22 @@ static void salvarObjetosPoligonoEmArquivo(std::vector<Poligono*> objetosPoligon
     }
     escreve.close();
 }
+
+static void salvarObjetosCurvaEmArquivo(std::vector<Curva*> objetosCurva) {
+    ofstream escreve;
+    escreve.open("saida.obj", ofstream::ios_base::app);
+    
+    for(int i = 0; i < objetosCurva.size(); i++) {
+        auto curva = objetosCurva.at(i);
+        escreve << "o " << curva->getNome() << "\n";
+        for(int j = 0; j < curva->getListaDePontos().size(); j++) {
+            auto ponto = curva->getListaDePontos().at(j);
+            escreve << "v " << ponto->getValorX() << " " << ponto->getValorY() << "\n";
+        }
+    }
+    escreve.close();
+}
+
 static std::vector<Poligono*> lerObjetosDoArquivo() {
     ifstream leitura;
     leitura.open("saida.obj");
