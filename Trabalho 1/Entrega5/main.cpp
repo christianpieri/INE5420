@@ -678,7 +678,10 @@ static void on_buttonSimConfExclusao_clicked() {
     
     gtk_widget_hide(windowConfirmacaoExclusao);
 
-    int quantidade = objetosPoligono.size() + objetosPonto.size() + objetosReta.size();
+    int quantidade = objetosCurva.size() +
+                     objetosPoligono.size() + 
+                     objetosPonto.size() + 
+                     objetosReta.size();
 
     std::ostringstream console;
 
@@ -691,6 +694,7 @@ static void on_buttonSimConfExclusao_clicked() {
     monstrarMensagemNoConsole(console.str().c_str());
 
     gtk_list_store_clear(objectListStore);
+    objetosCurva.clear();
     objetosPoligono.clear();
     objetosReta.clear();
     objetosPonto.clear();
@@ -716,6 +720,7 @@ static void rotacionaWindow() {
     objetosPonto = rotacionaTodosOsPontos(sentidoRotacao, objetosPonto, tela.getValorXMinimo(), tela.getValorYMinimo());
     objetosReta = rotacionaTodasAsRetas(sentidoRotacao, objetosReta, tela.getValorXMinimo(), tela.getValorYMinimo());
     objetosPoligono = rotacionaTodosOsPoligonos(sentidoRotacao, objetosPoligono, tela.getValorXMinimo(), tela.getValorYMinimo());
+    objetosCurva = rotacionaTodasAsCurvas(sentidoRotacao, objetosCurva, tela.getValorXMinimo(), tela.getValorYMinimo());
     reDrawAll();
 }
 
@@ -803,6 +808,24 @@ static Poligono* retornarPoligono() {
     return nullptr;
 }
 
+static Curva* retornarCurva() {
+    GtkTreeIter iter;
+    GtkTreeModel *model;
+    gchar* nomeDoObjeto;
+
+    if (gtk_tree_selection_get_selected (objectSelected, &model, &iter)) {
+        gtk_tree_model_get (model, &iter, COL_NAME, &nomeDoObjeto, -1);
+        string nome = (std::string)nomeDoObjeto;
+        std::vector<Curva*>::iterator it;
+        for (std::vector<Curva*>::iterator it = objetosCurva.begin(); it != objetosCurva.end(); it++) {
+            if(!nome.compare((*it)->getNome())) {
+                return (*it);
+            }
+        }
+    }
+    return nullptr;
+}
+
 static void removerObjetoDaListStore() {
     GtkTreeIter iter;
     GtkTreeModel *model;
@@ -879,6 +902,28 @@ static void deletarObjetoPoligono() {
     }
 }
 
+static void deletarObjetoCurva() {
+   
+    auto curva = retornarCurva();
+    if(curva == nullptr) {
+        monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para deletá-lo!\n");
+    } else {
+        for (int i = 0; i < objetosCurva.size(); i++) {
+            if(objetosCurva.at(i)->getNome().compare(curva->getNome()) == 0) {
+                objetosCurva.erase(objetosCurva.begin() + i);
+
+                std::ostringstream console;
+                console << "A curva " << curva->getNome() << " foi deletada." << std::endl;
+                monstrarMensagemNoConsole(console.str().c_str());
+                
+                reDrawAll();
+                removerObjetoDaListStore();                
+                break;
+            }
+        }
+    }
+}
+
 // chama este método quando o botão deletar objeto é clicado
 static void on_buttonDeletarObjeto_clicked() {
       
@@ -893,9 +938,11 @@ static void on_buttonDeletarObjeto_clicked() {
             } else if(tipo.compare("Reta") == 0) {
                     deletarObjetoReta();
                 
-                } else if (tipo.compare("Polígono") == 0) {
+                } else if(tipo.compare("Polígono") == 0) {
                         deletarObjetoPoligono();
-            }
+                    } else if(tipo.compare("Curva") == 0) {
+                        deletarObjetoCurva();
+                    }
     } else {
         monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para deletá-lo!\n");
     }
@@ -1051,7 +1098,7 @@ static void on_buttonSalvarCurva_clicked() {
                     (pow(t, 3) * yFinal);
 
 
-                std::cout << x << ", " << y << std::endl;
+                // std::cout << x << ", " << y << std::endl;
                 p = new Ponto(x, y);
                 pontosAuxiliarCurva.push_back(p);
             }
@@ -1232,6 +1279,56 @@ static void rotacionarPoligono() {
     }
 }
 
+static void rotacionarCurva() {
+    auto curva = retornarCurva();
+    if(curva == nullptr) {
+        monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para editá-lo!\n");
+    } else {
+
+        double angulo = getValorAnguloRotacao();
+
+        double x;
+        double y;
+
+        if(gtk_toggle_button_get_active((GTK_TOGGLE_BUTTON(radioButtonCentroObjeto))) == TRUE) {
+            double somaX = 0;
+            double somaY = 0;
+        
+            for(int i = 0; i < curva->getListaDePontos().size(); i++) {
+                auto ponto = curva->getListaDePontos().at(i);
+                somaX = somaX + ponto->getValorX();
+                somaY = somaY + ponto->getValorY();
+            }
+
+            x = somaX/curva->getListaDePontos().size();
+            y = somaY/curva->getListaDePontos().size();
+        }
+
+        if(gtk_toggle_button_get_active((GTK_TOGGLE_BUTTON(radioButtonCentroMundo))) == TRUE) {
+            x = 0;
+            y = 0;
+        }
+
+        if(gtk_toggle_button_get_active(radioButtonPontoQualquer) == TRUE) {
+            x = atof(gtk_entry_get_text(GTK_ENTRY(textEntryQualX)));
+            y = atof(gtk_entry_get_text(GTK_ENTRY(textEntryQualY)));
+        }
+        
+        for(int i = 0; i < curva->getListaDePontos().size(); i++) {
+            auto ponto = curva->getListaDePontos().at(i);
+            double novoX = (ponto->getValorX() - x) * cos(angulo) + (ponto->getValorY() - y) * sin(angulo) + x;
+            double novoY = (ponto->getValorX() - x) * -sin(angulo) + (ponto->getValorY() - y) * cos(angulo) + y;
+            ponto->setValorX(novoX);
+            ponto->setValorY(novoY);
+        }
+       
+        reDrawAll();
+        std::ostringstream console;
+        console << "O polígono " << curva->getNome() << " foi rotacionado." << std::endl;
+        monstrarMensagemNoConsole(console.str().c_str());
+    }
+}
+
 // chama este método quando o botão salvar da window de rotação de objeto é clicado
 static void on_buttonSalvarRotacao_clicked() {
     gtk_widget_hide(windowRotacionarObjeto);
@@ -1243,9 +1340,11 @@ static void on_buttonSalvarRotacao_clicked() {
                 rotacionarPonto();
             } else if(tipo.compare("Reta") == 0) {
                     rotacionarReta();
-                    } else if (tipo.compare("Polígono") == 0) {
+                    } else if(tipo.compare("Polígono") == 0) {
                             rotacionarPoligono();
-                    }
+                        } else if(tipo.compare("Curva") == 0) {
+                                rotacionarCurva();
+                        }
     } else {
         monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para editá-lo!\n");
     }
@@ -1325,6 +1424,17 @@ static void editarObjetoPoligono() {
     gtk_widget_show(windowEditarObjeto);
 }
 
+static void editarObjetoCurva() {
+    gtk_toggle_button_set_active(radioButtonTransladar, true);
+    gtk_label_set_text(GTK_LABEL(labelWindowEditar), "Editando seu objeto curva:");
+    gtk_widget_set_sensitive(GTK_WIDGET(GTK_BUTTON(GTK_RADIO_BUTTON(radioButtonEscalonar))), true);
+    gtk_label_set_text(GTK_LABEL(labelTransladarEscalonar), "Você gostaria de transladar o seu objeto em quantos x e y?");
+    gtk_widget_set_sensitive(textEntryEditarEscalonar, true);
+    gtk_widget_set_tooltip_text(GTK_WIDGET(GTK_BUTTON(GTK_RADIO_BUTTON(radioButtonEscalonar))), "");
+    on_radioButtonTransladar_toggled();
+    gtk_widget_show(windowEditarObjeto);
+}
+
 // chama quando botão editar objeto é clicado
 static void on_buttonEditObjeto_clicked() {
 
@@ -1338,11 +1448,15 @@ static void on_buttonEditObjeto_clicked() {
         } else if(tipo.compare("Reta") == 0) {
                 editarObjetoReta();
             
-            } else if (tipo.compare("Polígono") == 0) {
+            } else if(tipo.compare("Polígono") == 0) {
                 editarObjetoPoligono();
-            } else {
-                monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para editá-lo!\n");
-    }
+
+                } else if(tipo.compare("Curva") == 0) {
+                    editarObjetoCurva();
+                    
+                    } else {
+                        monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para editá-lo!\n");
+                    }
 }
 
 // chama quando botão cancelar da edicao é clicado
@@ -1418,6 +1532,29 @@ static void transladarPoligono() {
     }
 }
 
+static void transladarCurva() {
+    auto curva = retornarCurva();
+    if(curva == nullptr) {
+        monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para editá-lo!\n");
+    } else {
+        
+        double x = atof(gtk_entry_get_text(GTK_ENTRY(textEntryEditarX)));
+        double y = atof(gtk_entry_get_text(GTK_ENTRY(textEntryEditarY)));
+       
+        for(int i = 0; i < curva->getListaDePontos().size(); i++) {
+            auto ponto = curva->getListaDePontos().at(i);
+            ponto->setValorX(ponto->getValorX() + x);
+            ponto->setValorY(ponto->getValorY() + y);
+        }
+            
+        std::ostringstream console;
+        console << "A curva " << curva->getNome() << " foi transladada em (" << 
+                x << ", " << y << ") a mais." << std::endl;
+        monstrarMensagemNoConsole(console.str().c_str());
+        reDrawAll();
+    }
+}
+
 static void escalonarReta() {
     auto reta = retornarReta();
     if(reta == nullptr) {
@@ -1482,6 +1619,39 @@ static void escalonarPoligono() {
     }
 }
 
+static void escalonarCurva() {
+    auto curva = retornarCurva();
+    if(curva == nullptr) {
+        monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para editá-lo!\n");
+    } else {
+
+        double recebido = atof(gtk_entry_get_text(GTK_ENTRY(textEntryEditarEscalonar)));
+
+        double somaX = 0;
+        double somaY = 0;
+        
+        for(int i = 0; i < curva->getListaDePontos().size(); i++) {
+            auto ponto = curva->getListaDePontos().at(i);
+            somaX = somaX + ponto->getValorX();
+            somaY = somaY + ponto->getValorY();
+        }
+
+        double pontoMedioX = somaX/curva->getListaDePontos().size();
+        double pontoMedioY = somaY/curva->getListaDePontos().size();
+
+        for(int i = 0; i < curva->getListaDePontos().size(); i++) {
+            auto ponto = curva->getListaDePontos().at(i);
+            ponto->setValorX((ponto->getValorX() - pontoMedioX) * recebido + pontoMedioX);
+            ponto->setValorY((ponto->getValorY() - pontoMedioY) * recebido + pontoMedioY);
+        }
+
+        reDrawAll();
+        std::ostringstream console;
+        console << "A curva " << curva->getNome() << " foi escalonada." << std::endl;
+        monstrarMensagemNoConsole(console.str().c_str());
+    }
+}
+
 // chama quando botão salvar da edição é clicado
 static void on_buttonSalvarEdicao_clicked() {
     gtk_widget_hide(windowEditarObjeto);
@@ -1496,7 +1666,9 @@ static void on_buttonSalvarEdicao_clicked() {
                     transladarReta();
                     } else if (tipo.compare("Polígono") == 0) {
                             transladarPoligono();
-                    }
+                        } else if(tipo.compare("Curva") == 0) {
+                                transladarCurva();
+                        }
             } else {
                 if(tipo.compare("Ponto") == 0) {
                     monstrarMensagemNoConsole("Você é o Magaiver? Um objeto ponto não pode ser escalonado");
@@ -1505,7 +1677,9 @@ static void on_buttonSalvarEdicao_clicked() {
                         
                         } else if (tipo.compare("Polígono") == 0) {
                             escalonarPoligono();   
-                        }       
+                            } else if(tipo.compare("Curva") == 0) {
+                                escalonarCurva();
+                            }      
             }
     } else {
         monstrarMensagemNoConsole("Você precisa selecionar ao menos um objeto para editá-lo!\n");

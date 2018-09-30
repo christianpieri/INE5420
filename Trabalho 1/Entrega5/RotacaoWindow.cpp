@@ -6,6 +6,7 @@ using namespace std;
 #include "Ponto.hpp"
 #include "Reta.hpp"
 #include "Poligono.hpp"
+#include "Curva.hpp"
 #include <cmath>
 #define PI 3.14159265
 
@@ -83,4 +84,30 @@ static std::vector<Poligono*> rotacionaTodosOsPoligonos(std::string sentido, std
     }
     
     return novaListaDePoligonos;
+}
+
+static std::vector<Curva*> rotacionaTodasAsCurvas(std::string sentido, std::vector<Curva*> listaDeCurvas, double x, double y) {
+    double angulo = 90 * PI / 180;
+    if(sentido.compare("Direita") == 0) {
+        angulo = angulo * (-1);
+    }
+
+    std::vector<Curva*> novaListaDeCurvas;
+    
+    x = x + 250;
+    y = y + 250;
+
+    for (std::vector<Curva*>::iterator it = listaDeCurvas.begin(); it != listaDeCurvas.end(); ++it) {
+        for(int i = 0; i < (*it)->getListaDePontos().size(); i++) {
+            auto ponto = (*it)->getListaDePontos().at(i);
+            double novoX = (ponto->getValorX() - x) * cos(angulo) + (ponto->getValorY() - y) * sin(angulo) + x;
+            double novoY = (ponto->getValorX() - x) * -sin(angulo) + (ponto->getValorY() - y) * cos(angulo) + y;
+            ponto->setValorX(novoX);
+            ponto->setValorY(novoY);
+        }
+
+        novaListaDeCurvas.push_back((*it));
+    }
+    
+    return novaListaDeCurvas;
 }
