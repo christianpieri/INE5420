@@ -97,6 +97,7 @@ using namespace std;
     GtkWidget *spinCurvaControleY1;
     GtkWidget *spinCurvaControleX2;
     GtkWidget *spinCurvaControleY2;
+    GtkRadioButton *buttonRadioBezier;
 
     // Botões da window de confirmação de carregamento
     GtkWidget *buttonSimConfCarregar;
@@ -1086,26 +1087,75 @@ static void on_buttonSalvarCurva_clicked() {
             double x;
             double y;
 
-            for(double t = 0; t < 1; t = t + 0.05) {
-                x = (pow((1 - t), 3) * xInicial) + 
-                    (3 * t * pow((1 - t), 2) * xControle1) +
-                    (3 * pow(t, 2) * (1 - t) * xControle2) +
-                    (pow(t, 3) * xFinal);
+            if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(buttonRadioBezier))==TRUE) {
+                for(double t = 0; t < 1; t = t + 0.05) {
+                    x = (pow((1 - t), 3) * xInicial) + 
+                        (3 * t * pow((1 - t), 2) * xControle1) +
+                        (3 * pow(t, 2) * (1 - t) * xControle2) +
+                        (pow(t, 3) * xFinal);
 
-                y = (pow((1 - t), 3) * yInicial) + 
-                    (3 * t * pow((1 - t), 2) * yControle1) +
-                    (3 * pow(t, 2) * (1 - t) * yControle2) +
-                    (pow(t, 3) * yFinal);
+                    y = (pow((1 - t), 3) * yInicial) + 
+                        (3 * t * pow((1 - t), 2) * yControle1) +
+                        (3 * pow(t, 2) * (1 - t) * yControle2) +
+                        (pow(t, 3) * yFinal);
+
+                    // std::cout << x << ", " << y << std::endl;
+                    p = new Ponto(x, y);
+                    pontosAuxiliarCurva.push_back(p);
+                }
+            } else {
+                int i = 0;
+                std::vector<double> arX;
+                std::vector<double> arY;
+                double rangeX;
+                double rangeY;
+                double passo;
+
+                arX.push_back(xInicial);
+                arX.push_back(xFinal);
+                arX.push_back(xControle1);
+                arX.push_back(xControle2);
+
+                arY.push_back(yFinal);
+                arY.push_back(yInicial);
+                arY.push_back(yControle1);
+                arY.push_back(yControle2);
 
 
-                // std::cout << x << ", " << y << std::endl;
-                p = new Ponto(x, y);
-                pontosAuxiliarCurva.push_back(p);
+                while(i + 3 < arX.size()) {
+                    rangeX = fabs(arX.at(i + 2) - arX.at(i + 1));
+                    rangeY = fabs(arY.at(i + 2) - arY.at(i + 1));
+
+                    if(rangeX > rangeY) {
+                        passo = 1.0/rangeX;
+                    } else {
+                        passo = 1.0/rangeY;
+                    }
+                    
+                    for(double t = 0; t <= 1; t = t + passo) {
+                        x = (((-1*pow(t, 3) + 3*pow(t, 2) - 3*t + 1) * arX.at(i) +
+                              ( 3*pow(t, 3) - 6*pow(t, 2) + 0*t + 4) * arX.at(i + 1) +
+                              (-3*pow(t, 3) + 3*pow(t, 2) + 3*t + 1) * arX.at(i + 2) +
+                              ( 1*pow(t, 3) + 0*pow(t, 2) + 0*t + 0) * arX.at(i + 3)) / 6);
+
+                        y = (((-1*pow(t, 3) + 3*pow(t, 2) - 3*t + 1) * arY.at(i) +
+                              ( 3*pow(t, 3) - 6*pow(t, 2) + 0*t + 4) * arY.at(i + 1) +
+                              (-3*pow(t, 3) + 3*pow(t, 2) + 3*t + 1) * arY.at(i + 2) +
+                              ( 1*pow(t, 3) + 0*pow(t, 2) + 0*t + 0) * arY.at(i + 3)) / 6);
+                        
+                        p = new Ponto(x, y);
+                        std::cout << x << ", " << y << std::endl;
+                        pontosAuxiliarCurva.push_back(p);
+                    }
+
+                    i++;
+                }
             }
 
             Curva *curva = new Curva(pontosAuxiliarCurva, nome);
             objetosCurva.push_back(curva);
             reDrawAll();
+            std::cout << pontosAuxiliarCurva.size() << std::endl;
             pontosAuxiliarCurva.clear();
 
             std::ostringstream console;
@@ -1847,6 +1897,7 @@ int main(int argc, char *argv[]) {
     spinCurvaControleY1 = GTK_WIDGET(gtk_builder_get_object(builder, "spinCurvaControleY1"));
     spinCurvaControleX2 = GTK_WIDGET(gtk_builder_get_object(builder, "spinCurvaControleX2"));
     spinCurvaControleY2 = GTK_WIDGET(gtk_builder_get_object(builder, "spinCurvaControleY2"));
+    buttonRadioBezier = GTK_RADIO_BUTTON(gtk_builder_get_object(builder, "buttonRadioBezier"));
 
     buttonSimConfExclusao = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSimConfExclusao"));
     buttonCancelarConfExclusao = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCancelarConfExclusao"));
