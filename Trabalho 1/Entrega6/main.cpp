@@ -973,11 +973,39 @@ static void on_radioButtonPontoQualquer_toggled() {
 
 // chama este método quando o botão salvar obj da window principal é clicado
 static void on_buttonSalvarObj_clicked() {
-    monstrarMensagemNoConsole("Botão salvar objeto pressionado!\n");
-    salvarObjetosPontoEmArquivo(objetosPonto);
-    salvarObjetosRetaEmArquivo(objetosReta);
-    salvarObjetosPoligonoEmArquivo(objetosPoligono);
-    salvarObjetosCurvaEmArquivo(objetosCurva);
+        
+    GtkWidget *dialog;
+    GtkFileChooser *chooser;
+    GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_SAVE;
+
+    dialog = gtk_file_chooser_dialog_new("Save File",
+                                        GTK_WINDOW(windowPrincipal),
+                                        action,
+                                        "_Cancel",
+                                        GTK_RESPONSE_CANCEL,
+                                        "_Save",
+                                        GTK_RESPONSE_ACCEPT,
+                                        NULL);
+
+    chooser = GTK_FILE_CHOOSER(dialog);
+    gtk_file_chooser_set_do_overwrite_confirmation(chooser, TRUE);
+    gtk_file_chooser_set_current_name(chooser, "saida.obj");
+
+    if (gtk_dialog_run(GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
+        char *file;
+        file = gtk_file_chooser_get_filename(chooser);
+        if(file != NULL) {
+            std::string filename(file);
+            salvarObjetosPontoEmArquivo(objetosPonto, filename);
+            salvarObjetosRetaEmArquivo(objetosReta, filename);
+            salvarObjetosPoligonoEmArquivo(objetosPoligono, filename);
+            salvarObjetosCurvaEmArquivo(objetosCurva, filename);
+                
+            monstrarMensagemNoConsole("Salvando no arquivo: " + filename + ".\n");
+        }
+        g_free (file);
+    }
+    gtk_widget_destroy (dialog);     
 }
 
 static void on_buttonCancelarConfCarregar_clicked() {
@@ -995,40 +1023,66 @@ static void on_buttonSimConfCarregar_clicked() {
     clear_surface();
 
     std::vector<Poligono*> objetosVindosDoArquivo;
-    objetosVindosDoArquivo = lerObjetosDoArquivo();
+        
+    GtkWidget *dialog;
+    GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
 
-    for(int i = 0; i < objetosVindosDoArquivo.size(); i ++) {
-        Poligono *p = objetosVindosDoArquivo.at(i);
-        if(p->getListaDePontos().size() == 1) {
-            double x = p->getListaDePontos().at(0)->getValorX();
-            double y = p->getListaDePontos().at(0)->getValorY();
-            std::string nome = p->getNome();
-            Ponto *ponto = new Ponto(x, y, nome);
-            objetosPonto.push_back(ponto);
-            colocaObjetoNaListStore(nome, "Ponto");
-        } else if(p->getListaDePontos().size() == 2) {
-            double x1 = p->getListaDePontos().at(0)->getValorX();
-            double y1 = p->getListaDePontos().at(0)->getValorY();
-            double x2 = p->getListaDePontos().at(1)->getValorX();
-            double y2 = p->getListaDePontos().at(1)->getValorY();
-            std::string nome = p->getNome();
-            Reta *reta = new Reta(x1, y1, x2, y2, nome);
-            objetosReta.push_back(reta);
-            colocaObjetoNaListStore(nome, "Reta");
-        } else if(p->getListaDePontos().size() >= 20) {
-            std::string nome = p->getNome();
-            Curva *curva = new Curva(p->getListaDePontos(), nome);
-            objetosCurva.push_back(curva);
-            colocaObjetoNaListStore(nome, "Curva");
-        } else {
-            std::string nome = p->getNome();
-            objetosPoligono.push_back(p);
-            colocaObjetoNaListStore(nome, "Polígono");
+    dialog = gtk_file_chooser_dialog_new("Open File",
+                                        GTK_WINDOW(windowPrincipal),
+                                        action,
+                                        "_Cancel",
+                                        GTK_RESPONSE_CANCEL,
+                                        "_Open",
+                                        GTK_RESPONSE_ACCEPT,
+                                        NULL);
+
+    if(gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
+        char *file;
+        GtkFileChooser *chooser = GTK_FILE_CHOOSER (dialog);
+        file = gtk_file_chooser_get_filename (chooser);
+        if(file != NULL) {
+            std::string filename(file);
+
+            objetosVindosDoArquivo = lerObjetosDoArquivo(filename);
+            for(int i = 0; i < objetosVindosDoArquivo.size(); i ++) {
+                Poligono *p = objetosVindosDoArquivo.at(i);
+                if(p->getListaDePontos().size() == 1) {
+                    double x = p->getListaDePontos().at(0)->getValorX();
+                    double y = p->getListaDePontos().at(0)->getValorY();
+                    std::string nome = p->getNome();
+                    Ponto *ponto = new Ponto(x, y, nome);
+                    objetosPonto.push_back(ponto);
+                    colocaObjetoNaListStore(nome, "Ponto");
+                } else if(p->getListaDePontos().size() == 2) {
+                    double x1 = p->getListaDePontos().at(0)->getValorX();
+                    double y1 = p->getListaDePontos().at(0)->getValorY();
+                    double x2 = p->getListaDePontos().at(1)->getValorX();
+                    double y2 = p->getListaDePontos().at(1)->getValorY();
+                    std::string nome = p->getNome();
+                    Reta *reta = new Reta(x1, y1, x2, y2, nome);
+                    objetosReta.push_back(reta);
+                    colocaObjetoNaListStore(nome, "Reta");
+                } else if(p->getListaDePontos().size() >= 20) {
+                    std::string nome = p->getNome();
+                    Curva *curva = new Curva(p->getListaDePontos(), nome);
+                    objetosCurva.push_back(curva);
+                    colocaObjetoNaListStore(nome, "Curva");
+                } else {
+                    std::string nome = p->getNome();
+                    objetosPoligono.push_back(p);
+                    colocaObjetoNaListStore(nome, "Polígono");
+                }
+            }
+            monstrarMensagemNoConsole("Arquivo " + filename + " importado!\n");
+            reDrawAll();
         }
+        g_free(file);
+    } else {
+        monstrarMensagemNoConsole("Cancelado carregamento de arquivos.");
     }
-    monstrarMensagemNoConsole("Arquivo importado!\n");
-    reDrawAll();
+    gtk_widget_destroy (dialog);
 }
+
 
 // chama este método quando o botão carregar obj da window principal é clicado
 static void on_buttonCarregarObj_clicked() {
