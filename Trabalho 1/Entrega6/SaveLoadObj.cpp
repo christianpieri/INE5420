@@ -8,9 +8,9 @@ using namespace std;
 #include "Poligono.hpp"
 #include "Curva.hpp"
 
-static void salvarObjetosPontoEmArquivo(std::vector<Ponto*> objetosPonto) {
+static void salvarObjetosPontoEmArquivo(std::vector<Ponto*> objetosPonto, std::string filename) {
     ofstream escreve;
-    escreve.open("saida.obj");
+    escreve.open(filename);
         
     for(int i = 0; i < objetosPonto.size(); i ++) {
         auto ponto = objetosPonto.at(i);
@@ -20,9 +20,9 @@ static void salvarObjetosPontoEmArquivo(std::vector<Ponto*> objetosPonto) {
     escreve.close();
 }
 
-static void salvarObjetosRetaEmArquivo(std::vector<Reta*> objetosReta) {
+static void salvarObjetosRetaEmArquivo(std::vector<Reta*> objetosReta, std::string filename) {
     ofstream escreve;
-    escreve.open("saida.obj", ofstream::ios_base::app);
+    escreve.open(filename, ofstream::ios_base::app);
     
     for(int i = 0; i < objetosReta.size(); i ++) {
         auto reta = objetosReta.at(i);
@@ -33,9 +33,9 @@ static void salvarObjetosRetaEmArquivo(std::vector<Reta*> objetosReta) {
     escreve.close();
 }
 
-static void salvarObjetosPoligonoEmArquivo(std::vector<Poligono*> objetosPoligono) {
+static void salvarObjetosPoligonoEmArquivo(std::vector<Poligono*> objetosPoligono, std::string filename) {
     ofstream escreve;
-    escreve.open("saida.obj", ofstream::ios_base::app);
+    escreve.open(filename, ofstream::ios_base::app);
     
     for(int i = 0; i < objetosPoligono.size(); i++) {
         auto poligono = objetosPoligono.at(i);
@@ -48,9 +48,9 @@ static void salvarObjetosPoligonoEmArquivo(std::vector<Poligono*> objetosPoligon
     escreve.close();
 }
 
-static void salvarObjetosCurvaEmArquivo(std::vector<Curva*> objetosCurva) {
+static void salvarObjetosCurvaEmArquivo(std::vector<Curva*> objetosCurva, std::string filename) {
     ofstream escreve;
-    escreve.open("saida.obj", ofstream::ios_base::app);
+    escreve.open(filename, ofstream::ios_base::app);
     
     for(int i = 0; i < objetosCurva.size(); i++) {
         auto curva = objetosCurva.at(i);
@@ -63,9 +63,9 @@ static void salvarObjetosCurvaEmArquivo(std::vector<Curva*> objetosCurva) {
     escreve.close();
 }
 
-static std::vector<Poligono*> lerObjetosDoArquivo() {
+static std::vector<Poligono*> lerObjetosDoArquivo(std::string filename) {
     ifstream leitura;
-    leitura.open("saida.obj");
+    leitura.open(filename);
     char linhaLida[100];
     std::string nome;
     std::string lixo;
