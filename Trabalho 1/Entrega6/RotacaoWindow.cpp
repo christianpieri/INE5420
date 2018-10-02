@@ -7,10 +7,11 @@ using namespace std;
 #include "Reta.hpp"
 #include "Poligono.hpp"
 #include "Curva.hpp"
+#include "Window.hpp"
 #include <cmath>
 #define PI 3.14159265
 
-static std::vector<Ponto*> rotacionaTodosOsPontos(std::string sentido,std::vector<Ponto*> listaDePontos, double x, double y) {
+static std::vector<Ponto*> rotacionaTodosOsPontos(std::string sentido,std::vector<Ponto*> listaDePontos, Window *tela) {
     double angulo = 90 * PI / 180;
     if(sentido.compare("Direita") == 0) {
         angulo = angulo * (-1);
@@ -18,8 +19,8 @@ static std::vector<Ponto*> rotacionaTodosOsPontos(std::string sentido,std::vecto
 
     std::vector<Ponto*> novaListaDePontos;
 
-    x = x + 250;
-    y = y + 250;
+    double x = (tela->getValorXMinimo() + tela->getValorXMaximo()) / 2;
+    double y = (tela->getValorYMinimo() + tela->getValorYMaximo()) / 2;
 
     for (std::vector<Ponto*>::iterator it = listaDePontos.begin(); it != listaDePontos.end(); ++it) {
         double novoX = ((*it)->getValorX() - x) * cos(angulo) + ((*it)->getValorY() - y) * sin(angulo) + x;
@@ -32,7 +33,7 @@ static std::vector<Ponto*> rotacionaTodosOsPontos(std::string sentido,std::vecto
     return novaListaDePontos;
 }
 
-static std::vector<Reta*> rotacionaTodasAsRetas(std::string sentido, std::vector<Reta*> listaDeRetas, double x, double y) {
+static std::vector<Reta*> rotacionaTodasAsRetas(std::string sentido, std::vector<Reta*> listaDeRetas, Window *tela) {
     double angulo = 90 * PI / 180;
     if(sentido.compare("Direita") == 0) {
         angulo = angulo * (-1);
@@ -40,8 +41,8 @@ static std::vector<Reta*> rotacionaTodasAsRetas(std::string sentido, std::vector
 
     std::vector<Reta*> novaListaDeRetas;
 
-    x = x + 250;
-    y = y + 250;
+    double x = (tela->getValorXMinimo() + tela->getValorXMaximo()) / 2;
+    double y = (tela->getValorYMinimo() + tela->getValorYMaximo()) / 2;
     
     for (std::vector<Reta*>::iterator it = listaDeRetas.begin(); it != listaDeRetas.end(); ++it) {
         double novoXInicial = ((*it)->getValorXInicial() - x) * cos(angulo) + ((*it)->getValorYInicial() - y) * sin(angulo) + x;
@@ -60,7 +61,7 @@ static std::vector<Reta*> rotacionaTodasAsRetas(std::string sentido, std::vector
     return novaListaDeRetas;
 }
 
-static std::vector<Poligono*> rotacionaTodosOsPoligonos(std::string sentido, std::vector<Poligono*> listaDePoligonos, double x, double y) {
+static std::vector<Poligono*> rotacionaTodosOsPoligonos(std::string sentido, std::vector<Poligono*> listaDePoligonos, Window *tela) {
     double angulo = 90 * PI / 180;
     if(sentido.compare("Direita") == 0) {
         angulo = angulo * (-1);
@@ -68,8 +69,8 @@ static std::vector<Poligono*> rotacionaTodosOsPoligonos(std::string sentido, std
 
     std::vector<Poligono*> novaListaDePoligonos;
     
-    x = x + 250;
-    y = y + 250;
+    double x = (tela->getValorXMinimo() + tela->getValorXMaximo()) / 2;
+    double y = (tela->getValorYMinimo() + tela->getValorYMaximo()) / 2;
 
     for (std::vector<Poligono*>::iterator it = listaDePoligonos.begin(); it != listaDePoligonos.end(); ++it) {
         for(int i = 0; i < (*it)->getListaDePontos().size(); i++) {
@@ -86,7 +87,7 @@ static std::vector<Poligono*> rotacionaTodosOsPoligonos(std::string sentido, std
     return novaListaDePoligonos;
 }
 
-static std::vector<Curva*> rotacionaTodasAsCurvas(std::string sentido, std::vector<Curva*> listaDeCurvas, double x, double y) {
+static std::vector<Curva*> rotacionaTodasAsCurvas(std::string sentido, std::vector<Curva*> listaDeCurvas, Window *tela) {
     double angulo = 90 * PI / 180;
     if(sentido.compare("Direita") == 0) {
         angulo = angulo * (-1);
@@ -94,8 +95,8 @@ static std::vector<Curva*> rotacionaTodasAsCurvas(std::string sentido, std::vect
 
     std::vector<Curva*> novaListaDeCurvas;
     
-    x = x + 250;
-    y = y + 250;
+    double x = (tela->getValorXMinimo() + tela->getValorXMaximo()) / 2;
+    double y = (tela->getValorYMinimo() + tela->getValorYMaximo()) / 2;
 
     for (std::vector<Curva*>::iterator it = listaDeCurvas.begin(); it != listaDeCurvas.end(); ++it) {
         for(int i = 0; i < (*it)->getListaDePontos().size(); i++) {

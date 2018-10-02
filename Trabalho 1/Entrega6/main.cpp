@@ -718,10 +718,10 @@ static std::string retornarTipoObjeto() {
 }
 
 static void rotacionaWindow() {
-    objetosPonto = rotacionaTodosOsPontos(sentidoRotacao, objetosPonto, tela.getValorXMinimo(), tela.getValorYMinimo());
-    objetosReta = rotacionaTodasAsRetas(sentidoRotacao, objetosReta, tela.getValorXMinimo(), tela.getValorYMinimo());
-    objetosPoligono = rotacionaTodosOsPoligonos(sentidoRotacao, objetosPoligono, tela.getValorXMinimo(), tela.getValorYMinimo());
-    objetosCurva = rotacionaTodasAsCurvas(sentidoRotacao, objetosCurva, tela.getValorXMinimo(), tela.getValorYMinimo());
+    objetosPonto = rotacionaTodosOsPontos(sentidoRotacao, objetosPonto, &tela);
+    objetosReta = rotacionaTodasAsRetas(sentidoRotacao, objetosReta, &tela);
+    objetosPoligono = rotacionaTodosOsPoligonos(sentidoRotacao, objetosPoligono, &tela);
+    objetosCurva = rotacionaTodasAsCurvas(sentidoRotacao, objetosCurva, &tela);
     reDrawAll();
 }
 
