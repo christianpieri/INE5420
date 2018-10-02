@@ -93,6 +93,10 @@ using namespace std;
     GtkWidget *spinCurvaY;
     GtkWidget *spinCurvaZ;
     GtkWidget *buttonAddPontoACurva;
+    GtkToggleButton *buttonRadioBezier;
+    GtkWidget *labelWindowCurva;
+    GtkWidget *labelQuantidadePontosCurva;
+    GtkWidget *labelQuantidadePontosCurvaFaltantes;
 
     // Botões da window de confirmação de carregamento
     GtkWidget *buttonSimConfCarregar;
@@ -1036,10 +1040,52 @@ static void on_buttonCarregarObj_clicked() {
     }
 }
 
+static void refazLabelsWindowCurva() {
+    int size = pontosAuxiliarCurva.size();
+    std::ostringstream saidaLabelQuantidade;
+    std::ostringstream saidaLabelFaltantes;
+    saidaLabelQuantidade << "Você já adicionou " << size << " pontos a sua curva.";
+    
+    if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(buttonRadioBezier))==TRUE) {
+        gtk_label_set_text(GTK_LABEL(labelQuantidadePontosCurva), saidaLabelQuantidade.str().c_str());
+        if(size != 4 && size != 7 && size != 10 && size != 13 && size !=16) {
+            saidaLabelFaltantes << "Você precisa adicionar, pelo menos, mais " << fabs(4 - size) << " pontos!";
+            gtk_widget_set_sensitive(buttonSalvarCurva, false);
+            gtk_widget_set_tooltip_text(buttonSalvarCurva, saidaLabelFaltantes.str().c_str());
+
+        } else {
+            saidaLabelFaltantes << "Adição de pontos concluída. A curva já pode ser salva!";
+            gtk_widget_set_sensitive(buttonSalvarCurva, true);
+            gtk_widget_set_tooltip_text(buttonSalvarCurva, "");
+
+
+        }
+        gtk_label_set_text(GTK_LABEL(labelQuantidadePontosCurvaFaltantes), saidaLabelFaltantes.str().c_str());
+
+    } else {
+        gtk_label_set_text(GTK_LABEL(labelQuantidadePontosCurva), saidaLabelQuantidade.str().c_str());
+        if(size < 4) {
+            saidaLabelFaltantes << "Você precisa adicionar, pelo menos, mais " << 4 - size << " pontos!";
+            gtk_widget_set_sensitive(buttonSalvarCurva, false);
+            gtk_widget_set_tooltip_text(buttonSalvarCurva, saidaLabelFaltantes.str().c_str());
+
+
+        } else {
+            saidaLabelFaltantes << "Adição de pontos concluída. A curva já pode ser salva!";
+            gtk_widget_set_sensitive(buttonSalvarCurva, true);
+            gtk_widget_set_tooltip_text(buttonSalvarCurva, "");
+
+        }
+        gtk_label_set_text(GTK_LABEL(labelQuantidadePontosCurvaFaltantes), saidaLabelFaltantes.str().c_str());
+
+    }
+}
+
 // chama este método quando o botão desenhar curva da window principal é clicado
 static void on_buttonCurva_clicked() {
     gtk_widget_show(windowCurva);
     monstrarMensagemNoConsole("Botão desenhar curva pressionado!\n");
+    refazLabelsWindowCurva();
 }
 
 // chama este método quando o botão add ponto da window de curvas é clicado
@@ -1053,6 +1099,19 @@ static void on_buttonAddPontoACurva_clicked() {
     std::ostringstream console;
     console << "O ponto (" << x << ", " << y << ") foi adicionado a lista de pontos da sua curva." << std::endl;
     monstrarMensagemNoConsole(console.str().c_str());
+
+    refazLabelsWindowCurva();
+}
+
+static void on_buttonRadioBezier_toggled() {
+    
+    if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(buttonRadioBezier))==TRUE) {
+        gtk_label_set_text(GTK_LABEL(labelWindowCurva), "Escolha as coordenadas da sua nova curva de Bezier");
+    } else {
+        gtk_label_set_text(GTK_LABEL(labelWindowCurva), "Escolha as coordenadas da sua nova curva b-Spline");
+    }
+    
+    refazLabelsWindowCurva();
 }
 
 // chama este método quando o botão salvar da window de curvas é clicado
@@ -1089,21 +1148,56 @@ static void on_buttonSalvarCurva_clicked() {
 
             std::vector<Ponto*> pontosConvertidosCurva;
 
-            for(double t = 0; t < 1; t = t + 0.05) {
-                x = (pow((1 - t), 3) * pontosAuxiliarCurva.at(0)->getValorX()) + 
-                    (3 * t * pow((1 - t), 2) * pontosAuxiliarCurva.at(1)->getValorX()) +
-                    (3 * pow(t, 2) * (1 - t) * pontosAuxiliarCurva.at(2)->getValorX()) +
-                    (pow(t, 3) * pontosAuxiliarCurva.at(3)->getValorX());
+            if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(buttonRadioBezier))==TRUE) { 
+                for(double t = 0; t < 1; t = t + 0.05) {
+                    x = (pow((1 - t), 3) * pontosAuxiliarCurva.at(0)->getValorX()) + 
+                        (3 * t * pow((1 - t), 2) * pontosAuxiliarCurva.at(1)->getValorX()) +
+                        (3 * pow(t, 2) * (1 - t) * pontosAuxiliarCurva.at(2)->getValorX()) +
+                        (pow(t, 3) * pontosAuxiliarCurva.at(3)->getValorX());
 
-                y = (pow((1 - t), 3) * pontosAuxiliarCurva.at(0)->getValorY()) + 
-                    (3 * t * pow((1 - t), 2) * pontosAuxiliarCurva.at(1)->getValorY()) +
-                    (3 * pow(t, 2) * (1 - t) * pontosAuxiliarCurva.at(2)->getValorY()) +
-                    (pow(t, 3) * pontosAuxiliarCurva.at(3)->getValorY());
+                    y = (pow((1 - t), 3) * pontosAuxiliarCurva.at(0)->getValorY()) + 
+                        (3 * t * pow((1 - t), 2) * pontosAuxiliarCurva.at(1)->getValorY()) +
+                        (3 * pow(t, 2) * (1 - t) * pontosAuxiliarCurva.at(2)->getValorY()) +
+                        (pow(t, 3) * pontosAuxiliarCurva.at(3)->getValorY());
 
 
-                // std::cout << x << ", " << y << std::endl;
+                    // std::cout << x << ", " << y << std::endl;
+                    p = new Ponto(x, y);
+                    pontosConvertidosCurva.push_back(p);
+                }
+            } else {
+                int i = 0;
+                double rangeX;
+                double rangeY;
+                double passo;
+
+                while(i + 3 < pontosAuxiliarCurva.size()) {
+                    rangeX = fabs(pontosAuxiliarCurva.at(i + 2)->getValorX() - pontosAuxiliarCurva.at(i + 1)->getValorX());
+                    rangeY = fabs(pontosAuxiliarCurva.at(i + 2)->getValorY() - pontosAuxiliarCurva.at(i + 1)->getValorY());
+                    if(rangeX > rangeY) {
+                        passo = 1.0/rangeX;
+                    } else {
+                        passo = 1.0/rangeY;
+                    }
+                    
+                    for(double t = 0; t <= 1; t = t + passo) {
+                        x = (((-1*pow(t, 3) + 3*pow(t, 2) - 3*t + 1) * pontosAuxiliarCurva.at(i)->getValorX() +
+                              ( 3*pow(t, 3) - 6*pow(t, 2) + 0*t + 4) * pontosAuxiliarCurva.at(i + 1)->getValorX() +
+                              (-3*pow(t, 3) + 3*pow(t, 2) + 3*t + 1) * pontosAuxiliarCurva.at(i + 2)->getValorX() +
+                              ( 1*pow(t, 3) + 0*pow(t, 2) + 0*t + 0) * pontosAuxiliarCurva.at(i + 3)->getValorX()) / 6);
+                        y = (((-1*pow(t, 3) + 3*pow(t, 2) - 3*t + 1) * pontosAuxiliarCurva.at(i)->getValorY() +
+                              ( 3*pow(t, 3) - 6*pow(t, 2) + 0*t + 4) * pontosAuxiliarCurva.at(i + 1)->getValorY() +
+                              (-3*pow(t, 3) + 3*pow(t, 2) + 3*t + 1) * pontosAuxiliarCurva.at(i + 2)->getValorY() +
+                              ( 1*pow(t, 3) + 0*pow(t, 2) + 0*t + 0) * pontosAuxiliarCurva.at(i + 3)->getValorY()) / 6);
+                        
+                        p = new Ponto(x, y);
+                        std::cout << x << ", " << y << std::endl;
+                        pontosAuxiliarCurva.push_back(p);
+                    }
+                    i++;
                 p = new Ponto(x, y);
-                pontosConvertidosCurva.push_back(p);
+                }
+                pontosAuxiliarCurva.push_back(p); 
             }
 
             Curva *curva = new Curva(pontosConvertidosCurva, nome);
@@ -1115,6 +1209,8 @@ static void on_buttonSalvarCurva_clicked() {
             console << "A curva " << nome << " foi desenhada." << std::endl;
             monstrarMensagemNoConsole(console.str().c_str());
             colocaObjetoNaListStore(nome, "Curva");
+            pontosAuxiliarCurva.clear();
+            refazLabelsWindowCurva();
         }    
     }
 }
@@ -1124,6 +1220,7 @@ static void on_buttonCancelarCurva_clicked() {
     gtk_widget_hide(windowCurva);
     pontosAuxiliarCurva.clear();
     monstrarMensagemNoConsole("Inclusão de curva cancelada!\n");
+    refazLabelsWindowCurva();
 }
 
 // chama este método quando o botão cancelar da window de rotação de objeto é clicado
@@ -1847,6 +1944,10 @@ int main(int argc, char *argv[]) {
     spinCurvaY = GTK_WIDGET(gtk_builder_get_object(builder, "spinCurvaY"));
     spinCurvaZ = GTK_WIDGET(gtk_builder_get_object(builder, "spinCurvaZ"));
     buttonAddPontoACurva = GTK_WIDGET(gtk_builder_get_object(builder, "buttonAddPontoACurva"));
+    buttonRadioBezier = GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, "buttonRadioBezier"));
+    labelWindowCurva = GTK_WIDGET(gtk_builder_get_object(builder, "labelWindowCurva"));
+    labelQuantidadePontosCurva = GTK_WIDGET(gtk_builder_get_object(builder, "labelQuantidadePontosCurva"));
+    labelQuantidadePontosCurvaFaltantes = GTK_WIDGET(gtk_builder_get_object(builder, "labelQuantidadePontosCurvaFaltantes"));
     
     buttonSimConfExclusao = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSimConfExclusao"));
     buttonCancelarConfExclusao = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCancelarConfExclusao"));
@@ -1915,7 +2016,7 @@ int main(int argc, char *argv[]) {
     g_signal_connect(buttonSalvarCurva, "button-release-event", G_CALLBACK (on_buttonSalvarCurva_clicked), NULL);
     g_signal_connect(buttonCancelarCurva, "button-release-event", G_CALLBACK (on_buttonCancelarCurva_clicked), NULL);
     g_signal_connect(buttonAddPontoACurva, "button-release-event", G_CALLBACK (on_buttonAddPontoACurva_clicked), NULL);
-
+    g_signal_connect(buttonRadioBezier, "toggled", G_CALLBACK(on_buttonRadioBezier_toggled), NULL);
 
     g_signal_connect(buttonSimConfExclusao, "button-release-event", G_CALLBACK (on_buttonSimConfExclusao_clicked), NULL);
     g_signal_connect(buttonCancelarConfExclusao, "button-release-event", G_CALLBACK (on_buttonCancelarConfExclusao_clicked), NULL);

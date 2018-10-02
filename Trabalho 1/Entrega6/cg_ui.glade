@@ -727,7 +727,7 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
           </object>
           <packing>
             <property name="x">50</property>
-            <property name="y">250</property>
+            <property name="y">265</property>
           </packing>
         </child>
         <child>
@@ -750,6 +750,7 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
             <property name="width_request">100</property>
             <property name="height_request">50</property>
             <property name="visible">True</property>
+            <property name="sensitive">False</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
           </object>
@@ -768,7 +769,7 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
           </object>
           <packing>
             <property name="x">30</property>
-            <property name="y">80</property>
+            <property name="y">75</property>
           </packing>
         </child>
         <child>
@@ -781,7 +782,7 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
           </object>
           <packing>
             <property name="x">145</property>
-            <property name="y">80</property>
+            <property name="y">75</property>
           </packing>
         </child>
         <child>
@@ -807,7 +808,7 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
           </object>
           <packing>
             <property name="x">50</property>
-            <property name="y">220</property>
+            <property name="y">235</property>
           </packing>
         </child>
         <child>
@@ -821,7 +822,7 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
           </object>
           <packing>
             <property name="x">140</property>
-            <property name="y">120</property>
+            <property name="y">115</property>
           </packing>
         </child>
         <child>
@@ -835,7 +836,7 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
           </object>
           <packing>
             <property name="x">20</property>
-            <property name="y">120</property>
+            <property name="y">115</property>
           </packing>
         </child>
         <child>
@@ -849,7 +850,7 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
           </object>
           <packing>
             <property name="x">260</property>
-            <property name="y">120</property>
+            <property name="y">115</property>
           </packing>
         </child>
         <child>
@@ -864,7 +865,7 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
             <property name="draw_indicator">True</property>
           </object>
           <packing>
-            <property name="x">50</property>
+            <property name="x">30</property>
             <property name="y">50</property>
           </packing>
         </child>
@@ -881,7 +882,7 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
             <property name="group">buttonRadioBezier</property>
           </object>
           <packing>
-            <property name="x">230</property>
+            <property name="x">180</property>
             <property name="y">50</property>
           </packing>
         </child>
@@ -895,7 +896,7 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
           </object>
           <packing>
             <property name="x">265</property>
-            <property name="y">80</property>
+            <property name="y">75</property>
           </packing>
         </child>
         <child>
@@ -909,7 +910,48 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
           </object>
           <packing>
             <property name="x">25</property>
+            <property name="y">205</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="labelQuantidadePontosCurva">
+            <property name="height_request">20</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Você já adicionou 0 pontos a sua curva.</property>
+          </object>
+          <packing>
+            <property name="x">75</property>
+            <property name="y">160</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="labelQuantidadePontosCurvaFaltantes">
+            <property name="width_request">186</property>
+            <property name="height_request">20</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Você precisa adicionar, pelo menos, mais 4 pontos!</property>
+          </object>
+          <packing>
+            <property name="x">30</property>
             <property name="y">180</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkImage" id="imageInfoCurva">
+            <property name="width_request">30</property>
+            <property name="height_request">30</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="tooltip_text" translatable="yes">Alterne entre os radio buttons para escolher entre Bezier ou b-Spline.
+Bezier precisa ter ao menos 4 pontos e depois como segue: 4.. 7.. 10.. 13..
+b-Spline precisa ter no mínimo 4 pontos.</property>
+            <property name="stock">gtk-info</property>
+          </object>
+          <packing>
+            <property name="x">320</property>
+            <property name="y">45</property>
           </packing>
         </child>
       </object>
