@@ -89,14 +89,10 @@ using namespace std;
     GtkWidget *buttonSalvarCurva;
     GtkWidget *buttonCancelarCurva;
     GtkWidget *textEntryCurvaName;
-    GtkWidget *spinCurvaX1;
-    GtkWidget *spinCurvaY1;
-    GtkWidget *spinCurvaX2;
-    GtkWidget *spinCurvaY2;
-    GtkWidget *spinCurvaControleX1;
-    GtkWidget *spinCurvaControleY1;
-    GtkWidget *spinCurvaControleX2;
-    GtkWidget *spinCurvaControleY2;
+    GtkWidget *spinCurvaX;
+    GtkWidget *spinCurvaY;
+    GtkWidget *spinCurvaZ;
+    GtkWidget *buttonAddPontoACurva;
 
     // Botões da window de confirmação de carregamento
     GtkWidget *buttonSimConfCarregar;
@@ -130,6 +126,7 @@ using namespace std;
     std::vector<Poligono*> objetosPoligono;
     std::vector<Curva*> objetosCurva;
     std::vector<Ponto*> pontosAuxiliarPoligono;
+    std::vector<Ponto*> pontosAuxiliarCurva;
 
     // Widgets da view de rotação
     GtkWidget *textEntryRotacaoPersonalizado;
@@ -1045,6 +1042,19 @@ static void on_buttonCurva_clicked() {
     monstrarMensagemNoConsole("Botão desenhar curva pressionado!\n");
 }
 
+// chama este método quando o botão add ponto da window de curvas é clicado
+static void on_buttonAddPontoACurva_clicked() {
+    double x = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinCurvaX));
+    double y = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinCurvaY));
+    
+    Ponto *pontoAuxiliar = new Ponto(x, y);
+    pontosAuxiliarCurva.push_back(pontoAuxiliar);
+
+    std::ostringstream console;
+    console << "O ponto (" << x << ", " << y << ") foi adicionado a lista de pontos da sua curva." << std::endl;
+    monstrarMensagemNoConsole(console.str().c_str());
+}
+
 // chama este método quando o botão salvar da window de curvas é clicado
 static void on_buttonSalvarCurva_clicked() {
     
@@ -1072,41 +1082,34 @@ static void on_buttonSalvarCurva_clicked() {
         } else {
 
             gtk_widget_hide(windowCurva);
-            double xInicial = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinCurvaX1));
-            double yInicial = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinCurvaY1));
-            double xFinal = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinCurvaX2));
-            double yFinal = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinCurvaY2));
-            double xControle1 = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinCurvaControleX1));
-            double yControle1 = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinCurvaControleY1));
-            double xControle2 = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinCurvaControleX2));
-            double yControle2 = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spinCurvaControleY2));
-
-            std::vector<Ponto*> pontosAuxiliarCurva;
+            
             Ponto *p;
             double x;
             double y;
 
-            for(double t = 0; t < 1; t = t + 0.05) {
-                x = (pow((1 - t), 3) * xInicial) + 
-                    (3 * t * pow((1 - t), 2) * xControle1) +
-                    (3 * pow(t, 2) * (1 - t) * xControle2) +
-                    (pow(t, 3) * xFinal);
+            std::vector<Ponto*> pontosConvertidosCurva;
 
-                y = (pow((1 - t), 3) * yInicial) + 
-                    (3 * t * pow((1 - t), 2) * yControle1) +
-                    (3 * pow(t, 2) * (1 - t) * yControle2) +
-                    (pow(t, 3) * yFinal);
+            for(double t = 0; t < 1; t = t + 0.05) {
+                x = (pow((1 - t), 3) * pontosAuxiliarCurva.at(0)->getValorX()) + 
+                    (3 * t * pow((1 - t), 2) * pontosAuxiliarCurva.at(1)->getValorX()) +
+                    (3 * pow(t, 2) * (1 - t) * pontosAuxiliarCurva.at(2)->getValorX()) +
+                    (pow(t, 3) * pontosAuxiliarCurva.at(3)->getValorX());
+
+                y = (pow((1 - t), 3) * pontosAuxiliarCurva.at(0)->getValorY()) + 
+                    (3 * t * pow((1 - t), 2) * pontosAuxiliarCurva.at(1)->getValorY()) +
+                    (3 * pow(t, 2) * (1 - t) * pontosAuxiliarCurva.at(2)->getValorY()) +
+                    (pow(t, 3) * pontosAuxiliarCurva.at(3)->getValorY());
 
 
                 // std::cout << x << ", " << y << std::endl;
                 p = new Ponto(x, y);
-                pontosAuxiliarCurva.push_back(p);
+                pontosConvertidosCurva.push_back(p);
             }
 
-            Curva *curva = new Curva(pontosAuxiliarCurva, nome);
+            Curva *curva = new Curva(pontosConvertidosCurva, nome);
             objetosCurva.push_back(curva);
             reDrawAll();
-            pontosAuxiliarCurva.clear();
+            pontosConvertidosCurva.clear();
 
             std::ostringstream console;
             console << "A curva " << nome << " foi desenhada." << std::endl;
@@ -1119,6 +1122,7 @@ static void on_buttonSalvarCurva_clicked() {
 // chama este método quando o botão cancelar da window de curvas é clicado
 static void on_buttonCancelarCurva_clicked() {
     gtk_widget_hide(windowCurva);
+    pontosAuxiliarCurva.clear();
     monstrarMensagemNoConsole("Inclusão de curva cancelada!\n");
 }
 
@@ -1839,15 +1843,11 @@ int main(int argc, char *argv[]) {
     buttonSalvarCurva = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSalvarCurva"));
     buttonCancelarCurva = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCancelarCurva"));
     textEntryCurvaName = GTK_WIDGET(gtk_builder_get_object(builder, "textEntryCurvaName"));
-    spinCurvaX1 = GTK_WIDGET(gtk_builder_get_object(builder, "spinCurvaX1"));
-    spinCurvaY1 = GTK_WIDGET(gtk_builder_get_object(builder, "spinCurvaY1"));
-    spinCurvaX2 = GTK_WIDGET(gtk_builder_get_object(builder, "spinCurvaX2"));
-    spinCurvaY2 = GTK_WIDGET(gtk_builder_get_object(builder, "spinCurvaY2"));
-    spinCurvaControleX1 = GTK_WIDGET(gtk_builder_get_object(builder, "spinCurvaControleX1"));
-    spinCurvaControleY1 = GTK_WIDGET(gtk_builder_get_object(builder, "spinCurvaControleY1"));
-    spinCurvaControleX2 = GTK_WIDGET(gtk_builder_get_object(builder, "spinCurvaControleX2"));
-    spinCurvaControleY2 = GTK_WIDGET(gtk_builder_get_object(builder, "spinCurvaControleY2"));
-
+    spinCurvaX = GTK_WIDGET(gtk_builder_get_object(builder, "spinCurvaX"));
+    spinCurvaY = GTK_WIDGET(gtk_builder_get_object(builder, "spinCurvaY"));
+    spinCurvaZ = GTK_WIDGET(gtk_builder_get_object(builder, "spinCurvaZ"));
+    buttonAddPontoACurva = GTK_WIDGET(gtk_builder_get_object(builder, "buttonAddPontoACurva"));
+    
     buttonSimConfExclusao = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSimConfExclusao"));
     buttonCancelarConfExclusao = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCancelarConfExclusao"));
 
@@ -1897,8 +1897,6 @@ int main(int argc, char *argv[]) {
     g_signal_connect(buttonRotateEsquerda, "button-release-event", G_CALLBACK (on_buttonRotateEsquerda_clicked), NULL);
     g_signal_connect(buttonDeletarObjeto, "button-release-event", G_CALLBACK (on_buttonDeletarObjeto_clicked), NULL);
     g_signal_connect(buttonCurva, "button-release-event", G_CALLBACK (on_buttonCurva_clicked), NULL);
-    g_signal_connect(buttonSalvarCurva, "button-release-event", G_CALLBACK (on_buttonSalvarCurva_clicked), NULL);
-    g_signal_connect(buttonCancelarCurva, "button-release-event", G_CALLBACK (on_buttonCancelarCurva_clicked), NULL);
     g_signal_connect(buttonOnOffClipping, "toggled", G_CALLBACK(on_buttonOnOffClipping_toggled), NULL);
     g_signal_connect(buttonSalvarObj, "button-release-event", G_CALLBACK(on_buttonSalvarObj_clicked), NULL);
     g_signal_connect(buttonCarregarObj, "button-release-event", G_CALLBACK(on_buttonCarregarObj_clicked), NULL);
@@ -1913,6 +1911,11 @@ int main(int argc, char *argv[]) {
     g_signal_connect(buttonSalvarPoligono, "button-release-event", G_CALLBACK (on_buttonSalvarPoligono_clicked), NULL);
     g_signal_connect(buttonCancelarPoligono, "button-release-event", G_CALLBACK (on_buttonCancelarPoligono_clicked), NULL);
     g_signal_connect(buttonAddPontoAoPoligono, "button-release-event", G_CALLBACK (on_buttonAddPontoAoPoligono_clicked), NULL);
+
+    g_signal_connect(buttonSalvarCurva, "button-release-event", G_CALLBACK (on_buttonSalvarCurva_clicked), NULL);
+    g_signal_connect(buttonCancelarCurva, "button-release-event", G_CALLBACK (on_buttonCancelarCurva_clicked), NULL);
+    g_signal_connect(buttonAddPontoACurva, "button-release-event", G_CALLBACK (on_buttonAddPontoACurva_clicked), NULL);
+
 
     g_signal_connect(buttonSimConfExclusao, "button-release-event", G_CALLBACK (on_buttonSimConfExclusao_clicked), NULL);
     g_signal_connect(buttonCancelarConfExclusao, "button-release-event", G_CALLBACK (on_buttonCancelarConfExclusao_clicked), NULL);
