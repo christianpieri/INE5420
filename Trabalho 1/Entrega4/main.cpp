@@ -304,11 +304,33 @@ static void redesenhaCurvas() {
     gtk_widget_queue_draw (windowPrincipal);
 }
 
+// Redesenha as 4 retas da área de clipping
+static void redesenhaAreaDeClipping() {
+    if(gtk_toggle_button_get_active(buttonOnOffClipping) == TRUE) {
+        cairo_t *cr;
+        cr = cairo_create (surface);
+        cairo_set_line_width (cr, 1);
+        cairo_set_source_rgb(cr, 1, 0, 0);
+        cairo_set_line_cap  (cr, CAIRO_LINE_CAP_ROUND);
+
+        cairo_move_to (cr, 50, 50);
+        cairo_line_to (cr, 50, 450);
+        cairo_line_to (cr, 450, 450);
+        cairo_line_to (cr, 450, 50);
+        cairo_line_to (cr, 50, 50);
+        
+        cairo_stroke (cr);    
+        gtk_widget_queue_draw (windowPrincipal);
+    } else {
+        // do nothing
+    }
+}
 
 // Redesenha tudo
 static void reDrawAll () {
     clear_surface();
 
+    redesenhaAreaDeClipping();
     redesenhaPontos();
     redesenhaRetas();
     redesenhaPoligonos();
@@ -701,6 +723,7 @@ static void on_buttonSimConfExclusao_clicked() {
     objetosPonto.clear();
     
     clear_surface();
+    reDrawAll();
     gtk_widget_queue_draw (windowPrincipal);
 }
 
@@ -1524,12 +1547,16 @@ static void on_buttonOnOffClipping_toggled() {
         gtk_widget_set_tooltip_text(GTK_WIDGET(GTK_BUTTON(buttonOnOffClipping)), "Clicar ativará o clipping de objetos");
         gtk_widget_set_sensitive(GTK_WIDGET(GTK_BUTTON(buttonRadioClip1)), false);
         gtk_widget_set_sensitive(GTK_WIDGET(GTK_BUTTON(buttonRadioClip2)), false);
+        monstrarMensagemNoConsole("Clipping de objetos desativado!\n");
     } else {
         gtk_button_set_label(GTK_BUTTON(buttonOnOffClipping), "On");
         gtk_widget_set_tooltip_text(GTK_WIDGET(GTK_BUTTON(buttonOnOffClipping)), "Clicar desativará o clipping de objetos");
         gtk_widget_set_sensitive(GTK_WIDGET(GTK_BUTTON(buttonRadioClip1)), true);
         gtk_widget_set_sensitive(GTK_WIDGET(GTK_BUTTON(buttonRadioClip2)), true);
+        monstrarMensagemNoConsole("Clipping de objetos ativado!\n");
     }
+
+    reDrawAll();
 }
 
 // chama quando o botão ok da window aviso é clicado
