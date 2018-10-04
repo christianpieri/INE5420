@@ -5,3 +5,7 @@ gcc `pkg-config --cflags gtk+-3.0` -o vpl_wexecution main.cpp Window.cpp Ponto.c
 Para rodar use:
 
 ./vpl_wexecution
+
+
+** Lembrando que **
+A entrega 4 foi feita depois da entrega 6, portanto é a mais recente!
