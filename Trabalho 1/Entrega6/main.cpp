@@ -1102,8 +1102,12 @@ static void refazLabelsWindowCurva() {
     
     if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(buttonRadioBezier))==TRUE) {
         gtk_label_set_text(GTK_LABEL(labelQuantidadePontosCurva), saidaLabelQuantidade.str().c_str());
-        if(size != 4 && size != 7 && size != 10 && size != 13 && size !=16) {
-            saidaLabelFaltantes << "Você precisa adicionar, pelo menos, mais " << fabs(4 - size) << " pontos!";
+        if(size == 0 || (size % 4) != 0) {
+            if(size < 4) {
+                saidaLabelFaltantes << "Você precisa adicionar, pelo menos, mais " << fabs(4 - size) << " ponto(s)!";
+            } else {
+                saidaLabelFaltantes << "Você precisa adicionar, pelo menos, mais " << fabs(4 - size % 4) << " ponto(s)!";
+            }
             gtk_widget_set_sensitive(buttonSalvarCurva, false);
             gtk_widget_set_tooltip_text(buttonSalvarCurva, saidaLabelFaltantes.str().c_str());
 
@@ -1119,7 +1123,7 @@ static void refazLabelsWindowCurva() {
     } else {
         gtk_label_set_text(GTK_LABEL(labelQuantidadePontosCurva), saidaLabelQuantidade.str().c_str());
         if(size < 4) {
-            saidaLabelFaltantes << "Você precisa adicionar, pelo menos, mais " << 4 - size << " pontos!";
+            saidaLabelFaltantes << "Você precisa adicionar, pelo menos, mais " << 4 - size << " ponto(s)!";
             gtk_widget_set_sensitive(buttonSalvarCurva, false);
             gtk_widget_set_tooltip_text(buttonSalvarCurva, saidaLabelFaltantes.str().c_str());
 
@@ -1203,22 +1207,27 @@ static void on_buttonSalvarCurva_clicked() {
             std::vector<Ponto*> pontosConvertidosCurva;
 
             if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(buttonRadioBezier))==TRUE) { 
-                for(double t = 0; t < 1; t = t + 0.05) {
-                    x = (pow((1 - t), 3) * pontosAuxiliarCurva.at(0)->getValorX()) + 
-                        (3 * t * pow((1 - t), 2) * pontosAuxiliarCurva.at(1)->getValorX()) +
-                        (3 * pow(t, 2) * (1 - t) * pontosAuxiliarCurva.at(2)->getValorX()) +
-                        (pow(t, 3) * pontosAuxiliarCurva.at(3)->getValorX());
+                
+                int i = 0;
+                while(i < pontosAuxiliarCurva.size()) {
+                    for(double t = 0; t < 1; t = t + 0.05) {
+                        x = (pow((1 - t), 3) * pontosAuxiliarCurva.at(i + 0)->getValorX()) + 
+                            (3 * t * pow((1 - t), 2) * pontosAuxiliarCurva.at(i + 1)->getValorX()) +
+                            (3 * pow(t, 2) * (1 - t) * pontosAuxiliarCurva.at(i + 2)->getValorX()) +
+                            (pow(t, 3) * pontosAuxiliarCurva.at(i + 3)->getValorX());
 
-                    y = (pow((1 - t), 3) * pontosAuxiliarCurva.at(0)->getValorY()) + 
-                        (3 * t * pow((1 - t), 2) * pontosAuxiliarCurva.at(1)->getValorY()) +
-                        (3 * pow(t, 2) * (1 - t) * pontosAuxiliarCurva.at(2)->getValorY()) +
-                        (pow(t, 3) * pontosAuxiliarCurva.at(3)->getValorY());
+                        y = (pow((1 - t), 3) * pontosAuxiliarCurva.at(i + 0)->getValorY()) + 
+                            (3 * t * pow((1 - t), 2) * pontosAuxiliarCurva.at(i + 1)->getValorY()) +
+                            (3 * pow(t, 2) * (1 - t) * pontosAuxiliarCurva.at(i + 2)->getValorY()) +
+                            (pow(t, 3) * pontosAuxiliarCurva.at(i + 3)->getValorY());
 
+                        p = new Ponto(x, y);
+                        pontosConvertidosCurva.push_back(p);
+                    }
 
-                    // std::cout << x << ", " << y << std::endl;
-                    p = new Ponto(x, y);
-                    pontosConvertidosCurva.push_back(p);
+                    i = i + 4;
                 }
+
             } else {
                 int i = 0;
                 double rangeX;
