@@ -945,7 +945,7 @@ Ao criar um polígono com 2 coordenadas, será desenhada uma reta.</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="tooltip_text" translatable="yes">Alterne entre os radio buttons para escolher entre Bezier ou b-Spline.
-Bezier precisa ter ao menos 4 pontos e depois como segue: 4.. 7.. 10.. 13..
+Bezier precisa ter múltiplos de 4 pontos.
 b-Spline precisa ter no mínimo 4 pontos.</property>
             <property name="stock">gtk-info</property>
           </object>
