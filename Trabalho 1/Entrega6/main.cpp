@@ -1245,13 +1245,10 @@ static void on_buttonSalvarCurva_clicked() {
                               ( 1*pow(t, 3) + 0*pow(t, 2) + 0*t + 0) * pontosAuxiliarCurva.at(i + 3)->getValorY()) / 6);
                         
                         p = new Ponto(x, y);
-                        std::cout << x << ", " << y << std::endl;
-                        pontosAuxiliarCurva.push_back(p);
+                        pontosConvertidosCurva.push_back(p);
                     }
                     i++;
-                p = new Ponto(x, y);
                 }
-                pontosAuxiliarCurva.push_back(p); 
             }
 
             Curva *curva = new Curva(pontosConvertidosCurva, nome);
