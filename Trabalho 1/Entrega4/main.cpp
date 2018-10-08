@@ -524,12 +524,20 @@ static void on_buttonSalvarPoint_clicked() {
 
             gtk_widget_hide(windowPonto);
 
-            if(!devoClipparPonto(x, y, &tela)) {
+            if(gtk_toggle_button_get_active(buttonOnOffClipping) == TRUE) {
+                if(!devoClipparPonto(x, y, &tela)) {
+                    desenharLinha(transformadaViewPortCoordenadaX(x), 
+                                transformadaViewPortCoordenadaY(y), 
+                                transformadaViewPortCoordenadaX(x), 
+                                transformadaViewPortCoordenadaY(y));
+                }
+            } else {
                 desenharLinha(transformadaViewPortCoordenadaX(x), 
-                            transformadaViewPortCoordenadaY(y), 
-                            transformadaViewPortCoordenadaX(x), 
-                            transformadaViewPortCoordenadaY(y));
+                                transformadaViewPortCoordenadaY(y), 
+                                transformadaViewPortCoordenadaX(x), 
+                                transformadaViewPortCoordenadaY(y));
             }
+
             std::ostringstream console;
             console << "O ponto " << nome << "(" << x << ", " << y << ") foi desenhado." << std::endl;
             monstrarMensagemNoConsole(console.str().c_str());
