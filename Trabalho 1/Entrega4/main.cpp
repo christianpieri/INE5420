@@ -524,11 +524,12 @@ static void on_buttonSalvarPoint_clicked() {
 
             gtk_widget_hide(windowPonto);
 
-            desenharLinha(transformadaViewPortCoordenadaX(x), 
-                        transformadaViewPortCoordenadaY(y), 
-                        transformadaViewPortCoordenadaX(x), 
-                        transformadaViewPortCoordenadaY(y));
-
+            if(!devoClipparPonto(x, y, &tela)) {
+                desenharLinha(transformadaViewPortCoordenadaX(x), 
+                            transformadaViewPortCoordenadaY(y), 
+                            transformadaViewPortCoordenadaX(x), 
+                            transformadaViewPortCoordenadaY(y));
+            }
             std::ostringstream console;
             console << "O ponto " << nome << "(" << x << ", " << y << ") foi desenhado." << std::endl;
             monstrarMensagemNoConsole(console.str().c_str());
