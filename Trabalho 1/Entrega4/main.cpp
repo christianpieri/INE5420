@@ -6,6 +6,7 @@ using namespace std;
 #include "Reta.hpp"
 #include "Poligono.hpp"
 #include "Curva.hpp"
+#include "Clipping.cpp"
 #include <sstream>
 #include <vector>
 #include <iterator>
@@ -218,10 +219,19 @@ static void redesenhaPontos() {
         x = (*it)->getValorX();
         y = (*it)->getValorY();
 
-        desenharLinha(transformadaViewPortCoordenadaX(x),
-                      transformadaViewPortCoordenadaY(y),
-                      transformadaViewPortCoordenadaX(x),
-                      transformadaViewPortCoordenadaY(y));
+        if(gtk_toggle_button_get_active(buttonOnOffClipping) == TRUE) {
+            if(!devoClipparPonto(x, y, &tela)) {
+                desenharLinha(transformadaViewPortCoordenadaX(x),
+                            transformadaViewPortCoordenadaY(y),
+                            transformadaViewPortCoordenadaX(x),
+                            transformadaViewPortCoordenadaY(y));
+            }
+        } else {
+            desenharLinha(transformadaViewPortCoordenadaX(x),
+                            transformadaViewPortCoordenadaY(y),
+                            transformadaViewPortCoordenadaX(x),
+                            transformadaViewPortCoordenadaY(y));
+        }
     }
 }
 
@@ -514,10 +524,19 @@ static void on_buttonSalvarPoint_clicked() {
 
             gtk_widget_hide(windowPonto);
 
-            desenharLinha(transformadaViewPortCoordenadaX(x), 
-                        transformadaViewPortCoordenadaY(y), 
-                        transformadaViewPortCoordenadaX(x), 
-                        transformadaViewPortCoordenadaY(y));
+            if(gtk_toggle_button_get_active(buttonOnOffClipping) == TRUE) {
+                if(!devoClipparPonto(x, y, &tela)) {
+                    desenharLinha(transformadaViewPortCoordenadaX(x), 
+                                transformadaViewPortCoordenadaY(y), 
+                                transformadaViewPortCoordenadaX(x), 
+                                transformadaViewPortCoordenadaY(y));
+                }
+            } else {
+                desenharLinha(transformadaViewPortCoordenadaX(x), 
+                                transformadaViewPortCoordenadaY(y), 
+                                transformadaViewPortCoordenadaX(x), 
+                                transformadaViewPortCoordenadaY(y));
+            }
 
             std::ostringstream console;
             console << "O ponto " << nome << "(" << x << ", " << y << ") foi desenhado." << std::endl;
