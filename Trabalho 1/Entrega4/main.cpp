@@ -47,8 +47,8 @@ using namespace std;
     GtkWidget *buttonDeletarObjeto;
     GtkWidget *buttonEditObjeto;
     GtkToggleButton *buttonOnOffClipping;
-    GtkRadioButton *buttonRadioClip1;
-    GtkRadioButton *buttonRadioClip2;
+    GtkRadioButton *liangBarskyRadioButton;
+    GtkRadioButton *cohenSutherlandRadioButton;
     GtkWidget *buttonSalvarObj;
     GtkWidget *buttonCarregarObj;
 
@@ -1564,14 +1564,14 @@ static void on_buttonOnOffClipping_toggled() {
     if(gtk_toggle_button_get_active(buttonOnOffClipping) == FALSE) {
         gtk_button_set_label(GTK_BUTTON(buttonOnOffClipping), "Off");
         gtk_widget_set_tooltip_text(GTK_WIDGET(GTK_BUTTON(buttonOnOffClipping)), "Clicar ativará o clipping de objetos");
-        gtk_widget_set_sensitive(GTK_WIDGET(GTK_BUTTON(buttonRadioClip1)), false);
-        gtk_widget_set_sensitive(GTK_WIDGET(GTK_BUTTON(buttonRadioClip2)), false);
+        gtk_widget_set_sensitive(GTK_WIDGET(GTK_BUTTON(liangBarskyRadioButton)), false);
+        gtk_widget_set_sensitive(GTK_WIDGET(GTK_BUTTON(cohenSutherlandRadioButton)), false);
         monstrarMensagemNoConsole("Clipping de objetos desativado!\n");
     } else {
         gtk_button_set_label(GTK_BUTTON(buttonOnOffClipping), "On");
         gtk_widget_set_tooltip_text(GTK_WIDGET(GTK_BUTTON(buttonOnOffClipping)), "Clicar desativará o clipping de objetos");
-        gtk_widget_set_sensitive(GTK_WIDGET(GTK_BUTTON(buttonRadioClip1)), true);
-        gtk_widget_set_sensitive(GTK_WIDGET(GTK_BUTTON(buttonRadioClip2)), true);
+        gtk_widget_set_sensitive(GTK_WIDGET(GTK_BUTTON(liangBarskyRadioButton)), true);
+        gtk_widget_set_sensitive(GTK_WIDGET(GTK_BUTTON(cohenSutherlandRadioButton)), true);
         monstrarMensagemNoConsole("Clipping de objetos ativado!\n");
     }
 
@@ -2012,8 +2012,8 @@ int main(int argc, char *argv[]) {
     buttonDeletarObjeto = GTK_WIDGET(gtk_builder_get_object(builder, "buttonDeletarObjeto"));
     buttonCurva = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCurva"));
     buttonOnOffClipping = GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, "buttonOnOffClipping"));
-    buttonRadioClip1 = GTK_RADIO_BUTTON(gtk_builder_get_object(builder, "buttonRadioClip1"));
-    buttonRadioClip2 = GTK_RADIO_BUTTON(gtk_builder_get_object(builder, "buttonRadioClip2"));
+    liangBarskyRadioButton = GTK_RADIO_BUTTON(gtk_builder_get_object(builder, "liangBarskyRadioButton"));
+    cohenSutherlandRadioButton = GTK_RADIO_BUTTON(gtk_builder_get_object(builder, "cohenSutherlandRadioButton"));
     buttonSalvarObj = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSalvarObj"));
     buttonCarregarObj = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCarregarObj"));
     buttonEditObjeto = GTK_WIDGET(gtk_builder_get_object(builder, "buttonEditObjeto"));
