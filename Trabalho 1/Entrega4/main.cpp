@@ -248,10 +248,26 @@ static void redesenhaRetas() {
         x2 = (*it)->getValorXFinal();
         y2 = (*it)->getValorYFinal();
 
-        desenharLinha(transformadaViewPortCoordenadaX(x1),
-                      transformadaViewPortCoordenadaY(y1),
-                      transformadaViewPortCoordenadaX(x2),
-                      transformadaViewPortCoordenadaY(y2));
+        if(gtk_toggle_button_get_active(buttonOnOffClipping) == TRUE) {
+            std::vector<double> pontos = liangBarskyClippingLine(x1, y1, x2, y2, &tela);
+           
+           if(pontos.size() != 0) {
+               x1 = pontos.at(0);
+               y1 = pontos.at(1);
+               x2 = pontos.at(2);
+               y2 = pontos.at(3);
+           }
+           
+             desenharLinha(transformadaViewPortCoordenadaX(x1),
+                        transformadaViewPortCoordenadaY(y1),
+                        transformadaViewPortCoordenadaX(x2),
+                        transformadaViewPortCoordenadaY(y2));
+        } else {
+            desenharLinha(transformadaViewPortCoordenadaX(x1),
+                        transformadaViewPortCoordenadaY(y1),
+                        transformadaViewPortCoordenadaX(x2),
+                        transformadaViewPortCoordenadaY(y2));
+        }
     }
 }
 
