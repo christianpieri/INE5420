@@ -289,18 +289,60 @@ static void redesenhaPoligonos() {
         cr = cairo_create (surface);
         cairo_set_line_width (cr, 5);
         cairo_set_line_cap  (cr, CAIRO_LINE_CAP_ROUND); 
-        cairo_move_to (cr, transformadaViewPortCoordenadaX(ponto->getValorX()),
-                        transformadaViewPortCoordenadaY(ponto->getValorY()));
+        
+        if(gtk_toggle_button_get_active(buttonOnOffClipping) == TRUE) {
+            std::vector<double> pontos;
 
-        for (std::vector<Ponto*>::iterator it = listaDePontos.begin(); it != listaDePontos.end(); ++it) {
-            x = (*it)->getValorX();
-            y = (*it)->getValorY();
-            cairo_line_to (cr, transformadaViewPortCoordenadaX(x), transformadaViewPortCoordenadaY(y));
-        }  
+            double x1;
+            double y1;
+            double x2;
+            double y2;
+            
+            for(int i = 0; i < listaDePontos.size(); i++) {
 
-        cairo_line_to (cr, transformadaViewPortCoordenadaX(ponto->getValorX()),
-                           transformadaViewPortCoordenadaY(ponto->getValorY()));
-    
+                int n = i + 1;
+                if(i == listaDePontos.size() -1) {
+                    n = 0;
+                }
+
+                pontos = liangBarskyClippingLine(listaDePontos.at(i)->getValorX(), 
+                                                 listaDePontos.at(i)->getValorY(),
+                                                 listaDePontos.at(n)->getValorX(), 
+                                                 listaDePontos.at(n)->getValorY(),
+                                                 &tela);
+                                                 
+                if(pontos.size() != 0) {
+                    x1 = pontos.at(0);
+                    y1 = pontos.at(1);
+                    x2 = pontos.at(2);
+                    y2 = pontos.at(3);
+                }
+
+                if(devoClipparPonto(x1, y1, &tela) && devoClipparPonto(x2, y2, &tela)) { 
+                    // do nothing
+                } else {
+                    desenharLinha(transformadaViewPortCoordenadaX(x1),
+                                transformadaViewPortCoordenadaY(y1),
+                                transformadaViewPortCoordenadaX(x2),
+                                transformadaViewPortCoordenadaY(y2));
+                }
+
+            }
+
+        } else {
+            cairo_move_to (cr, transformadaViewPortCoordenadaX(ponto->getValorX()),
+                            transformadaViewPortCoordenadaY(ponto->getValorY()));
+
+            for (std::vector<Ponto*>::iterator it = listaDePontos.begin(); it != listaDePontos.end(); ++it) {
+                x = (*it)->getValorX();
+                y = (*it)->getValorY();
+                cairo_line_to (cr, transformadaViewPortCoordenadaX(x), transformadaViewPortCoordenadaY(y));
+            }  
+
+            cairo_line_to (cr, transformadaViewPortCoordenadaX(ponto->getValorX()),
+                               transformadaViewPortCoordenadaY(ponto->getValorY()));
+        }
+
         cairo_stroke (cr);    
     }
     gtk_widget_queue_draw (windowPrincipal);
@@ -627,6 +669,7 @@ static void on_buttonSalvarReta_clicked() {
             objetosReta.push_back(reta);
 
             colocaObjetoNaListStore(nome, "Reta");
+            reDrawAll();
         }
     }
 }
@@ -722,6 +765,7 @@ static void on_buttonSalvarPoligono_clicked() {
                 pontosAuxiliarPoligono.clear();
 
                 colocaObjetoNaListStore(nome, "Polígono");
+                reDrawAll();
             }
         }
     }
