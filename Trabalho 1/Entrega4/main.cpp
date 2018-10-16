@@ -47,8 +47,8 @@ using namespace std;
     GtkWidget *buttonDeletarObjeto;
     GtkWidget *buttonEditObjeto;
     GtkToggleButton *buttonOnOffClipping;
-    GtkRadioButton *buttonRadioClip1;
-    GtkRadioButton *buttonRadioClip2;
+    GtkRadioButton *liangBarskyRadioButton;
+    GtkRadioButton *cohenSutherlandRadioButton;
     GtkWidget *buttonSalvarObj;
     GtkWidget *buttonCarregarObj;
 
@@ -248,10 +248,30 @@ static void redesenhaRetas() {
         x2 = (*it)->getValorXFinal();
         y2 = (*it)->getValorYFinal();
 
-        desenharLinha(transformadaViewPortCoordenadaX(x1),
-                      transformadaViewPortCoordenadaY(y1),
-                      transformadaViewPortCoordenadaX(x2),
-                      transformadaViewPortCoordenadaY(y2));
+        if(gtk_toggle_button_get_active(buttonOnOffClipping) == TRUE) {
+            std::vector<double> pontos = liangBarskyClippingLine(x1, y1, x2, y2, &tela);
+           
+            if(pontos.size() != 0) {
+               x1 = pontos.at(0);
+               y1 = pontos.at(1);
+               x2 = pontos.at(2);
+               y2 = pontos.at(3);
+            }
+
+            if(devoClipparPonto(x1, y1, &tela) && devoClipparPonto(x2, y2, &tela)) { 
+                // do nothing
+            } else {
+                desenharLinha(transformadaViewPortCoordenadaX(x1),
+                            transformadaViewPortCoordenadaY(y1),
+                            transformadaViewPortCoordenadaX(x2),
+                            transformadaViewPortCoordenadaY(y2));
+            }
+        } else {
+            desenharLinha(transformadaViewPortCoordenadaX(x1),
+                        transformadaViewPortCoordenadaY(y1),
+                        transformadaViewPortCoordenadaX(x2),
+                        transformadaViewPortCoordenadaY(y2));
+        }
     }
 }
 
@@ -269,18 +289,60 @@ static void redesenhaPoligonos() {
         cr = cairo_create (surface);
         cairo_set_line_width (cr, 5);
         cairo_set_line_cap  (cr, CAIRO_LINE_CAP_ROUND); 
-        cairo_move_to (cr, transformadaViewPortCoordenadaX(ponto->getValorX()),
-                        transformadaViewPortCoordenadaY(ponto->getValorY()));
+        
+        if(gtk_toggle_button_get_active(buttonOnOffClipping) == TRUE) {
+            std::vector<double> pontos;
 
-        for (std::vector<Ponto*>::iterator it = listaDePontos.begin(); it != listaDePontos.end(); ++it) {
-            x = (*it)->getValorX();
-            y = (*it)->getValorY();
-            cairo_line_to (cr, transformadaViewPortCoordenadaX(x), transformadaViewPortCoordenadaY(y));
-        }  
+            double x1;
+            double y1;
+            double x2;
+            double y2;
+            
+            for(int i = 0; i < listaDePontos.size(); i++) {
 
-        cairo_line_to (cr, transformadaViewPortCoordenadaX(ponto->getValorX()),
-                           transformadaViewPortCoordenadaY(ponto->getValorY()));
-    
+                int n = i + 1;
+                if(i == listaDePontos.size() -1) {
+                    n = 0;
+                }
+
+                pontos = liangBarskyClippingLine(listaDePontos.at(i)->getValorX(), 
+                                                 listaDePontos.at(i)->getValorY(),
+                                                 listaDePontos.at(n)->getValorX(), 
+                                                 listaDePontos.at(n)->getValorY(),
+                                                 &tela);
+                                                 
+                if(pontos.size() != 0) {
+                    x1 = pontos.at(0);
+                    y1 = pontos.at(1);
+                    x2 = pontos.at(2);
+                    y2 = pontos.at(3);
+                }
+
+                if(devoClipparPonto(x1, y1, &tela) && devoClipparPonto(x2, y2, &tela)) { 
+                    // do nothing
+                } else {
+                    desenharLinha(transformadaViewPortCoordenadaX(x1),
+                                transformadaViewPortCoordenadaY(y1),
+                                transformadaViewPortCoordenadaX(x2),
+                                transformadaViewPortCoordenadaY(y2));
+                }
+
+            }
+
+        } else {
+            cairo_move_to (cr, transformadaViewPortCoordenadaX(ponto->getValorX()),
+                            transformadaViewPortCoordenadaY(ponto->getValorY()));
+
+            for (std::vector<Ponto*>::iterator it = listaDePontos.begin(); it != listaDePontos.end(); ++it) {
+                x = (*it)->getValorX();
+                y = (*it)->getValorY();
+                cairo_line_to (cr, transformadaViewPortCoordenadaX(x), transformadaViewPortCoordenadaY(y));
+            }  
+
+            cairo_line_to (cr, transformadaViewPortCoordenadaX(ponto->getValorX()),
+                               transformadaViewPortCoordenadaY(ponto->getValorY()));
+        }
+
         cairo_stroke (cr);    
     }
     gtk_widget_queue_draw (windowPrincipal);
@@ -299,15 +361,53 @@ static void redesenhaCurvas() {
         cairo_t *cr;
         cr = cairo_create (surface);
         cairo_set_line_width (cr, 5);
-        cairo_set_line_cap  (cr, CAIRO_LINE_CAP_ROUND); 
-        cairo_move_to (cr, transformadaViewPortCoordenadaX(ponto->getValorX()),
-                        transformadaViewPortCoordenadaY(ponto->getValorY()));
+        cairo_set_line_cap  (cr, CAIRO_LINE_CAP_ROUND);
 
-        for (std::vector<Ponto*>::iterator it = listaDePontos.begin(); it != listaDePontos.end(); ++it) {
-            x = (*it)->getValorX();
-            y = (*it)->getValorY();
-            cairo_line_to (cr, transformadaViewPortCoordenadaX(x), transformadaViewPortCoordenadaY(y));
-        }  
+          if(gtk_toggle_button_get_active(buttonOnOffClipping) == TRUE) {
+            std::vector<double> pontos;
+
+            double x1;
+            double y1;
+            double x2;
+            double y2;
+            
+            for(int i = 0; i < listaDePontos.size() -1; i++) {
+
+                pontos = liangBarskyClippingLine(listaDePontos.at(i)->getValorX(), 
+                                                 listaDePontos.at(i)->getValorY(),
+                                                 listaDePontos.at(i+1)->getValorX(), 
+                                                 listaDePontos.at(i+1)->getValorY(),
+                                                 &tela);
+                                                 
+                if(pontos.size() != 0) {
+                    x1 = pontos.at(0);
+                    y1 = pontos.at(1);
+                    x2 = pontos.at(2);
+                    y2 = pontos.at(3);
+                }
+
+                if(devoClipparPonto(x1, y1, &tela) && devoClipparPonto(x2, y2, &tela)) { 
+                    // do nothing
+                } else {
+                    desenharLinha(transformadaViewPortCoordenadaX(x1),
+                                transformadaViewPortCoordenadaY(y1),
+                                transformadaViewPortCoordenadaX(x2),
+                                transformadaViewPortCoordenadaY(y2));
+                }
+
+            }
+
+        } else {
+
+            cairo_move_to (cr, transformadaViewPortCoordenadaX(ponto->getValorX()),
+                               transformadaViewPortCoordenadaY(ponto->getValorY()));
+
+            for (std::vector<Ponto*>::iterator it = listaDePontos.begin(); it != listaDePontos.end(); ++it) {
+                x = (*it)->getValorX();
+                y = (*it)->getValorY();
+                cairo_line_to (cr, transformadaViewPortCoordenadaX(x), transformadaViewPortCoordenadaY(y));
+            }  
+        }
 
         cairo_stroke (cr);    
     }
@@ -607,6 +707,7 @@ static void on_buttonSalvarReta_clicked() {
             objetosReta.push_back(reta);
 
             colocaObjetoNaListStore(nome, "Reta");
+            reDrawAll();
         }
     }
 }
@@ -702,6 +803,7 @@ static void on_buttonSalvarPoligono_clicked() {
                 pontosAuxiliarPoligono.clear();
 
                 colocaObjetoNaListStore(nome, "Polígono");
+                reDrawAll();
             }
         }
     }
@@ -1313,6 +1415,7 @@ static void on_buttonSalvarCurva_clicked() {
             colocaObjetoNaListStore(nome, "Curva");
             pontosAuxiliarCurva.clear();
             refazLabelsWindowCurva();
+            reDrawAll();
         }    
     }
 }
@@ -1564,14 +1667,14 @@ static void on_buttonOnOffClipping_toggled() {
     if(gtk_toggle_button_get_active(buttonOnOffClipping) == FALSE) {
         gtk_button_set_label(GTK_BUTTON(buttonOnOffClipping), "Off");
         gtk_widget_set_tooltip_text(GTK_WIDGET(GTK_BUTTON(buttonOnOffClipping)), "Clicar ativará o clipping de objetos");
-        gtk_widget_set_sensitive(GTK_WIDGET(GTK_BUTTON(buttonRadioClip1)), false);
-        gtk_widget_set_sensitive(GTK_WIDGET(GTK_BUTTON(buttonRadioClip2)), false);
+        gtk_widget_set_sensitive(GTK_WIDGET(GTK_BUTTON(liangBarskyRadioButton)), false);
+        gtk_widget_set_sensitive(GTK_WIDGET(GTK_BUTTON(cohenSutherlandRadioButton)), false);
         monstrarMensagemNoConsole("Clipping de objetos desativado!\n");
     } else {
         gtk_button_set_label(GTK_BUTTON(buttonOnOffClipping), "On");
         gtk_widget_set_tooltip_text(GTK_WIDGET(GTK_BUTTON(buttonOnOffClipping)), "Clicar desativará o clipping de objetos");
-        gtk_widget_set_sensitive(GTK_WIDGET(GTK_BUTTON(buttonRadioClip1)), true);
-        gtk_widget_set_sensitive(GTK_WIDGET(GTK_BUTTON(buttonRadioClip2)), true);
+        gtk_widget_set_sensitive(GTK_WIDGET(GTK_BUTTON(liangBarskyRadioButton)), true);
+        gtk_widget_set_sensitive(GTK_WIDGET(GTK_BUTTON(cohenSutherlandRadioButton)), true);
         monstrarMensagemNoConsole("Clipping de objetos ativado!\n");
     }
 
@@ -2012,8 +2115,8 @@ int main(int argc, char *argv[]) {
     buttonDeletarObjeto = GTK_WIDGET(gtk_builder_get_object(builder, "buttonDeletarObjeto"));
     buttonCurva = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCurva"));
     buttonOnOffClipping = GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, "buttonOnOffClipping"));
-    buttonRadioClip1 = GTK_RADIO_BUTTON(gtk_builder_get_object(builder, "buttonRadioClip1"));
-    buttonRadioClip2 = GTK_RADIO_BUTTON(gtk_builder_get_object(builder, "buttonRadioClip2"));
+    liangBarskyRadioButton = GTK_RADIO_BUTTON(gtk_builder_get_object(builder, "liangBarskyRadioButton"));
+    cohenSutherlandRadioButton = GTK_RADIO_BUTTON(gtk_builder_get_object(builder, "cohenSutherlandRadioButton"));
     buttonSalvarObj = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSalvarObj"));
     buttonCarregarObj = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCarregarObj"));
     buttonEditObjeto = GTK_WIDGET(gtk_builder_get_object(builder, "buttonEditObjeto"));

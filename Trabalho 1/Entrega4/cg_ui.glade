@@ -1719,34 +1719,36 @@ objetos e desenhos serão descartados.
           </packing>
         </child>
         <child>
-          <object class="GtkRadioButton" id="buttonRadioClip1">
-            <property name="label" translatable="yes">r1</property>
+          <object class="GtkRadioButton" id="liangBarskyRadioButton">
+            <property name="label" translatable="yes">LBLC</property>
             <property name="width_request">50</property>
             <property name="height_request">30</property>
             <property name="visible">True</property>
             <property name="sensitive">False</property>
             <property name="can_focus">True</property>
             <property name="receives_default">False</property>
+            <property name="tooltip_text" translatable="yes">Algoritmo de Liang Barsky para clipping de linha</property>
             <property name="active">True</property>
             <property name="draw_indicator">True</property>
           </object>
           <packing>
-            <property name="x">135</property>
+            <property name="x">130</property>
             <property name="y">245</property>
           </packing>
         </child>
         <child>
-          <object class="GtkRadioButton" id="buttonRadioClip2">
-            <property name="label" translatable="yes">r2</property>
+          <object class="GtkRadioButton" id="cohenSutherlandRadioButton">
+            <property name="label" translatable="yes">CSLC</property>
             <property name="width_request">50</property>
             <property name="height_request">30</property>
             <property name="visible">True</property>
             <property name="sensitive">False</property>
             <property name="can_focus">True</property>
             <property name="receives_default">False</property>
+            <property name="tooltip_text" translatable="yes">Algoritmo de Cohen Sutherland para clipping de linha</property>
             <property name="active">True</property>
             <property name="draw_indicator">True</property>
-            <property name="group">buttonRadioClip1</property>
+            <property name="group">liangBarskyRadioButton</property>
           </object>
           <packing>
             <property name="x">190</property>
