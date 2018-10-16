@@ -90,12 +90,13 @@ static std::vector<double> liangBarskyClippingLine(double x0, double y0, double 
 			    x1 = x0 + u2 * dx;
 			    y1 = y0 + u2 * dy;   	
 		    }
-            pontos.push_back(x0);
+            
+			pontos.push_back(x0);
             pontos.push_back(y0);
             pontos.push_back(x1);
             pontos.push_back(y1);
 
 		}
 
-		return pontos;
+	return pontos;
 }
