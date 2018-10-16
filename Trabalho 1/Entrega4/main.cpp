@@ -361,15 +361,53 @@ static void redesenhaCurvas() {
         cairo_t *cr;
         cr = cairo_create (surface);
         cairo_set_line_width (cr, 5);
-        cairo_set_line_cap  (cr, CAIRO_LINE_CAP_ROUND); 
-        cairo_move_to (cr, transformadaViewPortCoordenadaX(ponto->getValorX()),
-                        transformadaViewPortCoordenadaY(ponto->getValorY()));
+        cairo_set_line_cap  (cr, CAIRO_LINE_CAP_ROUND);
 
-        for (std::vector<Ponto*>::iterator it = listaDePontos.begin(); it != listaDePontos.end(); ++it) {
-            x = (*it)->getValorX();
-            y = (*it)->getValorY();
-            cairo_line_to (cr, transformadaViewPortCoordenadaX(x), transformadaViewPortCoordenadaY(y));
-        }  
+          if(gtk_toggle_button_get_active(buttonOnOffClipping) == TRUE) {
+            std::vector<double> pontos;
+
+            double x1;
+            double y1;
+            double x2;
+            double y2;
+            
+            for(int i = 0; i < listaDePontos.size() -1; i++) {
+
+                pontos = liangBarskyClippingLine(listaDePontos.at(i)->getValorX(), 
+                                                 listaDePontos.at(i)->getValorY(),
+                                                 listaDePontos.at(i+1)->getValorX(), 
+                                                 listaDePontos.at(i+1)->getValorY(),
+                                                 &tela);
+                                                 
+                if(pontos.size() != 0) {
+                    x1 = pontos.at(0);
+                    y1 = pontos.at(1);
+                    x2 = pontos.at(2);
+                    y2 = pontos.at(3);
+                }
+
+                if(devoClipparPonto(x1, y1, &tela) && devoClipparPonto(x2, y2, &tela)) { 
+                    // do nothing
+                } else {
+                    desenharLinha(transformadaViewPortCoordenadaX(x1),
+                                transformadaViewPortCoordenadaY(y1),
+                                transformadaViewPortCoordenadaX(x2),
+                                transformadaViewPortCoordenadaY(y2));
+                }
+
+            }
+
+        } else {
+
+            cairo_move_to (cr, transformadaViewPortCoordenadaX(ponto->getValorX()),
+                               transformadaViewPortCoordenadaY(ponto->getValorY()));
+
+            for (std::vector<Ponto*>::iterator it = listaDePontos.begin(); it != listaDePontos.end(); ++it) {
+                x = (*it)->getValorX();
+                y = (*it)->getValorY();
+                cairo_line_to (cr, transformadaViewPortCoordenadaX(x), transformadaViewPortCoordenadaY(y));
+            }  
+        }
 
         cairo_stroke (cr);    
     }
@@ -1377,6 +1415,7 @@ static void on_buttonSalvarCurva_clicked() {
             colocaObjetoNaListStore(nome, "Curva");
             pontosAuxiliarCurva.clear();
             refazLabelsWindowCurva();
+            reDrawAll();
         }    
     }
 }
