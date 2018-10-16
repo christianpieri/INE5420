@@ -95,5 +95,7 @@ static std::vector<double> liangBarskyClippingLine(double x0, double y0, double 
             pontos.push_back(x1);
             pontos.push_back(y1);
 
-	    }
+		}
+
+		return pontos;
 }
