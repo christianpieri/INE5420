@@ -534,7 +534,7 @@ static void on_buttonDireita_clicked() {
 // chama este método quando o botão zoomIn é clicado
 static void on_buttonZoomIn_clicked() {
     
-    monstrarMensagemNoConsole("Botão zoom in pressionado!\n");
+    monstrarMensagemNoConsole("Botão zoom in pressionado! Zoom +10.\n");
 
     double xMaximo = tela.getValorXMaximo();
     double xMinimo = tela.getValorXMinimo();
@@ -550,7 +550,7 @@ static void on_buttonZoomIn_clicked() {
 // chama este método quando o botão zoomOut é clicado
 static void on_buttonZoomOut_clicked() {
     
-    monstrarMensagemNoConsole("Botão zoom out pressionado!\n");
+    monstrarMensagemNoConsole("Botão zoom out pressionado! Zoom -10.\n");
 
     double xMaximo = tela.getValorXMaximo();
     double xMinimo = tela.getValorXMinimo();
@@ -866,6 +866,7 @@ static void rotacionaWindow() {
     objetosReta = rotacionaTodasAsRetas(sentidoRotacao, objetosReta, &tela);
     objetosPoligono = rotacionaTodosOsPoligonos(sentidoRotacao, objetosPoligono, &tela);
     objetosCurva = rotacionaTodasAsCurvas(sentidoRotacao, objetosCurva, &tela);
+    monstrarMensagemNoConsole("Tela rotacionada em 90º para a " + sentidoRotacao + ".\n");
     reDrawAll();
 }
 
@@ -1962,6 +1963,15 @@ static void escalonarCurva() {
     }
 }
 
+// chama quando o radio do algoritmo de clipping é trocado
+static void on_buttonRadioButtonCohenSutherland_toggled() {
+    if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(cohenSutherlandRadioButton))==TRUE) {
+        monstrarMensagemNoConsole("Algoritmo de clipping alterado para Cohen Sutherland.\n");
+    } else {
+        monstrarMensagemNoConsole("Algoritmo de clipping alterado para Liang Barsky.\n");
+    }
+}
+
 // chama quando botão salvar da edição é clicado
 static void on_buttonSalvarEdicao_clicked() {
     gtk_widget_hide(windowEditarObjeto);
@@ -1969,7 +1979,7 @@ static void on_buttonSalvarEdicao_clicked() {
     std::string tipo = retornarTipoObjeto();
 
     if(tipo.compare("-1") != 0) {
-        if(gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radioButtonTransladar))==TRUE) {
+        if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(radioButtonTransladar))==TRUE) {
             if(tipo.compare("Ponto") == 0) {
                 transladarPonto();
             } else if(tipo.compare("Reta") == 0) {
@@ -2208,6 +2218,7 @@ int main(int argc, char *argv[]) {
     g_signal_connect(buttonDeletarObjeto, "button-release-event", G_CALLBACK (on_buttonDeletarObjeto_clicked), NULL);
     g_signal_connect(buttonCurva, "button-release-event", G_CALLBACK (on_buttonCurva_clicked), NULL);
     g_signal_connect(buttonOnOffClipping, "toggled", G_CALLBACK(on_buttonOnOffClipping_toggled), NULL);
+    g_signal_connect(cohenSutherlandRadioButton, "toggled", G_CALLBACK(on_buttonRadioButtonCohenSutherland_toggled), NULL);
     g_signal_connect(buttonSalvarObj, "button-release-event", G_CALLBACK(on_buttonSalvarObj_clicked), NULL);
     g_signal_connect(buttonCarregarObj, "button-release-event", G_CALLBACK(on_buttonCarregarObj_clicked), NULL);
     g_signal_connect(buttonEditObjeto, "button-release-event", G_CALLBACK(on_buttonEditObjeto_clicked), NULL);
@@ -2255,7 +2266,7 @@ int main(int argc, char *argv[]) {
     gtk_builder_connect_signals(builder, NULL);
 
     gtk_widget_show(windowPrincipal);                
-    monstrarMensagemNoConsole("Pressione o botao F1 para obter ajuda e/ou ler a documentação.\n");
+    monstrarMensagemNoConsole("Pressione o botão F1 para obter ajuda e/ou ler a documentação.\n");
 
     gtk_main();
 
