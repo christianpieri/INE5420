@@ -47,8 +47,8 @@ using namespace std;
     GtkWidget *buttonDeletarObjeto;
     GtkWidget *buttonEditObjeto;
     GtkToggleButton *buttonOnOffClipping;
-    GtkRadioButton *liangBarskyRadioButton;
-    GtkRadioButton *cohenSutherlandRadioButton;
+    GtkWidget *liangBarskyRadioButton;
+    GtkWidget *cohenSutherlandRadioButton;
     GtkWidget *buttonSalvarObj;
     GtkWidget *buttonCarregarObj;
 
@@ -241,6 +241,7 @@ static void redesenhaRetas() {
     double y1;
     double x2;
     double y2;
+    std::vector<double> pontos;
 
     for (std::vector<Reta*>::iterator it = objetosReta.begin(); it != objetosReta.end(); ++it) {
         x1 = (*it)->getValorXInicial();
@@ -249,7 +250,13 @@ static void redesenhaRetas() {
         y2 = (*it)->getValorYFinal();
 
         if(gtk_toggle_button_get_active(buttonOnOffClipping) == TRUE) {
-            std::vector<double> pontos = liangBarskyClippingLine(x1, y1, x2, y2, &tela);
+            if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(liangBarskyRadioButton)) == TRUE) {
+                pontos = liangBarskyClippingLine(x1, y1, x2, y2, &tela);
+            } 
+
+            if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(cohenSutherlandRadioButton)) == TRUE) {
+                pontos = cohenSutherlandClippingLine(x1, y1, x2, y2, &tela);
+            }
            
             if(pontos.size() != 0) {
                x1 = pontos.at(0);
@@ -1970,6 +1977,8 @@ static void on_buttonRadioButtonCohenSutherland_toggled() {
     } else {
         monstrarMensagemNoConsole("Algoritmo de clipping alterado para Liang Barsky.\n");
     }
+
+    reDrawAll();
 }
 
 // chama quando botão salvar da edição é clicado
@@ -2125,8 +2134,8 @@ int main(int argc, char *argv[]) {
     buttonDeletarObjeto = GTK_WIDGET(gtk_builder_get_object(builder, "buttonDeletarObjeto"));
     buttonCurva = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCurva"));
     buttonOnOffClipping = GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, "buttonOnOffClipping"));
-    liangBarskyRadioButton = GTK_RADIO_BUTTON(gtk_builder_get_object(builder, "liangBarskyRadioButton"));
-    cohenSutherlandRadioButton = GTK_RADIO_BUTTON(gtk_builder_get_object(builder, "cohenSutherlandRadioButton"));
+    liangBarskyRadioButton = GTK_WIDGET(gtk_builder_get_object(builder, "liangBarskyRadioButton"));
+    cohenSutherlandRadioButton = GTK_WIDGET(gtk_builder_get_object(builder, "cohenSutherlandRadioButton"));
     buttonSalvarObj = GTK_WIDGET(gtk_builder_get_object(builder, "buttonSalvarObj"));
     buttonCarregarObj = GTK_WIDGET(gtk_builder_get_object(builder, "buttonCarregarObj"));
     buttonEditObjeto = GTK_WIDGET(gtk_builder_get_object(builder, "buttonEditObjeto"));
