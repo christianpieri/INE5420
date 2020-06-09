@@ -11,3 +11,5 @@ Entrega 1 > 2 > 3 > 5 > 6 > 4
 Clipping (entrega 4, foi deixado pro final)
 
 Cada entrega contém uma linha de compilação diferente, favor ler o README de cada uma delas.
+
+Documentação completa em: https://christianpieri.github.io/docCg/
